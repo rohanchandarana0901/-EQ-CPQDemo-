@@ -1,0 +1,273 @@
+<!-- UI/UX part was done by Vivek Parmar/Japan Bhavsar on 12/11/2018 Modified by Apttus Lab on 09-08-2019 -->
+<apex:page lightningStyleSheets="true" controller="APTSMD_MassApprovalRequestController" showHeader="true" standardStylesheets="false" sidebar="false">
+    <head>
+        <apex:slds />
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.css" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/jquery.js')}" />
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.css" />
+        <script src="/soap/ajax/29.0/connection.js"></script>
+        <script src="/soap/ajax/29.0/apex.js"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/jquery.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular_js.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-animate.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-material.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-messages.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-resources.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-route.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/assets_cache.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/materialize.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/bootstrap_js.js')}" />
+        <apex:includeScript value="{!$Resource.APTSMD_Nova_Js}" />
+        <apex:includeScript value="{!$Resource.APTSMD_NovaThemeProvider}" />
+        <!-- <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.css" rel="stylesheet" /> -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.10/angular-material.min.css" integrity="sha512-lUExuDw/YQOmNO0LN2XplczGTyTxTEUvXBPKOnfBNloscpdzpfrYBiyWtPeyF0guAgihG/6RrOfDpoyywWMk/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/angular-material-data-table/0.10.10/md-data-table.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+        <title>
+            Mass Approval
+        </title>
+        <script>
+            var app = angular.module("approvalApp",['ngMaterial', 'novaTheme', 'ngMessages', 'ngAnimate', 'ngRoute']);
+            app.config(function (novaThemeProvider) {
+                    novaThemeProvider.setTheme('default');
+            });
+            app.controller("approvalAppCtrl",["$scope",function($scope){
+
+                // New Logic for showing approved/rejected data in second screen - Japan Bhavsar
+                $scope.secondScreen = false;
+                $scope.returnData = [];
+            
+                $scope.selectedAll = {
+                    value: false  
+                };
+                $scope.$watch('selectedAll.value', function(value) {
+                    angular.forEach($scope.approvalReqObject, function (item) {
+                        item.check = value;
+                    });
+                });
+                $scope.approvalReqObject = {!appReqListJSON};
+                $scope.selectAll = function(val){
+
+                    if($scope.selectedAll.value){
+                        $scope.selectedAll.value = false;
+                    }
+                    else
+                    {
+                        $scope.selectedAll.value = true;
+                    };
+                    angular.forEach($scope.approvalReqObject, function (item) {
+                        item.check = $scope.selectedAll.value;
+                    });
+                }
+                $scope.approve = function(){
+                    
+                    // New Logic By Japan Bhavsar for Checking any selected items
+                    var selectedCnt = 0;
+                    angular.forEach($scope.approvalReqObject, function(item){
+                        if(item.check){
+                            selectedCnt = selectedCnt + 1;
+                        }
+                    });
+                    
+                    if(selectedCnt == 0){
+                           window.alert("Please select at least one valid record to approve/reject");
+                           return;
+                    }
+                    
+                    
+                    
+                    var isNull= false;
+                    $('.pageBlockDiv').hide();
+                    angular.forEach($scope.approvalReqObject, function(item){
+                        if(item.check && (item.approvalRequest.Apttus_Approval__Approval_Status__c!='Cancelled' || item.approvalRequest.Apttus_Approval__Approval_Status__c!='Approved' || item.approvalRequest.Apttus_Approval__Approval_Status__c!='Rejected')){
+                            item.approvalRequest.Apttus_Approval__Approval_Status__c = "Approved";
+                            var obj = item.approvalRequest;
+                            Visualforce.remoting.Manager.invokeAction(
+                              '{!$RemoteAction.APTSMD_MassApprovalRequestController.approve}',JSON.stringify(obj),angular.toJson($scope.approvalReqObject),
+                              function(result, event) {
+                                  //New Logic for showing rejected items in second table
+                                  $scope.returnData = result;
+                                  $scope.returnData = $.grep($scope.returnData,function(i){ return i.check; });
+                                  $scope.secondScreen = true;
+                                  $scope.$apply();
+                              }
+                        );
+                        }
+                        else{
+                        }
+                    });
+                    if(isNull){
+                         window.alert("Please select at least one valid record to approve/reject");
+                    }
+                    $('.pageBlockDiv').show();
+                }
+
+                $scope.reject = function(){
+                    
+                    // New Logic By Japan Bhavsar for Checking any selected items
+                    var selectedCnt = 0;
+                    angular.forEach($scope.approvalReqObject, function(item){
+                        if(item.check){
+                            selectedCnt = selectedCnt + 1;
+                        }
+                    });
+                    
+                    if(selectedCnt == 0){
+                           window.alert("Please select at least one valid record to approve/reject");
+                           return;
+                    }
+                    
+                    
+                    $('.pageBlockDiv').hide();
+                    angular.forEach($scope.approvalReqObject, function(item){
+                        if(item.check && (item.approvalRequest.Apttus_Approval__Approval_Status__c!='Cancelled' || item.approvalRequest.Apttus_Approval__Approval_Status__c!='Approved' || item.approvalRequest.Apttus_Approval__Approval_Status__c!='Rejected')){
+                            item.approvalRequest.Apttus_Approval__Approval_Status__c = "Rejected";
+                            var obj = item.approvalRequest;
+                            Visualforce.remoting.Manager.invokeAction(
+                              '{!$RemoteAction.APTSMD_MassApprovalRequestController.reject}',JSON.stringify(obj),angular.toJson($scope.approvalReqObject),
+                              function(result, event) {
+
+                                  //New Logic for showing rejected items in second table
+                                  $scope.returnData = result;
+                                  $scope.returnData = $.grep($scope.returnData,function(i){ return i.check; });
+                                  $scope.secondScreen = true;
+                                  $scope.$apply();
+                              }
+                        );
+                        }
+                    });
+                    $('.pageBlockDiv').show();
+                }
+                
+                // goBack() - go back means reload page
+                $scope.goBack = function(){
+                    location.reload();
+                }
+                
+                // goBackToHome - Go back to home
+                $scope.goBackToHome = function(){
+                    window.top.location = '/home/home.jsp';
+                   return;
+                }
+                
+            }]);
+        </script>
+        <style>
+            .noSidebarCell, .sidebarCell .fixed {
+                padding: 0px !important;
+            }
+            .moved{
+                margin-top:47px;
+            }
+        </style>
+    </head>
+    <body ng-app="approvalApp" ng-controller="approvalAppCtrl" ng-cloak="true">
+        <c:APTSMD_CommonHeader pageName1="Mass Approval" objectName="" iconName="account" type="standard"/>
+        <div class="apttusContainer moved">
+             
+            <div class="floatRight marginBottom15 marginTop7 apttusPanel buttonCls">
+                <button value="Approve" ng-click="approve()" ng-show="!secondScreen" class="apttusBtn floatRight marginLeft10">Approve</button>
+                <button value="Reject" ng-click="reject()" ng-show="!secondScreen" class="apttusBtnWhite slds-button slds-button--brand floatRight marginLeft10">Reject</button>
+                <button value="Cancel" ng-click="goBackToHome()" ng-show="!secondScreen" class="apttusBtnWhite slds-button slds-button--brand floatRight marginLeft10">Cancel</button>
+                <button value="Back" ng-click="goBack()" ng-show="secondScreen" class="apttusBtn floatRight marginLeft10">Back</button>
+            </div>
+
+            
+                <div class="apttusPanel marginTop60" ng-show="!secondScreen">
+                    <div>
+                        <p class="blackBold margin0" ng-click="showFilter = !showFilter">
+                            <i ng-init="showFilter = false;"
+                               class="material-icons verticalMiddle">{{showFilter ? 'expand_more' : 'chevron_right'}}</i>&nbsp;Search Filters
+                        </p>
+                    </div>
+                    <md-tabs md-dynamic-height="true" md-border-bottom="true" ng-show="showFilter">
+                        <md-tab label="Standard Search" class="capitalize">
+                            <md-content class="md-padding">
+                                <div class="row margin0 padding0">
+                                    <div class="col-md-4 col-sm-12 padding0">
+                                        <md-input-container md-no-float="true" class="md-block">
+                                            <input type="text" class="marginTop15 apttusInput " placeholder="Click here to search" ng-model="searchApprovalReq" />
+                                        </md-input-container>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-tab>
+                    </md-tabs>
+                </div>
+            
+        
+        <div class="">
+            <!-- Table No 1 -->
+            <div class="apttusPanel"  ng-show="!secondScreen">
+                <table id="approvalReqTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <md-checkbox class="ands-checkbox margin0" id="main" ng-model="selectedAll.value"></md-checkbox>
+                            </th>
+                            <th class="blackBold capitalize tableHeader"  ng-click="orderByField='approvalRequest.Name'; reverseSort = ! reverseSort">Name</th>
+                            <th class="blackBold capitalize tableHeader" ng-click="orderByField='approvalRequest.Apttus_Approval__ProcessInstanceId__r.Name'; reverseSort = ! reverseSort">Process Instance</th>
+                            <th class="blackBold capitalize tableHeader">Approval Status</th>
+                            <th class="blackBold capitalize tableHeader">Object</th>
+                            <th class="blackBold capitalize tableHeader">Object Instance</th>
+                            <th class="blackBold capitalize tableHeader"  ng-click="orderByField='approvalRequest.Apttus_Approval__Date__c'; reverseSort = ! reverseSort">Approval Date</th>
+                            <th class="blackBold capitalize tableHeader">Assigned To</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="ap in approvalReqObject | filter : searchApprovalReq | orderBy:orderByField:reverseSort">
+                            <td>
+                                <md-checkbox class="ands-checkbox margin0" id="main" ng-model="ap.check"></md-checkbox>
+                            </td>
+                            <td class="normalTextFont"><a href="/{{ap.approvalRequest.Id}}" target="_blank">{{ap.approvalRequest.Name}}</a></td>
+                            <td class="normalTextFont">{{ap.approvalRequest.Apttus_Approval__ProcessInstanceId__r.Name}}</td>
+                            <td class="normalTextFont">{{ap.approvalRequest.Apttus_Approval__Approval_Status__c}}</td>
+                            <td class="normalTextFont">{{ap.objectLabel}}</td>
+                            <td class="normalTextFont"><a href="/{{ap.approvalRequest.Apttus_Approval__Object_Id__c}}" target="_blank">{{ap.approvalRequest.Apttus_Approval__Object_Name__c}}</a></td>
+                            <td class="normalTextFont">{{ap.approvalRequest.Apttus_Approval__Date__c |  date:'{!dateFormat}'}}</td>
+                            <td class="normalTextFont">{{ap.approvalRequest.Apttus_Approval__Assigned_To_Name__c}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Table No 2 -->
+             <div class="apttusPanel"  ng-show="secondScreen">
+                <table id="approvalReqTable" class="table">
+                    <thead>
+                        <tr>
+                            <th class="blackBold capitalize tableHeader"  ng-click="orderByField='approvalRequest.Name'; reverseSort = ! reverseSort">Name</th>
+                            <th class="blackBold capitalize tableHeader" ng-click="orderByField='approvalRequest.Apttus_Approval__ProcessInstanceId__r.Name'; reverseSort = ! reverseSort">Process Instance</th>
+                            <th class="blackBold capitalize tableHeader">Approval Status</th>
+                            <th class="blackBold capitalize tableHeader">Object</th>
+                            <th class="blackBold capitalize tableHeader">Object Instance</th>
+                            <th class="blackBold capitalize tableHeader"  ng-click="orderByField='approvalRequest.Apttus_Approval__Date__c'; reverseSort = ! reverseSort">Approval Date</th>
+                            <th class="blackBold capitalize tableHeader">Assigned To</th>
+                            <th class="blackBold capitalize tableHeader">Actual Approver</th>
+                            <th class="blackBold capitalize tableHeader">Approver Comments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="ap in returnData | orderBy:orderByField:reverseSort">
+                            <td class="normalTextFont"><a href="/{{ap.approvalRequest.Id}}" target="_blank">{{ap.approvalRequest.Name}}</a></td>
+                            <td class="normalTextFont">{{ap.approvalRequest.Apttus_Approval__ProcessInstanceId__r.Name}}</td>
+                            <td class="normalTextFont">{{ap.approvalRequest.Apttus_Approval__Approval_Status__c}}</td>
+                            <td class="normalTextFont">{{ap.objectLabel}}</td>
+                            <td class="normalTextFont"><a href="/{{ap.approvalRequest.Apttus_Approval__Object_Id__c}}" target="_blank">{{ap.approvalRequest.Apttus_Approval__Object_Name__c}}</a></td>
+                            <td class="normalTextFont">{{ap.approvalRequest.Apttus_Approval__Date__c |  date:'{!dateFormat}'}}</td>
+                            <td class="normalTextFont">{{ap.approvalRequest.Apttus_Approval__Assigned_To_Name__c}}</td>
+                            <td class="normalTextFont">{{ap.approvalRequest.Apttus_Approval__Actual_Approver__r.Name}}</td>
+                            <td class="normalTextFont">{{ap.approvalRequest.Apttus_Approval__Approver_Comments__c}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+    </body>
+</apex:page>

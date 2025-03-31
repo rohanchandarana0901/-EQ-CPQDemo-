@@ -1,0 +1,51 @@
+<aura:component controller="APTSMD_ConsentFormController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    
+    <!-- <aura:dependency resource="markup://lightning:empApi" /> -->
+    <aura:attribute name="fullName" type="String" default=""/>
+    <aura:attribute name="companyName" type="String" default="" />
+    <aura:attribute name="address" type="String" default="" />
+    <aura:attribute name="phoneNumber" type="String" default="" />
+    <aura:attribute name="emailAddress" type="String" default="" />
+    <aura:attribute name="serviceStartDate" type="Date" />
+    <aura:attribute name="serviceEndDate" type="Date" />
+    <aura:attribute name="consentStatement" type="Boolean" default="false" />
+    <aura:attribute name="isLoading" type="Boolean" default="false" />
+    <aura:attribute name="loadingMessage" type="String" />
+
+    <!-- Init Function Calling -->
+
+
+
+    <lightning:card title="Consent Form">
+        <!-- Loading Bar -->
+        <aura:if isTrue="{! v.isLoading}">
+            <div class="slds-is-relative" style="text-align: center;padding: 30px;">
+                <div class="slds-spinner_container">
+                    <lightning:spinner alternativeText="Loading" size="medium" variant="brand" /><br />
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <p>{!v.loadingMessage}</p>
+            </div>
+        </aura:if>
+        <aura:if isTrue="{! !v.isLoading}">
+            <div class="slds-p-around_medium">
+                <!-- Fields -->
+                <lightning:input name="fullName" label="Full Name" value="{! v.fullName}" required="true" placeholder="John Doe" />
+                <lightning:input name="companyName" label="Company Name" value="{! v.companyName}" required="true" />
+                <lightning:input name="address" label="Address" value="{! v.address}" required="true" />
+                <lightning:input name="phoneNumber" label="Phone Number" value="{! v.phoneNumber}" required="true" placeholder="0000000000" pattern="\d*" />
+                <lightning:input name="emailAddress" label="Email Address" value="{! v.emailAddress}" required="true" placeholder="test@email.com" type="email" />
+                <lightning:input name="serviceStartDate" label="Service Start Date" value="{! v.serviceStartDate}" type="date" required="true" />
+                <lightning:input name="serviceEndDate" label="Service End Date" value="{! v.serviceEndDate}" type="date" required="true" />
+                <br/>
+                <lightning:input name="consentStatement" label="I agree to the terms and conditions" checked="{! v.consentStatement}" type="checkbox" required="true" />
+                <!-- <lightning:input name="billingCycle" label="Billing Cycle" value="{!v.consentData.billingCycle}" required="true" /> -->
+                <!-- Submit Button -->
+                <br/>
+                <lightning:button label="Submit" onclick="{!c.handleSubmit}" variant="brand" />
+            </div>
+        </aura:if>        
+    </lightning:card>
+
+</aura:component>

@@ -1,0 +1,2 @@
+<apex:page title="Review Extracted Result" controller="APTSMD_ReviewCCIDocumentController" action="{!getRLPDocumentId}" showHeader="true">
+</apex:page>

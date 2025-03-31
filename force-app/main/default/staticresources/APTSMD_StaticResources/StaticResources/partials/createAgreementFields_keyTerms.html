@@ -1,0 +1,149 @@
+<div layout="row" class="default-space">
+	<div style="margin-right: 10px !important;"></div>
+  <div flex ="25">
+
+  	<div class="form-group">
+        <label for="usr">Region</label>
+        <md-select ng-model="agreementObj.region" class="default-input">
+		  <md-option value="" selected="selected">--None--</md-option>
+          <md-option ng-repeat="item in regionItems"  value="{{item}}">{{item}}</md-option>
+        </md-select>
+    </div> 
+    <div class="form-group">
+        <label for="usr">Payment Terms</label>
+        <md-select ng-model="agreementObj.paymentTerm" class="default-input">
+		 <md-option value="" selected="selected">--None--</md-option>
+           <md-option ng-repeat="item in paymentTermsItems"  value="{{item}}">{{item}}</md-option>
+       </md-select>
+    </div>
+	<div class="form-group">
+        <label for="usr">Support Exhibits</label>
+        <md-select ng-model="agreementObj.supportExhibits" class="default-input">
+		 <md-option value="" selected="selected">--None--</md-option>
+             <md-option ng-repeat="item in supportExhibitsItems"  value="{{item}}">{{item}}</md-option>
+       </md-select>
+    </div> 
+    <div class="form-group">
+        <label for="usr">Annual Uplift</label>
+         <input type="text" class="form-control default-input" ng-model="agreementObj.annualUplift" />
+    </div> 	
+
+  </div>
+
+
+  <div style="margin-right: 10px !important;"></div>
+
+
+  <div flex ="30">
+
+    <div class="form-group">
+      <label for="comment">Special Terms</label>
+      <textarea class="form-control default-textarea" rows="5" id="comment" ng-model="agreementObj.specialTerms"></textarea>
+    </div> 
+	<div class="form-group default-checkbox" style="padding-top: 2.5%;">
+	&nbsp; 
+	<br/>
+        <md-checkbox ng-model="agreementObj.autoRenewal" ></md-checkbox><label for="per">Auto Renew?</label>&nbsp;
+         <md-checkbox ng-model="agreementObj.SLA" ></md-checkbox><label for="per">SLA</label>
+    </div> 
+	<div class="form-group">
+        <label for="usr">Organizational Unit</label>
+        <md-select ng-model="agreementObj.organizationUnit" class="default-input">
+		 <md-option value="" selected="selected">--None--</md-option>
+             <md-option ng-repeat="item in organizationUnitItems"  value="{{item}}" >{{item}}</md-option>
+       </md-select>
+    </div>
+      
+
+  </div>
+
+
+  <div style="margin-right: 10px !important;"></div>
+   <div flex ="25">
+		<div class="form-group">
+			<label for="usr">Language</label>
+			<md-select ng-model="agreementObj.contractLanguage" class="default-input" >
+			 <md-option value="" selected="selected">--None--</md-option>
+				 <md-option ng-repeat="item in langaugeItems"  value="{{item}}" >{{item}}</md-option>
+			</select>
+		</div>
+		<!-- <div class="form-group">
+        <label for="usr">Contract Facilator</label>
+        <input type="text" class="form-control default-input" ng-model="agreementObj.contactFacilator">
+		</div>  -->
+    <div class="form-group">
+        <label for="usr">Contract Facilator</label>
+        <md-select ng-model="agreementObj.contactFacilator" class="default-input">
+		 <md-option value="" selected="selected">--None--</md-option>
+             <md-option ng-repeat="item in contractFaciliatorItems"  value="{{item}}">{{item}}</md-option>
+       </md-select>
+    </div> 
+
+		<div class="form-group default-autocomplete">
+        <label for="usr">Deal Owner</label>
+       <md-autocomplete
+          md-search-text-change="AppCtrl.searchTextChangeAccount(AppCtrl.searchTextOwner)"
+          md-search-text="AppCtrl.searchTextOwner"
+          md-selected-item-change="AppCtrl.selectedItemChangeOwner(item)"
+          md-items="item in AppCtrl.querySearchOwner(AppCtrl.searchTextOwner)"
+          md-item-text="item.displayText"
+          md-min-length="0"
+          placeholder="Owner"
+          md-menu-class="autocomplete-custom-template"
+          md-selected-item="agreementObj.dealOwner"
+          >
+
+        <md-item-template>
+          <span class="item-title">
+            <md-icon md-svg-icon="{{envPath}}/img/icons/ic_person_black_24px.svg"></md-icon>
+             <strong><span> {{item.displayText}} </span></strong>
+          </span>
+          <span class="item-metadata">
+            <span class="item-metastat">
+              - {{item.description}} 
+            </span>
+          </span>
+        </md-item-template>
+      </md-autocomplete>
+      </div>
+	<!-- 	<div class="form-group">
+        <label for="usr">Signature Type</label>
+        <input type="text" ng-model="agreementObj.signatureType" class="form-control default-input" >
+		</div> -->
+     <div class="form-group">
+        <label for="usr">Signature Type</label>
+        <md-select ng-model="agreementObj.signatureType" class="default-input">
+		 <md-option value="" selected="selected">--None--</md-option>
+            <md-option ng-repeat="item in signatureTypeItems"  value="{{item}}" >{{item}}</md-option>
+       </md-select>
+    </div> 
+  </div>
+
+
+  <div style="margin-right: 10px !important;"></div>
+		
+
+   <div flex ="30" style="padding-right: 10px;">
+		<div class="form-group">
+        <label for="usr">Days Notice Period To Contract End</label>
+        <input type="text" ng-model="agreementObj.daysNotice" class="form-control default-input" >
+		</div>
+		<div class="form-group">
+        <label for="usr">Days Notice Required For Renew</label>
+        <input type="text" ng-model="agreementObj.daysNoticeRenew" class="form-control default-input" >
+		</div>
+		<div class="form-group">
+        <label for="usr">Internal Document ID #</label>
+        <input type="text" ng-model="agreementObj.internalDocId" class="form-control default-input" >
+		</div>
+		<div class="form-group">
+        <label for="usr">Purchase Order #</label>
+        <input type="text" ng-model="agreementObj.purchaseOrder" class="form-control default-input" >
+		</div>
+   
+   
+
+  </div>
+
+
+ </div>

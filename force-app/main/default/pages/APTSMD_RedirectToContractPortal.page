@@ -1,0 +1,2 @@
+<apex:page controller="APTSMD_RedirectToContractPortal" action="{!redirect}">
+</apex:page>

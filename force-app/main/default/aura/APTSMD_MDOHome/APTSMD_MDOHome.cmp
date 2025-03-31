@@ -1,0 +1,25 @@
+<aura:component implements="flexipage:availableForAllPageTypes" controller="APTSMD_MDOHomeController">
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+<div style="background-color:white;border-radius: 5px;" class="mainDiv" >
+    <div class=" aligncenter" style="padding-top: 5px;">
+        <div class="tileHeader" style="margin-left: 7px;margin-right: 7px;">
+        	<span>HTM MDO</span>
+        </div>
+    	
+    </div>
+    <div class="centerContent ">
+        <a aura:id="MDOHomeWelcome" class="HideLine" >
+            <span class="osOutputLabel" style="color: #54698d;">
+                Thank you for spinning a copy of the Apttus Quote to Cash demo environment. Your Apttus demo org is now ready! 
+                Your instance is a copy of the HTM MDO with Apttus packages installed and configured.
+                It is important to take a few easy administration steps before you begin. 
+                Highlighted in red are the steps that <span style="color:red">MUST</span> be configured before you start; the rest are optional. Thank you!
+                <span style="color:red"></span>
+                
+            </span>
+        </a>
+    	
+    </div>
+    
+</div>
+</aura:component>

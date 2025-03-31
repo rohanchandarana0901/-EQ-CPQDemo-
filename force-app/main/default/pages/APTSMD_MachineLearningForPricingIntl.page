@@ -1,0 +1,10 @@
+<apex:page sidebar="false" showHeader="false" lightningStyleSheets="true" controller="APTSMD_MachineLearingController" action="{!GetBaseUrlForInstance}">
+    
+    <script>
+        //document.location.href ="http://40.78.66.213/MDO/Recommender?userName={!$User.Username}&userId={!$User.Id}&accessToken={!$Api.Session_ID}&instanceURL={!instanceURL}";
+        //window.top.location="http://40.78.66.213/MDO/Recommender?userName={!$User.Username}&userId={!$User.Id}&accessToken={!$Api.Session_ID}&instanceURL={!instanceURL}";
+        window.open("{!$Label.APTSMD_MLUrls}/MDO/Pricing_Intelligence?userName={!$User.Username}&userId={!$User.Id}&accessToken={!$Api.Session_ID}&instanceURL={!instanceURL}", "_blank");
+    </script>
+    
+    <!--<apex:iframe src="http://aavtrain.com" scrolling="true" id="theIframe"/>-->
+</apex:page>

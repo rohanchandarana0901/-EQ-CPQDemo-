@@ -1,0 +1,19 @@
+ <div layout="row" layout-wrap id="MySplitter">
+      <div flex="60" class="view-left-section" >
+         <div layout="column">
+         	<div>
+         		 <div ng-include="envPath+'/partials/viewAgreement_Fields_chevron.html'"></div>
+                <br/>
+         	</div>
+         	<div>
+         		 <div ng-include="envPath+'/partials/viewAgreement_content_information.html'"></div>
+         	</div>
+         	<div>
+         		 <div ng-include="envPath+'/partials/viewAgreement_content_keyTerms.html'"></div>
+         	</div>
+         </div>
+      </div>
+      <div flex="40" class="ng-relatedlist">
+         <div ng-include="envPath+'/partials/relatedList.html'"></div>
+      </div>  
+</div>

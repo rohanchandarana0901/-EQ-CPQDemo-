@@ -1,0 +1,401 @@
+<!--
+* ─────────────────────────────────────────────────────────────────────────────────────────────────┐
+* Visualforce page designed to migrate KIRA projects into salesforce for CLM Intelligent Import
+*
+* This page should be used to migrate KIRA projects into salesforce
+* Creates records in Intelligent imports objects related to KIRA project selected by user. 
+* Creates correct mappings correspodning to KIRA projects.  
+* ──────────────────────────────────────────────────────────────────────────────────────────────────
+* @author         Chetan Patel   <cpatel@apttus.com>
+* @modifiedBy     Chetan Patel   <cpatel@apttus.com>
+* @maintainedBy   Chetan Patel   <cpatel@apttus.com>
+* @lastestVersion 1.9
+* @created        12/16/2019
+* @lastModified   03/27/2020
+* ──────────────────────────────────────────────────────────────────────────────────────────────────
+* @changes
+* v1.9            cpatel@apttus.com
+* 03/27/2020      Updated UI elements to match with lightning look and feel in salesforce.
+*
+* ─────────────────────────────────────────────────────────────────────────────────────────────────┘
+-->
+<apex:page docType="html-5.0"  controller="APTS_IDEInitialMigrationController"  applyBodyTag="true" standardStylesheets="false" sidebar="false" lightningStyleSheets="true" showHeader="false">
+
+    <html lang="en" ng-app="ngApp" ng-cloak='true' xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <link rel="stylesheet" href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}"
+        type="text/css" />
+    <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/jquery.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular_js.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-animate.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-aria.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-material.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-aria.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-messages.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-resources.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-route.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/assets_cache.js')}" />
+
+    <apex:includeScript value="{!$Resource.APTS_Nova_Js}" />
+    <apex:includeScript value="{!$Resource.APTS_NovaThemeProvider}" />
+
+    <apex:stylesheet value="{!URLFOR($Resource.APTS_ngResource, 'bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.APTS_ngResource, 'bootstrap/css/bootstrap-theme.min.css')}" />
+    <apex:stylesheet value="{!$Resource.APTS_ApttusCustomCss}" />
+    <script>
+
+        var app = angular.module('ngApp', ['ngMaterial', 'novaTheme',
+            'ngMessages', 'ngAnimate', 'ngRoute',
+            'material.svgAssetsCache'
+        ]);
+        app.config(function (novaThemeProvider) {
+            novaThemeProvider.setTheme('default');
+        });
+
+        var controller = app.controller('IDEInitialMigrationController',
+        function ($scope){
+
+            $scope.isimportSettingExists = {!isimportSettingExists};
+    
+            $scope.showSuccessMessage = false;
+            $scope.showErrorMessage = false;
+            $scope.step1 = false;
+            $scope.step2 = false;
+            $scope.step3 = false;
+            $scope.step4 = false;
+            $scope.search = '';
+            $scope.showProjectExistMessage =false;
+            $scope.availableRecordType = {!selectedRecordTypeJSON};
+            $scope.availableProjects = {!lstProjectsJSON};
+            console.log('>> availableProjects >>>>>');
+            console.log($scope.availableProjects);
+            $scope.selectedProjects = [];
+            $scope.removeSelected = function (item) {
+                item.isSelected = false;
+                $scope.availableProjects.push(item);
+                $scope.selectedProjects.splice($scope.selectedProjects.indexOf(item), 1);
+                $scope.isRecordTypeSelected(item);
+            };
+            $scope.addSelected = function (item) {
+                item.project.Apttus__RecordTypeName__c=null;
+                $scope.selectedProjects.push(item);
+                $scope.availableProjects.splice($scope.availableProjects.indexOf(
+                    item), 1);
+               
+            };
+            $scope.isRecordTypeSelected = function(prov){
+                var j=0;
+                angular.forEach($scope.selectedProjects,
+                function(i) {
+                    if(i.project.Apttus__RecordTypeName__c== prov.project.Apttus__RecordTypeName__c)
+                        j++;
+                });
+                if(j>=2){
+                    $scope.showProjectExistMessage =true;
+                    prov.project.Apttus__RecordTypeName__c=null;
+                }
+                else
+                    $scope.showProjectExistMessage =false;
+            };
+            $scope.createProject = function () {
+                $scope.step1 = true;
+                var waitTime = $scope.selectedProjects.length * 2000;
+                angular.forEach($scope.selectedProjects,
+                function(i){
+                if(!$scope.showErrorMessage){
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.APTS_IDEInitialMigrationController.createProject}',
+                        JSON.stringify(i),
+                        function (result, event) {
+                            console.log('>>>>>>>>>>>>>> response >>>>>>>>>');
+                            if (result != null && typeof result !== 'undefined') {
+                                //$scope.step2 = true;
+                                //$scope.$apply();
+                                var res = JSON.parse(result.replace(/(&quot\;)/g, "\""));
+                                res = JSON.stringify(res);
+                                console.log(res);
+                                Visualforce.remoting.Manager.invokeAction(
+                                    '{!$RemoteAction.APTS_IDEInitialMigrationController.createProvisionWithClauseFields}', res,
+                                    function (result, event) {
+                                        console.log('>>>>>>>>>>>>>> response 2nd >>>>>>>>>');
+                                        console.log(result);
+                                        if (result) {
+                                            //$scope.step3 = true;
+                                            //$scope.$apply();
+                                        } else {
+                                            $scope.showErrorMessage = true;
+                                            $scope.$apply();
+                                        }
+                                    });
+                            } else {
+                                $scope.showErrorMessage = true;
+                                $scope.$apply();
+                            }
+                        });
+                    }
+                });
+                setTimeout(function(){ 
+                    
+                    if(!$scope.showErrorMessage){
+                        $scope.step2 = true;
+                        $scope.step3 = true;
+                        $scope.step4 = true;
+                        $scope.showSuccessMessage = true;
+                        $scope.$apply();
+                    }
+                }, waitTime);
+            };
+            $scope.cancel = function () {
+                var url = 'https://' + window.location.host + '/home/home.jsp';
+                window.location.href = url;
+    
+            };
+            $scope.sortType = 'project.Name';
+            $scope.sortReverse = false;
+            $scope.sortTypeSeleted = 'project.Name';
+            $scope.sortReverseSeleted = false;
+        });
+
+    </script>
+    <script async="true" src="https://www.googletagmanager.com/gtag/js?id=UA-131485697-1"></script>
+    <script value="{!$Resource.APTS_GA}"></script>
+    <style>
+            .moved {
+                margin-top: 79px! important;
+            }
+            
+            .slds-scope .slds-card__body {
+                margin-top: 0.75rem;
+            }
+            
+            .slds-scope table {
+                width: auto;
+            }
+            
+            .md-calendar-scroll-mask {
+                width: ;
+            }
+            
+            md-calendar > div {
+                width: min-content;
+            }
+            
+            .md-calendar-date-selection-indicator {
+                text-align: center;
+            }
+            
+            .md-icon-button {
+                float: Top;
+                margin-bottom: 10px;
+            }
+            .marginTop101{
+                margin-top: 101px !important;
+            }
+
+        </style>
+    <apex:slds />
+    
+    <div class="headerContainer apttusContainer">
+            <nav class="apttusPanel">
+                <div class="container-fluid">
+                    <ul class="nav navbar-nav" style="margin-left: 1.5%;margin-top: 0% !important;">
+                        
+                        <li>
+                            <span class="slds-icon_container slds-icon-standard-account slds-icon_large">
+                          <svg class="slds-icon slds-icon_large" aria-hidden="true" id="headerIcon">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/action-sprite/svg/symbols.svg#account')}"></use>
+                          </svg>
+                        </span>
+                        <span>Agreement Type AIML Model Initial Migration</span>
+                        </li>
+                    </ul>
+                    
+                </div>
+            </nav>
+        </div>
+    
+    <body id="AiiBody" ng-controller="IDEInitialMigrationController">
+         
+        <div class="slds  width100P marginTop101">
+            <div class="slds-card">
+                
+                <div class="apttusContainer moved" ng-if="!isimportSettingExists">
+                    <br/>
+                    <br/>
+                    <br/>
+                    <span style="color:red;">Please create record with name KIRA in intelligent import settings custom setings. </span>
+                </div>
+                <div class="apttusContainer" ng-if="isimportSettingExists">
+                    <div class="slds-no-flex marginBottom10 floatRight">
+                        <div class="slds-button-group">
+                            <a ng-if="!showProjectExistMessage" class="slds-button slds-button--neutral" href="#" ng-click="createProject();">Start</a>&nbsp;&nbsp;
+                            <a class="slds-button slds-button--neutral" style="margin-left: -7px;" href="#" ng-click="cancel();">Back</a>
+                        </div>
+                    </div>
+                    <div class="apttusPanel">
+                        <div style="font-weight:bold;">
+                            Please select projects from available list, map record type and then click on start button to start migration process.
+                            <br/>List excludes any projects which are already there in salesforce and corresponding record type will not be available for selection.
+                            <br/> This will fetch all projects with its provisions from KIRA and create corresponding mapping records in Salesforce.
+                            <br/>
+                            <span style="color:red;" ng-if="showProjectExistMessage">Record type can not be resued for another project</span>
+                        </div>
+                        <div ng-if="step1 || step2 || step3 || step4 || showSuccessMessage || showErrorMessage ">
+
+                            <span ng-if="step1" class="slds-icon_container slds-icon_container_circle slds-icon-action-description">
+                                <svg class="slds-icon" aria-hidden="true">
+                                    <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/action-sprite/svg/symbols.svg#check')}"
+                                    />
+                                </svg>
+                                <span>Migartion started</span>
+                            </span>
+                            <span ng-if="step2" class="slds-icon_container slds-icon_container_circle slds-icon-action-description">
+                                <svg class="slds-icon" aria-hidden="true">
+                                    <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/action-sprite/svg/symbols.svg#check')}"
+                                    />
+                                </svg>
+                                <span>Projects created</span>
+                            </span>
+
+                            <span ng-if="step3" class="slds-icon_container slds-icon_container_circle slds-icon-action-description">
+                                <svg class="slds-icon" aria-hidden="true">
+                                    <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/action-sprite/svg/symbols.svg#check')}"
+                                    />
+                                </svg>
+                                <span>Clause/fields provisions created</span>
+                            </span>
+
+                            <span ng-if="step4" class="slds-icon_container slds-icon_container_circle slds-icon-action-description">
+                                <svg class="slds-icon" aria-hidden="true">
+                                    <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/action-sprite/svg/symbols.svg#check')}"
+                                    />
+                                </svg>
+                                <span>Migration complete.</span>
+                            </span>
+                            <br/>
+                            <span style="color:green;" ng-if="showSuccessMessage">Project with it's Caluses/fields migrated successfully.</span>
+                            <br/>
+                            <br/>
+                            <span style="color:red;" ng-if="showErrorMessage">Error occured while migrating projects with it's Caluses/fields.</span>
+                            <br/>
+                            <br/>
+                        </div>
+
+                    </div>
+                    <div class="apttusPanel">
+                        <div class="slds-form-element" style="width: 50%;">
+                            <input type="text" id="text-input-id-4" placeholder="Search available projects" class="slds-input" ng-model="search" />
+                        </div>
+                    </div>
+                    <div class="slds-card__body apttusPanel">
+                        <div id="collapseThree">
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_6-of-12 divScroll" >
+                                    <table id="ClauseTable slds-table slds-table_bordered slds-table--header-fixed">
+                                        <thead class="slds-table slds-max-medium-table--stacked-horizontal">
+                                            <tr class="slds-cell-shrink">
+                                                <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width12P" scope="col">
+                                                    <div ng-click="sortType = 'project.Name'; sortReverse = !sortReverse" class="slds-truncate blackBold capitalize tableHeader">Available Projects
+                                                        <button class="slds-button slds-button--icon-bare">
+                                                            <svg ng-show="!sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                                <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}"
+                                                                />
+                                                            </svg>
+                                                            <svg ng-show="sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                                <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}"
+                                                                />
+                                                            </svg>
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                        </button>
+                                                    </div>
+                                                </th>
+                                                <th>&nbsp;</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="slds-hint-parent" style="background: #fdfdfd;" ng-repeat="prov in availableProjects | filter: {name : search} | orderBy:sortType:sortReverse">
+                                                <td class="slds-truncate normalTextFont" style="padding-left: 24px;">
+                                                    <span ng-click="addSelected(prov);">
+                                                        {{prov.project.Name}} &nbsp;&nbsp;
+
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="slds-icon_container slds-icon-utility-announcement" title="Add" ng-click="addSelected(prov);">
+                                                        <svg  class="slds-icon-text-default slds-icon_small" aria-hidden="true">
+                                                            <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#chevronright')}"></use>
+                                                        </svg>
+                                                        <span class="slds-assistive-text">Add</span>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+                                <div class="slds-col slds-size_6-of-12 divScroll">
+                                    <table id="ClauseTable slds-table slds-table_bordered slds-table--header-fixed">
+                                        <thead class="slds-table slds-max-medium-table--stacked-horizontal">
+                                            <tr class="slds-cell-shrink">
+                                                <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P" scope="col">
+                                                    <div ng-click="sortTypeSeleted = 'project.Name'; sortReverseSeleted = !sortReverseSeleted" class="slds-truncate blackBold capitalize tableHeader">Selected projects
+                                                        <button class="slds-button slds-button--icon-bare">
+                                                            <svg ng-show="!sortReverseSeleted" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                                <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}"
+                                                                />
+                                                            </svg>
+                                                            <svg ng-show="sortReverseSeleted" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                                <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}"
+                                                                />
+                                                            </svg>
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                        </button>
+                                                    </div>
+                                                </th>
+                                                <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width12P">
+                                                    <div class="slds-truncate blackBold capitalize tableHeader" style="margin-left: 15px;">
+                                                        Record Type
+                                                    </div>
+
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="slds-hint-parent margin1" style="background: #fdfdfd;" ng-repeat="prov in selectedProjects | orderBy:sortTypeSelected:sortReverseSeleted">
+                                                <td class="slds-truncate normalTextFont" style="padding-left: 24px;">
+                                                    <span ng-click="removeSelected(prov);">
+                                                        <span class="slds-icon_container slds-icon-utility-announcement" title="Remove">
+                                                            <svg  class="slds-icon-text-default slds-icon_small" aria-hidden="true">
+                                                                <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+                                                            </svg>
+                                                            <span class="slds-assistive-text">Remove</span>
+                                                        </span>
+                                                        &nbsp;&nbsp; {{prov.project.Name}}
+                                                    </span>
+                                                </td>
+                                                <td class="slds-truncate normalTextFont" style="padding-left: 24px;">
+                                                    <div class="slds-form-element__control ">
+                                                        <select ng-required="true" class="slds-select" id="text-input-id-3" required="required" ng-change="isRecordTypeSelected(prov);" ng-model="prov.project.Apttus__RecordTypeName__c">
+                                                            <option value="{{type.Name}}" ng-repeat="type in availableRecordType" ng-selected="prov.Apttus__RecordTypeName__c==type.Name">{{type.Name}} </option>
+                                                        </select>
+                                                        
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </body>
+
+    </html>
+</apex:page>

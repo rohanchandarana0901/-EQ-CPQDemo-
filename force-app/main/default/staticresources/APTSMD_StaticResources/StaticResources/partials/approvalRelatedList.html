@@ -1,0 +1,37 @@
+<div layout="column">
+  <div flex layout-align="end" style="text-align: right;">
+  <md-button class="md-raised md-button-border-blue" ng-click="submitAgreementForApproval();">Submit For Approval</md-button>
+ <!--  <md-button class="md-icon-button" aria-label="More">
+        <md-icon md-svg-icon="{{envPath}}/img/icons/ic_more_vert_black_24px.svg"></md-icon>
+     </md-button> -->
+  </div>
+  <div flex>
+      <table class="table">
+    <thead>
+      <tr>
+        <th>Assigned To</th>
+        <th>Status</th>
+        <th>Date</th>
+		
+        <th>Approver Comments</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="approval in approvalJSON">
+        <td>{{approval.Apttus_Approval__Assigned_To_Name__c}}</td>
+        <td>{{approval.Apttus_Approval__Approval_Status__c}}</td>
+        <td><p style="float:right" ng-bind="approval.Apttus_Approval__Date__c | date:'MM/dd/yyyy'"></p></td>
+		
+        <td>{{approval.Apttus_Approval__Approver_Comments__c}}</td>
+         
+      </tr>
+       
+    </tbody>
+  </table>
+  </div>
+
+
+
+</div>
+
+     

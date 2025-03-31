@@ -1,0 +1,37 @@
+<div layout="column">
+  <div flex layout-align="end">
+  </div>
+  <div flex>
+      <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 110px;">&nbsp;Action</th>
+        <th>Type</th>
+        <th style="text-align: center;">Title</th>
+        <th style="width: 166px;">Last Modified Date</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="acti in attachmentJSON">
+        <td style="width: 110px;">
+          <md-icon md-svg-icon="{{envPath}}/img/icons/ic_mode_edit_black_24px.svg" md-menu-align-target ng-click="" style="height: 22px;width: 22px;"></md-icon>
+          <md-icon md-svg-icon="{{envPath}}/img/icons/ic_file_download_black_24px.svg" md-menu-align-target  ng-click="downloadAttachment(acti.Id)" style="height: 22px;width: 22px;"></md-icon>
+          <md-icon md-svg-icon="{{envPath}}/img/icons/ic_delete_black_24px.svg" md-menu-align-target ng-click="" style="height: 22px;width: 22px;"></md-icon>
+
+        </td>
+        <td>Attachment</td>
+        <td>{{acti.Name}}</td>
+        <td> <span ng-bind="acti.LastModifiedDate | date:'MM/dd/yyyy hh:mm:ss'"></span></td>
+        
+      </tr>
+       
+    </tbody>
+  </table>
+  </div>
+
+
+
+</div>
+
+     

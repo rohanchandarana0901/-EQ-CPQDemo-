@@ -1,0 +1,12 @@
+Apttus_Config2__LineItem__c.$ParentBundle.$Options['Apttus_Config2__OptionId__r.ProductCode','UKSS REG SR SR_REGISTRAR-SR ADMIN-Demo'].Apttus_Config2__NetPrice__c/IF(OR(Apttus_Config2__ProductAttributeValue__c.Open_Accounts__c==0, ISNULL(Apttus_Config2__ProductAttributeValue__c.Open_Accounts__c)), 1, Apttus_Config2__ProductAttributeValue__c.Open_Accounts__c)*0.60
+
+IF(ISNULL(Apttus_Config2__LineItem__c.$ParentBundle.Apttus_Config2__AttributeValueId__r.Open_Accounts__c), 0, Apttus_Config2__LineItem__c.$ParentBundle.Apttus_Config2__AttributeValueId__r.Open_Accounts__c) + IF(ISNULL(Apttus_Config2__LineItem__c.$ParentBundle.Apttus_Config2__AttributeValueId__r.Closed_Accounts__c), 0, Apttus_Config2__LineItem__c.$ParentBundle.Apttus_Config2__AttributeValueId__r.Closed_Accounts__c)
+
+CEILING(IF(ISNULL(Apttus_Config2__LineItem__c.$ParentBundle.Apttus_Config2__AttributeValueId__r.Open_Accounts__c), 0, Apttus_Config2__LineItem__c.$ParentBundle.Apttus_Config2__AttributeValueId__r.Open_Accounts__c*1.05) / 100) * 100
+
+IF(ISNULL(Apttus_Config2__LineItem__c.$ParentBundle.Apttus_Config2__AttributeValueId__r.Open_Accounts__c), 0, Apttus_Config2__LineItem__c.$ParentBundle.Apttus_Config2__AttributeValueId__r.Open_Accounts__c)
+
+Basic Registration Fees (Demo)
+Register Maintenance (Demo)
+Annual General Meetings(Demo)
+Customer Disbursements(Demo)

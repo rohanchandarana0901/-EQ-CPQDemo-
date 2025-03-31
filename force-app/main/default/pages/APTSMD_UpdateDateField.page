@@ -1,0 +1,35 @@
+<apex:page controller="APTSMD_UpdateDateFieldController" action="{!updateDates}">
+
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+        <style type="text/css">
+           .pull-right {
+            float: right!important;
+            font-size: 23px!important;
+        }
+        </style>
+        <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+    </head>
+<body>
+
+
+<div> 
+
+    <!-- New Design -->
+    <div class="padding10 backgroundWhite"> 
+        <br/><br/><br/><br/><br/>
+        
+        <div class="textAlignCenter">
+            <h4><b>Updated All The Report Data related to Agreement, Proposal and Order.</b></h4>
+        </div>
+        
+    </div>
+
+
+</div>
+</body>
+</html>
+
+</apex:page>

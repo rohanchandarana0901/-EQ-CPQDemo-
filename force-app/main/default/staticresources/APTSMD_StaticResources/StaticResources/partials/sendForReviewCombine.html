@@ -1,0 +1,217 @@
+<html>
+<head>
+  
+  <script type="text/javascript">
+    function onloadReview(){
+    alert('in sendForReview');
+
+ }
+   function loadInit(){
+      console.log('loadInit called');
+
+   console.log($('#emailBodyTextArea'));
+       tinymce.init({
+  selector: 'textarea',
+  height: 500,
+  plugins: [
+    'advlist autolink lists link image charmap print preview anchor',
+    'searchreplace visualblocks code fullscreen',
+    'insertdatetime media table contextmenu paste code'
+  ],
+  toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+  content_css: [
+   // '//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+    '//www.tinymce.com/css/codepen.min.css'
+  ]
+});
+   }
+    
+  </script>
+</head>
+<body onload="loadInit()">
+<md-dialog aria-label="Select Attachments">
+  
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h3>Send For Review</h3>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancelAttachmentForReview('Cancel')">
+          <md-icon md-svg-src="{{envPath}}/img/icons/ic_close_black_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="max-width:1000px;max-height:1000px; ">
+     <md-content class="md-padding" id="reviewContent">
+
+      <div class="container" id="sendForReview_content_attachment">
+        <h3>Attachment</h3>    
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th width="10%">Select</th>
+              <th width="50%">File Name</th>
+              <th width="10%">Description</th>
+              <th width="10%">Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="reviewAttachment in reviewAttachments track by reviewAttachment.id">
+              <td> <md-checkbox ng-model="reviewAttachment.isSelected" aria-label="Attachment" ></md-checkbox></td>
+              <td>{{reviewAttachment.name}}</td>
+              <td>{{reviewAttachment.description}}</td>
+              <td>{{reviewAttachment.size}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+
+
+
+
+      <div class="slds-form-element slds-m-left--medium slds-m-right--medium container" id="sendForReview_content_email" style="display:none">
+
+     <table class="slds-table">
+	 
+                            <tbody>
+                            <tr class="slds-hint-parent">
+                               <td class="slds-truncate" data-label="Select Row" style="padding:4px;">
+                                    <span> To</span>
+                                </td>
+                                <td class="slds-truncate" data-label="Contact Name" scope="row"   style="padding:4px;">
+                                   <!--  <input type="text" style="width: 77%;height: 28px;" ng-model="eSignatureData.toContact"/> -->
+                                    <md-autocomplete
+                                        md-search-text-change="searchTextChangePrimaryContact(searchTextPrimaryContact)"
+                                        md-search-text="searchTextPrimaryContact"
+                                        md-selected-item-change="selectedItemChangePrimaryContact(item)"
+                                        md-items="item in queryPrimaryContact(searchTextPrimaryContact)"
+                                        md-item-text="item.displayText"
+                                        md-min-length="0"
+                                        placeholder="Contact"
+                                        md-menu-class="autocomplete-custom-template"
+                                        md-selected-item="eSignatureData.toContactName"
+                                        >
+
+                                      <md-item-template>
+                                        <span class="item-title">
+                                          <md-icon md-svg-icon="{{envPath}}/img/icons/ic_card_giftcard_black_24px.svg"></md-icon>
+                                           <strong><span> {{item.displayText}} </span></strong>
+                                        </span>
+                                        <span class="item-metadata">
+                                          <span class="item-metastat">
+                                            - {{item.description}}
+                                          </span>
+                                        </span>
+                                      </md-item-template>
+                                    </md-autocomplete>
+                                </td> 
+                                
+                            </tr>
+                            <tr class="slds-hint-parent">
+                                <td class="slds-cell-shrink" data-label="Select Row"  style="padding:4px;">
+                                    <span> Subject</span>
+                                </td>
+                                <td class="slds-truncate" data-label="Opportunity Name" scope="row"  style="padding:4px;">
+                                    <input type="text" style="width: 82%;height: 28px;"  ng-model="eSignatureData.subject"/>
+                                </td>
+                            </tr>
+                            <tr>
+                              <td>Attachment</td>
+                              <td>&nbsp;</td>
+                            </tr>
+                             <tr>
+                              <td></td>
+                              <td>
+                                <ul>
+                                  <li ng-repeat="reviewAttachment in reviewAttachments | filter : { isSelected : true}">{{reviewAttachment.name}}</li>
+                                </ul>
+                              </td>
+                            </tr>
+                            <tr class="slds-hint-parent" style="height:100px;">
+                                <td class="slds-cell-shrink" data-label="Select Row" colspan="2" style="height:100px;"  style="padding:4px;">
+                               
+                                   <textarea class="textarea" style="font-size: large;font-weight: bold;" id="emailBodyTextArea" style="height:100px;">
+								   <style>
+									  .mce-content-body {
+										padding: 0px 0px 0px 0px !important;
+									  }
+									  .mce-content-body p{
+											margin-top: 5px !important;
+											margin-bottom: 5px !important;
+									  }
+									  p{
+										margin-top: 5px !important;
+											margin-bottom: 5px !important;
+									  }
+									  </style>
+										<img style="text-align:center;margin-left: 42%;float:left;" src="/servlet/servlet.ImageServer?id=01536000001Dnaf&oid=00D36000000vv0d&lastMod=1464161544000"/>
+										<hr style="color:green;width:100%;border: 2px solid;"/>
+										<div style="color:black;font-family: 'Roboto', sans-serif;font-size: 16px;margin-top: 10px;    margin-bottom: 10px;">
+											Dear {{eSignatureData.toContactName}},<br/>
+											<br/>
+											The following contract has been prepared for your review.<br/>
+											Please review the details and respond with any questions or concerns.<br/>
+											<br/>
+											Agreement Number : {{agreement.Apttus__FF_Agreement_Number__c}}<br/>
+											Agreement Name : {{agreement.Name}}<br/>
+											Agreement Start Date : {{agreement.Apttus__Contract_Start_Date__c}}<br/>
+											Agreement End Date : {{agreement.Apttus__Contract_End_Date__c}}<br/>
+											Company : {{agreement.Apttus__Account__r.Name}}<br/>
+											Total Agreement Value : $ {{agreement.Apttus__Total_Contract_Value__c}}<br/>
+											<br/>
+											Thank you,
+											<br/>
+											Wipro
+										</div>
+										<hr style="color:green;width:100%;border: 2px solid;"/>
+                                    </textarea> 
+                                </td>
+                                
+                               
+                            </tr>
+                            </tbody>
+                        </table>
+       </div>
+
+
+
+
+
+
+        
+    </md-content>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" id="sendForReview_action_attachment">
+    <!--  <md-button ng-click="hideAttachmentForReview()" >
+        Cancel
+      </md-button>
+      <md-button ng-click="sendForReviewAttachmentAction()" >
+        Next
+      </md-button> -->
+      <md-button class="md-raised md-button-border-blue default-btn" ng-click="hideAttachmentForReview();">Cancel</md-button>
+      <md-button class="md-raised md-button-border-blue default-btn" ng-click="sendForReviewAttachmentAction();">Next</md-button>
+    </md-dialog-actions>
+
+    <md-dialog-actions layout="row" id="sendForReview_action_email" style="display:none;"">
+    <!--  <md-button ng-click="hideAttachmentForReview()" >
+        Cancel
+      </md-button>
+      <md-button ng-click="sendForReviewAttachmentActionDone()" >
+        Done
+      </md-button> -->
+      <md-button class="md-raised md-button-border-blue default-btn" ng-click="hideAttachmentForReview();">Cancel</md-button>
+      <md-button class="md-raised md-button-border-blue default-btn" ng-click="sendForReviewAttachmentActionDone();">Send</md-button>
+    </md-dialog-actions> 
+
+ <script>
+
+      
+ </script>
+</md-dialog> 
+
+
+
+</body></html>

@@ -1,0 +1,223 @@
+<!-- UI/UX done by Japan Bhavsar on 12/24/2018 -->
+<apex:page standardStylesheets="false" sidebar="false" showHeader="false"  controller="APTSMD_AddFinalClausesController" action="{!getAgreementClauses}">
+<html ng-app="myApp">
+<head>
+    <title>Amend Clauses</title>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/jquery.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular_js.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-animate.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-material.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-messages.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-resources.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-route.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/assets_cache.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/materialize.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/bootstrap_js.js')}"/>
+    <apex:includeScript value="{!$Resource.APTSMD_Nova_Js}"/>
+    <apex:includeScript value="{!$Resource.APTSMD_NovaThemeProvider}"/>
+    <apex:stylesheet value="{!$Resource.APTSMD_Nova_Css}"/>
+    <!-- <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.css" rel="stylesheet" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.10/angular-material.min.css" integrity="sha512-lUExuDw/YQOmNO0LN2XplczGTyTxTEUvXBPKOnfBNloscpdzpfrYBiyWtPeyF0guAgihG/6RrOfDpoyywWMk/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+      
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/angular-material-data-table/0.10.10/md-data-table.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="https://rawgit.com/alalonde/angular-scrollable-table/master/scrollable-table.css" />
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+    <script>
+        var myApp = angular.module('myApp', ['ngMaterial', 'novaTheme', 'ngMessages', 'ngAnimate', 'ngRoute', 'material.svgAssetsCache']);
+        myApp.config(function (novaThemeProvider) {
+            novaThemeProvider.setTheme('default');
+        });
+        myApp.config(function ($mdIconProvider) {
+            $mdIconProvider
+              .iconSet('call', 'img/icons/sets/communication-icons.svg', 24);
+        });
+        myApp.filter('pagination', function () {
+            return function (input, start) {
+                if (!input || !input.length) { return; }
+                start = +start;
+                return input.slice(start);
+            }
+        });
+        myApp.controller('AppCtrl', ['$scope', '$location', function ($scope, $location) {
+            
+            $scope.init = function(){
+                $scope.check=true;
+                $scope.active = false;
+                $scope.isInformationActive = false;
+                $scope.keyTermsActive = false;
+                $scope.agreementLineItemsActive = false;
+                $scope.inputId = '{!inputId}';
+                $scope.checkData = '{!JSENCODE(agreementClausesJSON)}';
+                $scope.error='{!JSENCODE(errorMessage)}';
+                if($scope.checkData != "[]"){
+                    $scope.agreementClausesJSON = JSON.parse($scope.checkData);
+                    $scope.check=true;
+                }else{
+                    $scope.agreementClausesJSON = {};
+                    $scope.check=false;
+                }
+                $scope.agreementClauses = $scope.agreementClausesJSON;
+                $scope.isAnySelected = false;
+                $scope.selectAllClause = false;
+            };
+            
+            // Calling init function for initialize variables
+            $scope.init();
+            
+            // goBackToAgreement() - Go back to agreement
+            $scope.goBackToAgreement = function(){
+                window.top.location.href = '/' + '{!mainAgreement.Id}'; 
+                return null;
+            }
+            
+            // check for selection (Check if any clauses are selected or not)
+            $scope.checkForSelection = function(){
+                var selectedCnt = 0;
+                //itereate through list
+                angular.forEach($scope.agreementClausesJSON,function(i,k){
+                    if(i.APTSMD_Include_in_Document__c){
+                        selectedCnt = selectedCnt + 1;
+                    }
+                });
+                if(selectedCnt > 0){
+                    $scope.isAnySelected = true;
+                }else{
+                    $scope.isAnySelected = false;
+                }
+            }
+            
+            // keep watch on 'selectAllClause' variable for select/deselect clauses for amend
+            $scope.$watch('selectAllClause', function() {
+                angular.forEach($scope.agreementClausesJSON,function(i,k){
+                    i.APTSMD_Include_in_Document__c = $scope.selectAllClause;
+                });
+                $scope.checkForSelection();
+            }); 
+            
+            // addClauses() - Add clause opeartion
+            $scope.addClauses = function(){
+                // Check for selection (if ain't any clause get selected throw an error)
+                var selectedCnt = 0;
+                //itereate through list
+                angular.forEach($scope.agreementClausesJSON,function(i,k){
+                    if(i.APTSMD_Include_in_Document__c){
+                        selectedCnt = selectedCnt + 1;
+                    }
+                });
+                if(selectedCnt == 0){
+                   window.alert('Please select at least one clause to amend.');
+                   return;
+                }
+                Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AddFinalClausesController.updateClauses}",JSON.stringify($scope.agreementClausesJSON),
+                    function(result, event){
+                       window.top.location.href = '/' + $scope.inputId;
+                    }, 
+                    {escape: false}
+                ); 
+            };
+
+        }]);
+    </script>
+    <style>
+        /* added by vivek as on 10/3/2022 to remove empty white space on higher resolution monitor */
+        body{
+            overflow:hidden;
+        }
+        .divScroll{
+            min-height: 31rem;
+            max-height: calc(100vh - 190px);
+        }
+    </style>
+</head>
+<body ng-controller="AppCtrl" ng-cloak="true">
+    <!-- Add Custom Header -->
+    <c:APTSMD_CommonHeader pageName1="Amend Clauses" objectName="{!mainAgreement.Apttus__FF_Agreement_Number__c}"  iconName="account" type="standard"/>
+    
+    <!-- Add apttus container (if data is available -->
+    <div class="apttusContainer" style="margin-top: 7rem;">
+        
+        <!-- Button Section -->
+        <div class="textAlignRight marginBottom15">
+            
+            <!-- Amend Clause Button -->
+            <button type="button" class="apttusBtn" ng-class="{disabled: !isAnySelected}" ng-show="check" ng-click="addClauses();">
+                Amend Clauses
+            </button>
+            <!-- Add back button -->
+            <button type="button" class="apttusBtnWhite slds-button slds-button--brand" ng-click="goBackToAgreement();">
+                Back
+            </button>
+            
+        </div>
+        
+        <!-- Panel Section for clauses teble -->
+        <div class="apttusPanel ands-list-table padding0" ng-init="showBody = true;" ng-show="check">
+            <div class="divScroll boxShadowNone"> 
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="ands-col-1 tableHeaderFont verticalMiddle tableHeader">
+                                <div class="marginLeft10">
+                                    <md-checkbox class="ands-checkbox" ng-model="selectAllClause" 
+                                        ng-change="checkForSelection();"></md-checkbox>
+                                </div>
+                            </th>
+                            <th class="ands-col-1 blackBold tableHeaderFont verticalMiddle tableHeader"
+                                ng-click="orderByField='Name'; reverseSort = !reverseSort">
+                                Number
+                            </th>
+                            <th class="ands-col-1 blackBold tableHeaderFont verticalMiddle tableHeader"  
+                                    ng-click="orderByField='Apttus__Category__c'; reverseSort = !reverseSort">
+                                Category
+                            </th>
+                            <th class="ands-col-2 blackBold tableHeaderFont verticalMiddle tableHeader"
+                                    ng-click="orderByField='Apttus__Clause__c'; reverseSort = !reverseSort">
+                                Clause
+                            </th> 
+                            <th class="ands-col-6 blackBold tableHeaderFont verticalMiddle tableHeader">
+                                Text
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody ng-repeat="obj in agreementClauses | orderBy:orderByField:reverseSort">
+                        <tr>
+                            <td class="ands-col-1 verticalMiddle simpleTextAlign normalTextFont">
+                                <div class="marginLeft20">
+                                    <md-checkbox class="ands-checkbox" ng-model="obj.APTSMD_Include_in_Document__c" 
+                                        ng-change="checkForSelection();"></md-checkbox>
+                                </div>
+                            </td>
+                            <td class="ands-col-1 verticalMiddle simpleTextAlign normalTextFont">
+                                <a class="anchor marginLeft10" ng-href="{{'/'+obj.Id}}" target="_blank"><u>{{obj. Name}}</u></a>
+                            </td>
+                            <td class="ands-col-1 verticalMiddle simpleTextAlign normalTextFont">
+                                <span class="marginLeft10">{{obj.Apttus__Category__c}}</span>
+                            </td>
+                            <td class="ands-col-2 verticalMiddle simpleTextAlign normalTextFont">
+                                <span class="marginLeft10">{{obj.Apttus__Clause__c}}</span>
+                            </td>
+                            <td class="ands-col-6 verticalMiddle simpleTextAlign normalTextFont">
+                                <span class="marginLeft10">{{obj.Apttus__Text__c}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Error container (if any error occured) -->
+    <div class="apttusContainer"  ng-show="!check">
+      <div>
+        <p class="warningText marginTop100 textAlignCenter marginBottom150"><b>{{error}}</b></p>
+      </div>
+    </div>
+</body>
+</html>
+</apex:page>

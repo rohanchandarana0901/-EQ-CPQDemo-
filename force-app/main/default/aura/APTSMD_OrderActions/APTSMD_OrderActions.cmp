@@ -1,0 +1,45 @@
+<!-- 
+    Apttus Proposal Management
+    Order Actions Lightning Component
+     
+    @2015-2018 Apttus Inc. All rights reserved.
+
+ -->
+ 
+<aura:component  controller="APTSMD_OrderActionsController" implements="flexipage:availableForAllPageTypes,force:hasRecordId">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="force:refreshView" action="{!c.update}"/>
+    
+    <aura:attribute name="recordId" type="Id" description="The Id of the record"/>
+    <aura:attribute name="flow" type="string" description="Flow of the Record"/>
+    <aura:attribute name="order" type="Apttus_Config2__Order__c"/>
+    
+    <ltng:require styles="/resource/slds080/assets/styles/salesforce-lightning-design-system-vf.css" />
+    <div style="border: 1px solid lightgray; padding: 5px; margin-bottom: 10px; border-radius: 5px;background-color:white;">
+        <div style="margin-left: 7px; margin-bottom: 7px; color: black; font-weight: 700; font-size: 16px;">
+            <span>
+                <!--<img src="/resource/APTSMD_ApttusLogo" id="apttuslogo" alt="Account Actions" border="0"/>-->Order Actions
+            </span>
+        </div>
+        
+        <div class="full forcePageBlockSectionRow">
+            <p class="full forcePageBlockItem forcePageBlockItemView" style="width:100%;text-align:center">
+                <div class="slds">
+                    <div class="slds-grid slds-grid--align-spread">
+                        
+                        <!--Configure Order Button-->
+                        <aura:if isTrue="{!v.order.Apttus_Config2__PriceListId__c != null}">
+                            <div class="slds-col slds-size--3-of-12" >
+                                <a aura:id="ConfigureProducts" onclick="{!c.configureProducts}">
+                                    <lightning:icon iconName="custom:custom93" size="medium" alternativeText="Configure"/><br/>
+                                </a>
+                                <span class="osOutputLabel">Configure Products</span>
+                            </div>
+                        </aura:if>
+                        
+                    </div>
+                </div>
+            </p>
+        </div>
+    </div>
+</aura:component>

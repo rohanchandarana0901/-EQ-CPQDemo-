@@ -1,0 +1,2 @@
+<apex:page controller="APTSMD_LightningComposerCollectionCtrl" showheader="false" sidebar="false" lightningStylesheets="true" action="{!updateComposerCollection}">
+</apex:page>

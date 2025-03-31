@@ -1,0 +1,23 @@
+<apex:page showHeader="false" sidebar="false">
+    <apex:pageBlock > 
+        <b>Enter search term: </b> 
+        <apex:form > 
+            <script>
+                function doSearch(){
+                    var searchStr = document.getElementById('txtSearch').value;
+                    window.open('/apex/APTSMD_ContractSearch?search=' + encodeURIComponent(searchStr), "_Blank" );
+                }
+            </script>
+            <table>
+                <tr>
+                    <td>
+                        <input type="text" id="txtSearch" style="width:90%;"/>
+                    </td>
+                    <td>
+                        <input type="button" value="Go!" id="btnSearch" onclick="doSearch()"/>
+                    </td>
+                </tr>
+            </table>        
+        </apex:form>
+    </apex:pageBlock> 
+</apex:page>

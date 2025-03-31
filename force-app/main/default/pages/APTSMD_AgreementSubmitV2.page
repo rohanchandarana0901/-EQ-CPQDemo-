@@ -1,0 +1,208 @@
+<apex:page standardController="Apttus__APTS_Agreement__c" extensions="APTSMD_AgreementSubmitV2Controller">
+    <apex:slds />
+    <html  xmlns:xlink="http://www.w3.org/1999/xlink">
+        <head>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-route.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-animate.js"></script>
+                <script src="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-aria.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-messages.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-resource.js"></script>
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+                <link rel="https://rawgit.com/alalonde/angular-scrollable-table/master/scrollable-table.css" />
+                <link href="http://fonts.googleapis.com/icon?family=Material+Icons"/>
+                <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+                <link rel="stylesheet" href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}" type="text/css" />
+                <style>
+                    .spinner{
+                        margin-top: 8rem !important;
+                        height:6rem;
+                        position:relative;
+                }
+                </style>
+        </head>
+        <body ng-app="app" ng-controller="controller" class="slds">
+            
+            <!-- Header Design -->
+            <c:APTSMD_CommonHeader pageName1="Agreement - {!Apttus__APTS_Agreement__c.Name}" objectName="" iconName="contract"
+            type="standard" />
+            
+            <!-- Main Body Content goes here  -->
+            <div style="margin: 10rem;">
+                <div style="text-align:right;">
+                    <button class="slds-button slds-button--brand apttusBtnWhite" style="margin-right: -7.5rem;" ng-click="goToAgreement()" ng-show="!processMessage">Back to Agreement</button>    
+                </div>
+                <br/><br/>
+                <div style="text-align: center;">
+                    <div ng-show="processMessage">
+                        <div class="spinner">
+                          <div class="slds-spinner_container">
+                            <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand">
+                              <span class="slds-assistive-text">Loading</span>
+                              <div class="slds-spinner__dot-a"></div>
+                              <div class="slds-spinner__dot-b"></div>
+                            </div>
+                          </div>
+                        </div>
+                        <p style="font-size: 16px;">{{processMessage}}</p>
+                    </div>
+                    <div ng-show="!processMessage">
+                        <p style="font-size: 16px;" class="spinner">Thank you for Requesting an Agreement. The Contract Team will be in contact with you if they have any further questions.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Angular App -->
+            <script>
+                var app = angular.module('app',[]);
+                app.controller('controller',function($scope){
+                   
+                   $scope.agreementId = '{!agreementId}';
+                   $scope.preSalesSetting = '{!preSalesSettingJSON}' ? JSON.parse('{!preSalesSettingJSON}') : '';
+                   $scope.msaAndndaTemplates = '{!MSAandNDATemplatesJSON}' ? JSON.parse('{!MSAandNDATemplatesJSON}') : '';
+                   $scope.createdNDAAgreementId = '';
+                   $scope.processMessage = 'Loading...';
+                   
+                   console.log($scope.agreementId);
+                   console.log($scope.preSalesSetting);
+                   console.log($scope.msaAndndaTemplates);
+                   
+                   $scope.createNDA = function(){
+                        if($scope.agreementId){
+                            $scope.processMessage = 'Creating an NDA';
+                            Visualforce.remoting.Manager.invokeAction(
+                                '{!$RemoteAction.APTSMD_AgreementSubmitV2Controller.createNDAAgreement}',
+                                $scope.agreementId, 
+                                function(result, event){
+                                    if (event.status) {
+                                        if(result.indexOf('Error') > -1){
+                                            alert(result);
+                                        }else if(result.indexOf('Success') > -1){
+                                            $scope.createdNDAAgreementId = result.split('AgreementID:')[1].trim();
+                                            if($scope.createdNDAAgreementId){
+                                                setTimeout(function(){
+                                                    $scope.processMessage = 'Generating Document for MSA';
+                                                    $scope.$apply();
+                                                    $scope.generateMSADoc();
+                                                },1000)
+                                            }
+                                        }
+                                    } else if (event.type === 'exception') {
+                                        alert(event.message + ' @ ' + event.where);
+                                    } else {
+                                        alert(event.message);
+                                    }
+                                }, 
+                                {escape: true,timeout: 120000 }
+                            );
+                       }
+                   }
+                   
+                   $scope.generateMSADoc= function(){
+                       var MSATemplateId = $scope.msaAndndaTemplates.filter(function(i){
+                                                return i.Name ==  $scope.preSalesSetting.APTSMD_Default_MSA_Template__c   
+                                            });
+                        if($scope.agreementId && MSATemplateId[0].Id){
+                            Visualforce.remoting.Manager.invokeAction(
+                                '{!$RemoteAction.APTSMD_AgreementSubmitV2Controller.generateDocument}',
+                                $scope.agreementId,
+                                MSATemplateId[0].Id,
+                                $scope.preSalesSetting.APTSMD_Esignature_Type__c,
+                                function(result, event){
+                                    if (event.status) {
+                                        if(result.indexOf('Error') > -1){
+                                            alert(result);
+                                        }else if(result.indexOf('Success') > -1){
+                                            setTimeout(function(){
+                                                $scope.processMessage = 'Generating Document for NDA';
+                                                $scope.$apply();
+                                                $scope.generateNDADoc();
+                                            },1000)
+                                        }
+                                    } else if (event.type === 'exception') {
+                                        alert(event.message + ' @ ' + event.where);
+                                    } else {
+                                        alert(event.message);
+                                    }
+                                }, 
+                                {escape: true,timeout: 120000 }
+                            );
+                        }
+                   }
+                   
+                   $scope.generateNDADoc= function(){
+                       var NDATemplateId = $scope.msaAndndaTemplates.filter(function(i){
+                                                return i.Name ==  $scope.preSalesSetting.APTSMD_Default_NDA_Template__c   
+                                            });
+                        if($scope.createdNDAAgreementId && NDATemplateId[0].Id){
+                            Visualforce.remoting.Manager.invokeAction(
+                                '{!$RemoteAction.APTSMD_AgreementSubmitV2Controller.generateDocument}',
+                                $scope.createdNDAAgreementId,
+                                NDATemplateId[0].Id,
+                                $scope.preSalesSetting.APTSMD_Esignature_Type__c,
+                                function(result, event){
+                                    if (event.status) {
+                                        if(result.indexOf('Error') > -1){
+                                            alert(result);
+                                        }else if(result.indexOf('Success') > -1){
+                                            setTimeout(function(){
+                                                $scope.processMessage = 'Sending Document for E-Signature';
+                                                $scope.$apply();
+                                                $scope.sendNDAForSignature();
+                                            },1000)
+                                        }
+                                    } else if (event.type === 'exception') {
+                                        alert(event.message + ' @ ' + event.where);
+                                    } else {
+                                        alert(event.message);
+                                    }
+                                }, 
+                                {escape: true,timeout: 120000 }
+                            );
+                        }
+                   }
+                   
+                   $scope.sendNDAForSignature = function(){
+                       if($scope.createdNDAAgreementId && $scope.preSalesSetting.APTSMD_Esignature_Type__c == 'Docusign' ){
+                           Visualforce.remoting.Manager.invokeAction(	
+                                '{!$RemoteAction.APTSMD_AgreementSubmitV2Controller.sendForsignature}',	
+                                $scope.createdNDAAgreementId,	
+                                $scope.preSalesSetting.APTSMD_Esignature_Type__c,	
+                                function(result, event){	
+                                    if (event.status) {	
+                                        if(result.indexOf('Error') > -1){	
+                                            alert(result);	
+                                        }else if(result.indexOf('Success') > -1){	
+                                            $scope.processMessage = '';	
+                                            $scope.$apply();	
+                                        }	
+                                    } else if (event.type === 'exception') {	
+                                        alert(event.message + ' @ ' + event.where);	
+                                    } else {	
+                                        alert(event.message);	
+                                    }	
+                                }, 	
+                                {escape: true,timeout: 120000 }	
+                            );
+					   }
+                       else{
+                           window.location = "/apex/APTSMD_AgreementSendToESV2?id=" + $scope.agreementId; 
+                       }
+                   }
+                   
+                   $scope.goToAgreement = function(){
+                        window.top.location.href = '/{!Apttus__APTS_Agreement__c.Id}';
+                   }
+                   
+                   $scope.createNDA();
+                    
+                });
+            </script>
+            
+        </body>
+    </html>
+    
+
+</apex:page>

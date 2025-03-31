@@ -1,0 +1,54 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,forceCommunity:availableForAllPageTypes" controller="APTSMD_QuoteActionsController">
+   	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+   	<ltng:require styles="/resource/SLDS0102/assets/styles/salesforce-lightning-design-system-ltng.css" />
+    <ltng:require styles="/resource/slds080/assets/styles/salesforce-lightning-design-system-vf.css" />
+    <aura:attribute name="recordId" type="Id" description="The Id of the record"/>
+    <aura:attribute name="opportunity" type="Opportunity" description="Opportunity record" />
+    <aura:attribute name="preSalesConfigSettingRecord" type="APTSMD_Apttus_PreSales_Config_Settings2__c" description="Presales Config Setting record"/>
+    
+    <div style="border: 1px solid lightgray; padding: 5px; margin-bottom: 10px; border-radius: 5px;background-color:white">
+    <div style="margin-left: 7px; color: gray; font-weight: 700; font-size: 16px;">
+        <!-- Apttus Logo Image + Title of Actions -->
+        <span class="header-label" style="color: black"><!--<img src="/resource/APTSMD_ApttusLogo" id="apttuslogo" alt="Opportunity Actions" border="0"/>-->
+        	Opportunity Actions
+        </span>
+    </div>
+    <br/>
+    <div class="full forcePageBlockSectionRow">
+
+        <p class="full forcePageBlockItem forcePageBlockItemView" style="width:100%;text-align:center">
+            <div class="slds">
+                <div class="slds-grid slds-grid--align-spread">
+                    <!-- Quote Actions -->
+                	<div class="slds-col slds-size--3-of-12"> 
+                        <a aura:id="proposalQuote" onclick="{!c.createQuote}">
+                            <lightning:icon iconName="standard:quotes" size="medium" alternativeText="Quote" style="background-color: #67af43;"/>
+                            <br/>
+                            <span class="osOutputLabel">Quote</span>
+                        </a>
+                    </div>
+                    <!-- Agreement Actions -->
+                    <div class="slds-col slds-size--3-of-12">
+                        <a aura:id="createAgreement" onclick="{!c.createAgreement}">
+                            <lightning:icon iconName="standard:contract" size="medium" alternativeText="Create Agreement" style="background-color: #67af43;"/>
+                            <br/>
+                            <span class="osOutputLabel">Agreement</span>
+                        </a>        
+                    </div>
+                    <!-- This divs has to be used if want to add extra actions -->
+                    <div class="slds-col slds-size--3-of-12">
+                    	<!-- RLP Config Product Button -->
+                        <aura:if isTrue="{! AND(v.opportunity.APTSMD_Price_List__c != null,v.preSalesConfigSettingRecord.APTSMD_Enable_Configure_Product_RLP__c)}">                                
+                            <a aura:id="ConfigureProducts" onclick="{!c.createQuoteRLP}" class="hideLine">
+                                <lightning:icon iconName="standard:quotes" size="medium" alternativeText="Configure"/><br/>
+                                <span class="osOutputLabel">Quote (RLP)</span>
+                            </a>                                
+                        </aura:if>
+                    </div>
+                    <div class="slds-col slds-size--3-of-12"></div>
+                </div>
+            </div>
+        </p>
+    </div>
+    </div>
+</aura:component>

@@ -1,0 +1,60 @@
+<apex:page controller="APTSMD_MDOHOMECtrl" showheader="false" sidebar="false" lightningStylesheets="true">
+    <apex:form >
+        <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                          <table>
+                                          <tr>
+                                              <td>
+                                                 <a   class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseFour">
+                                                    <font class="hi">Rename the Users/email ids</font>
+                                                  </a>
+                                                 </td>
+                                                 <td>
+                                                  <!-- <a id="step4"><img src="{!$Resource.Help}"/></a> -->
+                                              </td>
+                                          </tr>
+                                          <tr><td>
+                                              <br/>
+                                              If you want to change email id's from example.com to apttus.com then you no need to make changes in Email text boxes just click 'Apply Changes' button and it will be done. Also, if you want to change anything else other then apttus.com then mentioned that in Email text boxes and click 'Apply Changes' button.
+                                          </td></tr>
+                                              
+                                      </table>
+                                      
+                                    </div>
+                                    <br/>
+                                    <div id="collapseFour" class="accordion-body collapse">
+                                          <div class="accordion-inner">
+                                                <apex:pageBlock id="pgBlockUserDetail" >
+                                                     
+                                                     <apex:pageBlockTable value="{!listOfUsers}" var="item">
+                                                         <apex:column headerValue="First Name">
+                                                             <apex:inputField value="{!item.FirstName}"/>
+                                                         </apex:column>
+                                                         <apex:column headerValue="Last Name">
+                                                             <apex:inputField value="{!item.LastName}"/>
+                                                         </apex:column>
+                                                         <apex:column headerValue="Email">
+                                                             <apex:inputField value="{!item.Email}"/>
+                                                         </apex:column>
+                                                         <apex:column headerValue="Original First Name">
+                                                             <apex:outputField value="{!item.APTSMD_Original_First_Name__c}"/>
+                                                         </apex:column>
+                                                         <apex:column headerValue="Original Last Name">
+                                                             <apex:outputField value="{!item.APTSMD_Original_Last_Name__c}"/>
+                                                         </apex:column>
+                                                         <apex:column headerValue="Original Email">
+                                                             <apex:outputField value="{!item.APTSMD_Original_email__c }"/>
+                                                         </apex:column>
+                                                     </apex:pageBlockTable> 
+                                                      
+                                                     <apex:pageBlockButtons location="bottom">
+                                                          <apex:commandButton value="Apply Changes" action="{!UpdateUser1}" />
+                                                          
+                                                     </apex:pageBlockButtons> 
+                                                      
+                                             </apex:pageblock>
+                                        </div>
+                                    </div>
+                              </div>
+    </apex:form>
+</apex:page>

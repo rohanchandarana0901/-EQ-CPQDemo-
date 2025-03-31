@@ -1,0 +1,272 @@
+<apex:page controller="APTSMD_MDOHOMECtrl" showheader="false" sidebar="false" lightningStylesheets="true">
+    <apex:form >
+       
+            <div id="collapseSix" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <apex:pageBlock id="pgBlockInstanceURL" >
+                                
+                <div class="accordion-group">
+                        <div class="accordion-heading">
+                              <table>
+                              <tr>
+                                  <td>
+                                     <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseSix">
+                                        <font size="4"><font color="red"><b>Instance URL</b></font></font>
+                                      </a>
+                                    </td>
+                              </tr>
+                             <tr>
+                             <td><h3>There are many Apttus components that reference the Org Instance URL for this particular Org. The instance URL is stored in custom settings that need to be updated. This step will update those custom settings with the click of one button.</h3>
+                             </td>
+                             </tr>
+                          </table>
+                          
+                        </div>
+                     </div>
+                            
+                    <table>
+                                    <tr>
+                                    <td>
+                                              <apex:pageBlockSection id="pgBlockSection" collapsible="false" columns="1"> 
+                                                  Type in the correct URL if the default URL is not correct.
+                                                  <apex:pageBlockSectionItem id="idpgInstanceUrl"> 
+                                                     Instance URL <apex:inputText value="{!instanceUrl}"/>
+                                                  </apex:pageBlockSectionItem> 
+                                                   
+                                              </apex:pageBlockSection>
+                                    </td>
+                                    <td>
+                                    <apex:image value="{!$Resource.APTSMD_InstanceURLImg}" style="padding-left: 150px;"/>
+                                    </td>
+                                    </tr>
+                                    </table>
+                    <br/><br/><hr size='3px' color='black'/><br/>
+                    
+                <!--<div class="accordion-group">
+                    <div class="accordion-heading">
+                          <table>
+                          <tr>
+                              <td>
+                                 <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseSeven">
+                                    <font size="4"><font color="red"><b>Code Backup Maintenance</b></font></font>
+                                  </a>
+                                </td>
+                              <td>
+                                   <a id="step7"><img src="{!$Resource.Help}"/></a> 
+                                  
+                              </td>
+                          </tr>
+                          <tr><td><h3>Code backup maintenance to update the custom settings. (Assign Username and Password below before clicking "Assign Changes" button.)</h3></td></tr>
+                        </table>
+                      
+                        <apex:pageBlockSection columns="1" showHeader="true" title="Enter Username & Password for Organization">
+                        <apex:inputText label="User Name" value="{!userName}" />
+                        <apex:inputSecret label="Password" value="{!password}" />
+                      </apex:pageBlockSection>
+                                      
+                    </div>
+                </div>
+                        <br/><br/><hr size='3px' color='black'/><br/>-->
+                                
+                    <div class="accordion-group"> 
+                    
+                    <div class="accordion-heading">
+                          <table>
+                          <tr>
+                              <td>
+                                 <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseSeven">
+                                    <font size="4"><font color="red"><b>Manage Users</b></font></font>
+                                  </a>
+                                </td>
+                              <td>
+                                  <!-- <a id="step7"><img src="{!$Resource.Help}"/></a> -->
+                                  
+                              </td>
+                          </tr>
+                          <tr><td><h3>You can assign licences to the main user and / or the ecomm site guest user and the Apttus licenses that are needed.</h3></td></tr>
+                              
+                      </table>
+                      
+                    </div></div>
+                    
+                    <apex:pageBlockSection collapsible="false" columns="1">
+                                    <apex:pageBlockSectionItem id="idpgMainUser" > 
+                                        <apex:inputCheckbox id="idMainUser" value="{!setMainUserLicenses}" />  Main User  
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem id="idpgEcommUser" > 
+                                        <apex:inputCheckbox id="idEcommUser" value="{!setEcommUserLicenses}" />  eComm Site Guest User 
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem id="idpgDiego" > 
+                                        <apex:inputCheckbox id="idDiego" value="{!setDiegoLicenses}" />  Diego Francis
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+                                
+                                 <br/><br/><hr size='3px' color='black'/><br/>
+                    
+                 <div class="accordion-group">
+                    <div class="accordion-heading">
+                          <table>
+                          <tr>
+                              <td>
+                                 <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseSeven">
+                                    <font size="4"><font color="red"><b>Backup User Maintenance</b></font></font>
+                                  </a>
+                                </td>
+                              <td>
+                                  <!-- <a id="step7"><img src="{!$Resource.Help}"/></a> -->
+                                  
+                              </td>
+                          </tr>
+                          <tr><td><h3>Backup User Maintenance - This will set the Username,Password and email address of Backup admin user.</h3></td></tr>
+                          <tr><td><apex:pageMessages ></apex:pageMessages></td></tr>
+                              
+                      </table>
+                      
+                    </div></div>
+                                
+                    <br/><br/><hr size='3px' color='black'/><br/>
+                                
+                     <div class="accordion-group">
+                    <div class="accordion-heading">
+                          <table>
+                          <tr>
+                              <td>
+                                 <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseSeven">
+                                    <font size="4"><font color="red"><b>Run Batch Maintance</b></font></font>
+                                  </a>
+                                </td>
+                              <td>
+                                  <!-- <a id="step7"><img src="{!$Resource.Help}"/></a> -->
+                                  
+                              </td>
+                          </tr>
+                          <tr><td><h3>It is crucial that all MDOs go through the Batch Maintenance Jobs provided by Apttus to be able to use Apttus. 
+
+Please go to CPQ console tab and choose "Maintenance Console." Then click "update all" button. Then go to Apttus Batch Maintenance and do "Category maintenance."</h3></td></tr>
+                              
+                      </table>
+                      
+                    </div></div>
+                    
+                   
+                    
+                    <br/><br/><hr size='3px' color='black'/><br/>
+                    
+                     <!--<div class="accordion-group">
+                    <div class="accordion-heading">
+                          <table>
+                          <tr>
+                              <td>
+                                 <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseSeven">
+                                    <font size="4"><font color="red"><b>eCommerce Maintenance</b></font></font>
+                                  </a>
+                                </td>
+                              <td>
+                                   <a id="step7"><img src="{!$Resource.Help}"/></a> 
+                                  
+                              </td>
+                          </tr>
+                          <tr><td><h3>Enable your Tier1 eCommerce flow. Setup for Presales eCommerce Setting.</h3></td></tr>
+                          <tr><td>{!$Label.eCommerce_Maintenance_Response}</td></tr>
+                              
+                      </table>
+                      
+                    </div></div>
+                    
+                    
+                    <br/><br/><hr size='3px' color='black'/><br/>-->
+                    
+                     <!--<div class="accordion-group">
+                    <div class="accordion-heading">
+                          <table>
+                          <tr>
+                              <td>
+                                 <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseSeven">
+                                    <font size="4"><font color="red"><b>SRM Maintenance</b></font></font>
+                                  </a>
+                                </td>
+                              <td>
+                                   <a id="step7"><img src="{!$Resource.Help}"/></a> 
+                                  
+                              </td>
+                          </tr>
+                          <tr><td><h3>Setup the SRM Custom settings.</h3></td></tr>
+                          <tr><td><apex:pagemessages ></apex:pagemessages></td></tr>
+                              
+                      </table>
+                      
+                    </div></div>
+                                
+                                
+                                
+                    <br/><br/><hr size='3px' color='black'/><br/>-->
+                    
+                     <div class="accordion-group">
+                    <div class="accordion-heading">
+                          <table>
+                          <tr>
+                              <td>
+                                 <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseSeven">
+                                    <font size="4"><font color="red"><b>Update Records</b></font></font>
+                                  </a>
+                                </td>
+                              <td>
+                                  <!-- <a id="step7"><img src="{!$Resource.Help}"/></a> -->
+                                  
+                              </td>
+                          </tr>
+                          <tr><td><h3>You must click on below button to make sure your org reports, incentives, attribute value matrices works properly and display proper data.</h3></td></tr>
+                          
+                              
+                      </table>
+                      
+                      
+                      <apex:pageBlockSection collapsible="false" columns="1">
+                                   <!-- <apex:pageBlockSectionItem id="idpgMainUser" > 
+                                        <apex:inputCheckbox id="idproposaldate" value="{!proposaldate}" />  Update Proposal Dates  
+                                    </apex:pageBlockSectionItem>-->
+                                </apex:pageBlockSection>
+                                <apex:pageBlockSection collapsible="false" columns="1">
+                                    <apex:pageBlockSectionItem id="avmdates" > 
+                                        <apex:inputCheckbox id="idavmdates" value="{!avmdates}" />  Update Attribute Value Matrices Dates  
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+                                <apex:pageBlockSection collapsible="false" columns="1">
+                                    <apex:pageBlockSectionItem id="incentivedates" > 
+                                        <apex:inputCheckbox id="idincentivedates" value="{!incentivedates}" />  Update Incentive Dates  
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+                                <apex:pageBlockSection collapsible="false" columns="1">
+                                 <apex:pageBlockSectionItem > 
+                                        <apex:inputCheckbox id="idincentivedates" value="{!updateIncentive}" />  Update Incentives with Product Ids
+                                    </apex:pageBlockSectionItem>
+                                     </apex:pageBlockSection>
+                                <apex:pageBlockSection collapsible="false" columns="1">
+                                    <apex:pageBlockSectionItem id="cssproductscope" > 
+                                        <apex:inputCheckbox id="idcssproductscope" value="{!cssproductscope}" />  Update Product Scope for 'Cloud Server Solution' Attribute Value Matrix 
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+                                <apex:pageBlockSection collapsible="false" columns="1">
+                                    <apex:pageBlockSectionItem > 
+                                        <apex:inputCheckbox id="idincentivedates" value="{!rackUnit}" />  Update Rack Unit Attribute Numeric Expression
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+                      
+                    </div></div>
+                                
+                                
+                                
+                    
+                                
+                                          
+                                         <apex:pageBlockButtons location="bottom">
+                                              <apex:commandButton value="Apply Changes" action="{!UpdateInstanceUrl}"/>
+                                              
+                                         </apex:pageBlockButtons> 
+                                          
+                                 </apex:pageblock>
+                            </div>
+                        </div>
+                 
+    </apex:form>
+</apex:page>

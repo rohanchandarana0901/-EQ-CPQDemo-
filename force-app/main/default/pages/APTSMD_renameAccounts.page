@@ -1,0 +1,49 @@
+<apex:page controller="APTSMD_MDOHOMECtrl" showheader="false" sidebar="false" lightningStylesheets="true">
+    <apex:form >
+        <div class="accordion-heading">
+                          <table>
+                          <tr>
+                              <td>
+                                 <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+                                    <font class="hi">Rename the Accounts and websites</font>
+                                  </a>
+                                </td>
+                              <td>
+                                  <!-- <a id="step3"><img src="{!$Resource.Help}"/></a> -->
+                              </td>
+                          </tr>
+                              
+                      </table>
+                      
+                    </div>
+                    <div id="collapseThree" class="accordion-body collapse">
+                          <div class="accordion-inner">
+                                <apex:pageBlock id="pgBlockAccountDetail" >
+                                     
+                                     <apex:pageBlockTable value="{!listOfAccounts}" var="item">
+                                         <apex:column headerValue="Account Name">
+                                             <apex:inputField value="{!item.Name}"/>
+                                         </apex:column>
+                                         <apex:column headerValue="Website">
+                                             <apex:inputField value="{!item.Website}"/>
+                                         </apex:column>
+                                         <apex:column headerValue="Original Account Name">
+                                             <apex:outputField value="{!item.APTSMD_Original_Account_Name__c}"/>
+                                         </apex:column>
+                                         <apex:column headerValue="Original Website">
+                                             <apex:outputField value="{!item.APTSMD_Original_Website__c }"/>
+                                         </apex:column>
+                                     </apex:pageBlockTable> 
+                                      
+                                     <apex:pageBlockButtons location="bottom">
+                                          <apex:commandButton value="Apply Changes" action="{!UpdateAccount}" />
+                                          <apex:commandButton value="Reset" action="{!ResetAccount}" />
+                                          <apex:commandButton value="Cancel" action="{!CancelAccount}" />
+                                          
+                                     </apex:pageBlockButtons> 
+                                      
+                             </apex:pageblock>
+                        </div>
+                    </div>
+    </apex:form>
+</apex:page>

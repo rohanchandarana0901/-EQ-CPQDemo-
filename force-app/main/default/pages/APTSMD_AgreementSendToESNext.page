@@ -1,0 +1,33 @@
+<apex:page showHeader="false" sidebar="false" controller="APTSMD_AgreementSubmitController" action="{!sendForEsignatureNext}">
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+        <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+    </head>
+<body>
+<c:APTSMD_CommonHeader pageName1="Agreement Creation Wizard" objectName="" iconName="account" type="standard"/>
+
+<div> 
+
+    <!-- New Design -->
+    <div class="padding10 backgroundWhite"> 
+        
+        <div class="textAlignRight marginTop70 marginBottom10 paddingRight5">
+            
+            <a href="{!$Setup.APTSMD_Apttus_PreSales_Config_Settings2__c.APTSMD_Instance_URL__c}/home/home.jsp" class="marginRight5"><button type="button" class="apttusBtn paddingLeft5">Home</button></a>
+            <a href="/{!id}"><button type="button" class="apttusBtnWhite paddingLeft5 paddingRight5">Back To Agreement</button></a>
+             
+        </div>
+        
+        <div class="apttusPanel textAlignCenter blackBold padding10  ">
+            Thank you for Requesting an Agreement. The Contract Team will be in contact with you if they have any further questions.
+        </div>
+        
+    </div>
+
+
+</div>
+</body>
+</html>
+</apex:page>

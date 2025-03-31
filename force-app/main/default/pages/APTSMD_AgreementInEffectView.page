@@ -1,0 +1,653 @@
+<apex:page standardStylesheets="false" sidebar="false" showHeader="true" controller="APTSMD_AgreementInEffectViewController"
+    action="{!queryInEffectAgreementInfo}" lightningStyleSheets="true">
+    <html ng-app="myApp">
+
+    <head>
+        <title>Agreement In Effect View</title>
+
+        <!-- PDF -->
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/jquery.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular_js.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-animate.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-material.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-messages.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-resources.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-route.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/assets_cache.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/materialize.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/bootstrap_js.js')}"
+        />
+        <apex:includeScript value="{!$Resource.APTSMD_Nova_Js}" />
+        <apex:includeScript value="{!$Resource.APTSMD_NovaThemeProvider}" />
+        <apex:stylesheet value="{!$Resource.APTSMD_Nova_Css}" />
+        <!-- <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.css"
+            rel="stylesheet" /> -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.10/angular-material.min.css" integrity="sha512-lUExuDw/YQOmNO0LN2XplczGTyTxTEUvXBPKOnfBNloscpdzpfrYBiyWtPeyF0guAgihG/6RrOfDpoyywWMk/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+     
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/angular-material-data-table/0.10.10/md-data-table.css"
+            rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"
+        />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        />
+        <link rel="https://rawgit.com/alalonde/angular-scrollable-table/master/scrollable-table.css"
+        />
+        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" />
+        <link rel="stylesheet" href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}"
+            type="text/css" />
+        <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+        <script>
+            var myApp = angular.module('myApp', ['ngMaterial', 'novaTheme',
+                'ngMessages', 'ngAnimate', 'ngRoute',
+                'material.svgAssetsCache'
+            ]);
+            myApp.config(function(novaThemeProvider) {
+                novaThemeProvider.setTheme('default');
+            });
+            myApp.config(function($mdIconProvider) {
+                $mdIconProvider
+                    .iconSet('call',
+                        'img/icons/sets/communication-icons.svg', 24);
+            });
+            myApp.filter('pagination', function() {
+                return function(input, start) {
+                    if (!input || !input.length) {
+                        return;
+                    }
+                    start = +start;
+                    return input.slice(start);
+                }
+            });
+            myApp.controller('AppCtrl', ['$scope', '$location', function($scope,
+                $location) {
+
+                $scope.sizes = [
+                    5,
+                    10,
+                    25,
+                    50,
+                    100,
+                    200,
+                    300,
+                    400,
+                    500
+                ];
+
+                $scope.check = true;
+                $scope.active = false;
+                $scope.isInformationActive = false;
+                $scope.keyTermsActive = false;
+                $scope.agreementLineItemsActive = false;
+                $scope.eContractingAgreement;
+                $scope.isLoading = false;
+                $scope.curPage = 0;
+                $scope.pageSize = 10;
+                $scope.filtered = 0;
+                $scope.numberPages = 0;
+                $scope.tabName = 'eContracting';
+
+                $scope.sort = function(keyname) {
+                    $scope.sortKey = keyname;
+                    $scope.reverse = !$scope.reverse;
+                }
+
+                $scope.nextPage = function() {
+                    $scope.curNo = $scope.curNo + 1;
+                    $scope.curPage = $scope.curPage + 1;
+                }
+
+                $scope.previousPage = function() {
+                    $scope.curNo = $scope.curNo - 1;
+                    $scope.curPage = $scope.curPage - 1;
+                }
+
+                $scope.firstPage = function() {
+                    $scope.curNo = 1;
+                    $scope.curPage = 0;
+                }
+
+                $scope.lastPage = function() {
+                    $scope.curNo = $scope.numberPages + 1;
+                    $scope.curPage = $scope.numberPages;
+                }
+
+                $scope.search = function() {
+                    $scope.curNo = 1;
+                    $scope.curPage = 0;
+                }
+                $scope.alertFunction = function() {
+                    alert("clicked");
+                }
+
+                $scope.checkData =
+                    '{!JSENCODE(agreementWrapperJSON)}';
+                $scope.error = '{!JSENCODE(errorMessage)}'
+                if ($scope.checkData != '') {
+                    $scope.agreementWrapperJSON = JSON.parse($scope
+                        .checkData);
+                    $scope.check = true;
+                } else {
+                    $scope.agreementWrapperJSON = {};
+                    $scope.check = false;
+
+                }
+                $scope.parse_agreement_json = $scope.agreementWrapperJSON;
+
+                $scope.eContractingData = function() {
+
+                    $scope.isLoading = false;
+                    $scope.eContractingAgreement = {};
+
+                }
+                $scope.eContractingData();
+                $scope.numberOfPages = function() {
+                    if ($scope.filtered == undefined) {
+                        return 0;
+                    }
+                    $scope.numberPages = Math.ceil($scope.filtered
+                        .length / $scope.pageSize) - 1;
+                    return Math.ceil($scope.filtered.length /
+                        $scope.pageSize);
+                };
+
+                $scope.updatePageSize = function(size) {
+                    $scope.curNo = 1;
+                    $scope.curPage = 0;
+                    $scope.pageSize = parseInt(size);
+                }
+                $scope.scrollRight = function() {
+                    $("#eContractingBody").scrollLeft($(
+                            "#eContractingBody").scrollLeft() +
+                        80);
+                    $("#tableheader").scrollLeft($(
+                            "#tableheader").scrollLeft() +
+                        80);
+                }
+                $scope.scrollLeft = function() {
+                    $("#eContractingBody").scrollLeft($(
+                            "#eContractingBody").scrollLeft() -
+                        80);
+                    $("#tableheader").scrollLeft($(
+                            "#tableheader").scrollLeft() -
+                        80);
+                }
+
+                // backToAgreement() - Back to agreement 
+                $scope.backToAgreement = function() {
+                    window.top.location = '/' + $scope.parse_agreement_json
+                        .agreement.Id;
+                    return;
+                }
+
+
+            }]);
+
+        </script>
+    </head>
+    <apex:slds />
+    <style>
+        .moved {
+            margin-top: 63px;
+        }
+        
+        .apttusPanel {
+            display: inline-block!important;
+        }
+
+    </style>
+
+    <c:APTSMD_CommonHeader pageName1="Agreement In Effect View" objectName="" iconName="account"
+        type="standard" />
+
+    <body ng-controller="AppCtrl" ng-cloak="true">
+
+
+        <!-- <md-content> -->
+        <div class="ands-row" ng-show="!check">
+            <div>
+                <p class="warningText marginTop100 textAlignCenter"><b>{{error}}</b></p>
+            </div>
+        </div>
+        <div ng-show="check">
+            <div class="md-padding apttusContainer moved">
+                <!-- Button Section -->
+                <div class="apttusPanel textAlignRight">
+
+                    <button type="button" class="apttusBtn" ng-click="backToAgreement();">Back To Agreement</button>
+                </div>
+
+
+                <div class="apttusPanel">
+                    <div class="expandcollapse-item ands-card-body">
+                        <div>
+                            <p class="blackBold margin0 sectionHeaderFont" ng-click="isInformationActive = !isInformationActive">
+                                <i class="material-icons verticalMiddle">{{ !isInformationActive ? 'expand_more' : 'chevron_right'}}</i>&nbsp;Agreement
+                                Details
+                            </p>
+                        </div>
+
+                        <div class="slideDown" ng-hide="isInformationActive">
+                            <div class="expand-collapse-content">
+                                <div class="ands-row">
+
+                                    <div class="ands-col-6">
+                                        <div class=".ands-label ands-col-4 labelFont">Agreement Number</div>
+                                        <div class="ands-col-2 labelFont">
+                                            <a class="anchor" ng-href="{{'/'+parse_agreement_json.agreement.Id}}" target="_blank"><u>{{parse_agreement_json.agreement.Apttus__FF_Agreement_Number__c}}</u></a>
+                                        </div>
+                                    </div>
+
+                                    <div class="ands-col-6">
+                                        <div class=".ands-headline ands-col-4 labelFont">Record Type</div>
+                                        <div class="ands-col-2 labelFont">
+                                            {{parse_agreement_json.agreement.APTSMD_Record_Type_Name__c}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ands-row">
+                                    <div class="ands-col-6">
+                                        <div class=".ands-label ands-col-4 labelFont">Agreement Name</div>
+                                        <div class="ands-col-7 labelFont">
+                                            {{parse_agreement_json.agreement.Name}}
+                                        </div>
+                                    </div>
+
+                                    <div class="ands-col-6">
+                                        <div class=".ands-headline ands-col-4 labelFont">Primary Contact</div>
+                                        <div class="ands-col-4 labelFont">
+                                            <a class="anchor" ng-href="{{'/'+parse_agreement_json.agreement.Apttus__Primary_Contact__r.Id}}"
+                                                target="_blank"><u>{{parse_agreement_json.agreement.Apttus__Primary_Contact__r.Name}}</u></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ands-row">
+                                    <div class="ands-col-6">
+                                        <div class=".ands-label ands-col-4 labelFont">Account</div>
+                                        <div class="ands-col-4 labelFont">
+                                            <a class="anchor" ng-href="{{'/'+parse_agreement_json.agreement.Apttus__Account__r.Id}}"
+                                                target="_blank"><u>{{parse_agreement_json.agreement.Apttus__Account__r.Name}}</u></a>
+                                        </div>
+                                    </div>
+
+                                    <div class="ands-col-6">
+                                        <div class=".ands-headline ands-col-4 labelFont">Status Category</div>
+                                        <div class="ands-col-2 labelFont">
+                                            {{parse_agreement_json.agreement.Apttus__Status_Category__c}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ands-row">
+                                    <div class="ands-col-6">
+                                        <div class=".ands-label ands-col-4 labelFont">Agreement Start Date</div>
+                                        <div class="ands-col-2 labelFont">
+                                            {{parse_agreement_json.agreement.Apttus__Contract_Start_Date__c | date: '{!dateFormat}'}}
+                                            </div>
+                                    </div>
+
+                                    <div class="ands-col-6">
+                                        <div class=".ands-headline ands-col-4 labelFont">Status</div>
+                                        <div class="ands-col-4 labelFont">
+                                            {{parse_agreement_json.agreement.Apttus__Status__c}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ands-row">
+                                    <div class="ands-col-6">
+                                        <div class=".ands-label ands-col-4 labelFont">Agreement End Date</div>
+                                        <div class="ands-col-2 labelFont">
+                                            {{parse_agreement_json.agreement.Apttus__Contract_End_Date__c | date: '{!dateFormat}'}}
+
+                                        </div>
+                                    </div>
+
+                                    <div class="ands-col-6">
+                                        <div class=".ands-headline ands-col-4 labelFont">Approval Status</div>
+                                        <div class="ands-col-4 labelFont">
+                                            {{parse_agreement_json.agreement.Apttus_Approval__Approval_Status__c}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="apttusPanel">
+                    <div class="expandcollapse-item ands-card-body">
+                        <div>
+                            <p class="blackBold margin0 sectionHeaderFont" ng-click="keyTermsActive = !keyTermsActive">
+                                <i class="material-icons verticalMiddle">{{ !keyTermsActive ? 'expand_more' : 'chevron_right'}}</i>&nbsp;Key
+                                Terms
+                            </p>
+                        </div>
+
+                        <div class="slideDown" ng-hide="keyTermsActive">
+                            <div class="expand-collapse-content">
+                                <div class="ands-row">
+                                    <div class="ands-col-6">
+                                        <div class=".ands-label ands-col-4 labelFont">Region</div>
+                                        <div class="ands-col-2 labelFont">
+                                            {{parse_agreement_json.agreement.APTSMD_Region__c}}
+                                        </div>
+                                    </div>
+
+                                    <div class="ands-col-6">
+                                        <div class=".ands-headline ands-col-4 labelFont">Annual Uplift</div>
+                                        <div class="ands-col-2 labelFont">
+                                            {{parse_agreement_json.agreement.APTSMD_Annual_Uplift__c}}{{parse_agreement_json.agreement.APTSMD_Annual_Uplift__c
+                                            ? '%' : ''}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ands-row">
+                                    <div class="ands-col-6">
+                                        <div class=".ands-label ands-col-4 labelFont">Payment Terms</div>
+                                        <div class="ands-col-2 labelFont">
+                                            {{parse_agreement_json.agreement.APTSMD_Payment_Term_Name__c}}
+                                        </div>
+                                    </div>
+
+                                    <div class="ands-col-6">
+                                        <div class=".ands-headline ands-col-4 labelFont">Special Terms</div>
+                                        <div class="ands-col-4 labelFont">
+                                            {{parse_agreement_json.agreement.Apttus__Special_Terms__c}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ands-row">
+                                    <div class="ands-col-6">
+                                        <div class=".ands-label ands-col-4 labelFont">Support Exhibits</div>
+                                        <div class="ands-col-2 labelFont">
+                                            {{parse_agreement_json.agreement.APTSMD_Support_Exhibits__c}}
+                                        </div>
+                                    </div>
+
+                                    <div class="ands-col-6">
+                                        <div class=".ands-headline ands-col-4 labelFont">Auto Renew</div>
+                                        <div class="ands-col-2 labelFont">
+                                            {{parse_agreement_json.agreement.Apttus__Auto_Renewal__c}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="apttusPanel">
+
+                    <div class="expandcollapse-item ands-card-body">
+                        <div>
+                            <p class="blackBold margin0 sectionHeaderFont" ng-click="active = !active">
+                                <i class="material-icons verticalMiddle">{{ !active ? 'expand_more' : 'chevron_right'}}</i>&nbsp;Agreement
+                                Clauses
+                            </p>
+                        </div>
+
+                        <div class="slideDown" ng-hide="active">
+                            <div class="expand-collapse-content" style="width: 100%;">
+
+                                <p class="marginTop10 marginBottom10 textAlignCenter labelFont" ng-show="parse_agreement_json.agreementClauses.length == 0">
+                                    No Agreement Clauses found.
+                                </p>
+
+                                <div class="ands-list-table boxShadowNone" ng-show="parse_agreement_json.agreementClauses.length > 0">
+                                    <div class="ands-row"></div>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th class="ands-col-2 blackBold tableHeader tableHeaderFont margin0 borderBottomDark boxShadowNone">
+                                                    Clause
+                                                </th>
+                                                <th class="ands-col-8 blackBold tableHeader tableHeaderFont margin0 borderBottomDark boxShadowNone">
+                                                    Text
+                                                </th>
+                                                <th class="ands-col-2 blackBold tableHeader tableHeaderFont margin0 borderBottomDark boxShadowNone">
+                                                    Activated On
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody ng-repeat="obj in parse_agreement_json.agreementClauses">
+                                            <tr>
+                                                <td class="ands-col-2 margin0 simpleTextAlign sectionHeaderFont labelFont backgroundWhite">
+                                                    <p class="marginLeft10 labelFont">{{obj.Apttus__Clause__c}}</p>
+                                                </td>
+                                                <td class="ands-col-8 margin0 simpleTextAlign sectionHeaderFont labelFont backgroundWhite">
+                                                    {{obj.Apttus__Text__c}}
+                                                </td>
+                                                <td class="ands-col-2 margin0 simpleTextAlign sectionHeaderFont labelFont backgroundWhite">
+                                                    <a class="anchor" ng-href="{{'/'+obj.Apttus__PreviousVersionId__r.Apttus__Agreement__c}}"
+                                                        target="_blank"><u>{{obj.Apttus__PreviousVersionId__r.Apttus__Agreement__r.Apttus__FF_Agreement_Number__c}}</u></a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="apttusPanel">
+
+                    <div class="expandcollapse-item ands-card-body">
+                        <div class="expandcollapse-item">
+                            <div>
+                                <p class="blackBold sectionHeaderFont margin0" ng-click="agreementLineItemsActive = !agreementLineItemsActive">
+                                    <i class="material-icons verticalMiddle">{{ !agreementLineItemsActive ? 'expand_more' : 'chevron_right'}}</i>&nbsp;Agreement
+                                    Line Items</p>
+                            </div>
+
+                            <div class="slideDown" ng-hide="agreementLineItemsActive">
+                                <div class="expand-collapse-content" style="width: 100%;">
+
+                                    <p class="marginTop10 marginBottom10 textAlignCenter labelFont" ng-show="parse_agreement_json.agreementLineItems.length == 0">
+                                        No Agreement Line Items found.
+                                    </p>
+
+
+                                    <div class="ands-list-table boxShadowNone" ng-show="parse_agreement_json.agreementLineItems.length > 0">
+                                        <div class="ands-row"></div>
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th class="ands-col-1 blackBold tableHeader tableHeaderFont borderBottomDark boxShadowNone">
+                                                        Line Item Id
+                                                    </th>
+                                                    <th class="ands-col-1 blackBold tableHeader tableHeaderFont borderBottomDark boxShadowNone">
+                                                        Product or Option
+                                                    </th>
+                                                    <th class="ands-col-1 blackBold tableHeader tableHeaderFont borderBottomDark boxShadowNone">
+                                                        Charge Type
+                                                    </th>
+                                                    <th class="ands-col-1 blackBold tableHeader tableHeaderFont borderBottomDark boxShadowNone">
+                                                        Pricing Frequency
+                                                    </th>
+                                                    <th class="ands-col-1 blackBold currencyTextAlign tableHeaderFont borderBottomDark boxShadowNone">
+                                                        Pricing Uom
+                                                    </th>
+                                                    <th class="ands-col-1 blackBold currencyTextAlign tableHeaderFont borderBottomDark boxShadowNone">
+                                                        Selling Term
+                                                    </th>
+                                                    <th class="ands-col-1 blackBold currencyTextAlign tableHeaderFont borderBottomDark boxShadowNone">
+                                                        Quantity
+                                                    </th>
+                                                    <th class="ands-col-1 blackBold currencyTextAlign tableHeaderFont borderBottomDark boxShadowNone">
+                                                        Base Extended Price
+                                                    </th>
+                                                    <th class="ands-col-1 blackBold currencyTextAlign tableHeaderFont borderBottomDark boxShadowNone">
+                                                        Net Price
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody ng-repeat="obj in parse_agreement_json.agreementLineItems">
+                                                <tr>
+                                                    <td class="ands-col-1 simpleTextAlign labelFont backgroundWhite">
+                                                        <a class="anchor marginLeft10" ng-href="{{'/'+obj.Id}}" target="_blank"><u>{{obj. Name}}</u></a>
+
+                                                    </td>
+                                                    <td class="ands-col-1 simpleTextAlign labelFont backgroundWhite">
+                                                        {{obj. APTSMD_Product_or_Option__c}}
+
+                                                    </td>
+                                                    <td class="ands-col-1 simpleTextAlign labelFont backgroundWhite">
+                                                        {{obj. Apttus_CMConfig__ChargeType__c}}
+
+                                                    </td>
+                                                    <td class="ands-col-1 numberTextAlign labelFont backgroundWhite">
+                                                        {{obj.Apttus_CMConfig__Frequency__c}}
+
+                                                    </td>
+                                                    <td class="ands-col-1 currencyTextAlign labelFont backgroundWhite">
+                                                        {{obj.Apttus_CMConfig__PriceUom__c}}
+
+                                                    </td>
+                                                    <td class="ands-col-1 numberTextAlign labelFont backgroundWhite">
+                                                        {{obj.Apttus_CMConfig__SellingTerm__c}}
+
+                                                    </td>
+                                                    <td class="ands-col-1 numberTextAlign labelFont backgroundWhite">
+                                                        {{obj.Apttus__Quantity__c}}
+
+                                                    </td>
+                                                    <td class="ands-col-1 currencyTextAlign labelFont backgroundWhite">
+                                                        {{obj.Apttus_CMConfig__BaseExtendedPrice__c | currency : value = '{!defaultCurrancy}'}}
+
+                                                    </td>
+                                                    <td class="ands-col-1 currencyTextAlign labelFont backgroundWhite">
+                                                        {{obj.Apttus__NetPrice__c | currency : value = '{!defaultCurrancy}'}}
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="apttusPanel marginBottom15">
+
+                    <div class="expandcollapse-item ands-card-body">
+                        <div>
+                            <p class="blackBold sectionHeaderFont margin0" ng-click="activeObligation = !activeObligation">
+                                <i class="material-icons verticalMiddle">{{ !activeObligation ? 'expand_more' : 'chevron_right'}}</i>&nbsp;Obligations
+                            </p>
+                        </div>
+
+                        <div class="slideDown" ng-hide="activeObligation">
+                            <div class="expand-collapse-content" style="width: 100%;">
+
+                                <p class="marginTop10 marginBottom10 textAlignCenter" ng-show="parse_agreement_json.agreementObligations.length == 0">
+                                    No Active Obligations found.
+                                </p>
+
+                                <div class="ands-list-table boxShadowNone" ng-show="parse_agreement_json.agreementObligations.length > 0">
+                                    <div class="ands-row"></div>
+
+                                    <table class="">
+
+                                        <thead>
+                                            <tr>
+                                                <th class="ands-col-1 blackBold tableHeader tableHeaderFont borderBottomDark boxShadowNone ">
+                                                    Name
+                                                </th>
+                                                <th class="ands-col-1 blackBold tableHeader tableHeaderFont borderBottomDark boxShadowNone ">
+                                                    Obligation Type
+                                                </th>
+                                                <!--<th class="ands-col-1 blackBold tableHeader tableHeaderFont borderBottomDark boxShadowNone ">
+                                                                    Responsible
+                                                                </th>-->
+                                                <th class="ands-col-1 blackBold currencyTextAlign tableHeaderFont borderBottomDark boxShadowNone ">
+                                                    Payment Amount
+                                                </th>
+
+                                                <th class="ands-col-1 blackBold tableHeader tableHeaderFont borderBottomDark boxShadowNone ">
+                                                    Recurrence
+                                                </th>
+                                                <th class="ands-col-1 blackBold tableHeader tableHeaderFont borderBottomDark boxShadowNone ">
+                                                    Due Date
+                                                </th>
+                                                <th class="ands-col-1 blackBold tableHeader tableHeaderFont borderBottomDark boxShadowNone ">
+                                                    Guidance
+                                                </th>
+                                                <th class="ands-col-1 blackBold tableHeader tableHeaderFont borderBottomDark boxShadowNone ">
+                                                    Status
+                                                </th>
+                                                <th class="ands-col-1 blackBold tableHeader tableHeaderFont borderBottomDark boxShadowNone ">
+                                                    Brief Description
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody ng-repeat="obj in parse_agreement_json.agreementObligations">
+                                            <tr>
+                                                <td class="ands-col-1 simpleTextAlign labelFont backgroundWhite">
+                                                    <a class="anchor marginLeft10" ng-href="{{'/'+obj.Id}}" target="_blank"><u>{{obj. Name}}</u></a>
+                                                </td>
+                                                <td class="ands-col-1 simpleTextAlign labelFont backgroundWhite">
+                                                    <p class="marginLeft10 labelFont">{{obj.APTSMD_Obligation_Type__c}}</p>
+
+                                                </td>
+
+                                                <td class="ands-col-1 currencyTextAlign labelFont backgroundWhite">
+                                                    {{obj.APTSMD_Payment_Amount__c | currency : value = '{!defaultCurrancy}'}}
+
+                                                </td>
+                                                <td class="ands-col-1 simpleTextAlign labelFont backgroundWhite">
+                                                    {{ obj.APTSMD_Recurrence__c}}
+
+                                                </td>
+                                                <td class="ands-col-1 simpleTextAlign labelFont backgroundWhite">
+                                                    {{ obj.APTSMD_Due_Date__c | date: '{!dateFormat}'}}
+
+                                                </td>
+
+                                                <td class="ands-col-1 simpleTextAlign labelFont backgroundWhite">
+                                                    {{obj.APTSMD_Guidance__c}}
+
+                                                </td>
+                                                <td class="ands-col-1 simpleTextAlign labelFont backgroundWhite">
+                                                    {{obj.APTSMD_Status__c}}
+
+                                                </td>
+                                                <td class="ands-col-1 simpleTextAlign labelFont backgroundWhite">
+                                                    {{obj.Apttus__Description__c}}
+
+                                                </td>
+                                            </tr>
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </body>
+
+    </html>
+
+</apex:page>

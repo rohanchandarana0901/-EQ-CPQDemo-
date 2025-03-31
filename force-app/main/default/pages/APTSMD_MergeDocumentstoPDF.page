@@ -1,0 +1,137 @@
+<!--@UI/UX: japan Bhavsar/Vivek Parmar (Apttus Developer) on 12/10/2018, Modified by Apttus Lab on 09-08-2019 -->
+<apex:page controller="APTSMD_MergeDocumentsAgreementCtrl" standardStyleSheets="false" lightningStyleSheets="true">
+<apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/jquery.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/bootstrap_js.js')}"/>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+<apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap-theme.min.css')}"/>
+<apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+<script type="text/javascript">
+    //Checked checkbox counting for sequencing
+   
+    var Counter=1;
+    // Added by Japan Bhavsar on 12/17/2018
+    // checkAtLeast2CheckboxChecked for check if atleats 2 checkbox is checked or not
+    function checkAtLeast2CheckboxChecked(chkSelected,title){
+        console.log(chkSelected);
+        var textinputs = document.querySelectorAll("input[type='text']");
+        var node = document.querySelector('[title="'+title+'"]');
+        console.log(node);
+        
+        if(chkSelected.checked == true){
+            if(Counter<0){
+                Counter = 1;
+            }
+            node.value = Counter;
+            Counter = Counter + 1;
+        }
+        else{
+            for(i=1;i<textinputs.length;i++){
+                if(textinputs[i].value>node.value){
+                    textinputs[i].value = textinputs[i].value-1;
+                }
+            }
+            node.value = "";
+            Counter = Counter - 1;
+            
+        }
+        var allCheckedCBLength = $("input[name*='checkedone']:checked").length;
+        if(allCheckedCBLength >= 2){
+            document.getElementById("{!$Component.form.pb.pbb.generateButtonID}").classList.remove("disabled");
+        }else{
+            document.getElementById("{!$Component.form.pb.pbb.generateButtonID}").classList.add("disabled");
+        }
+    
+    }
+
+    function checkAll(cb,cbid) 
+        { 
+            var inputs = document.querySelectorAll("input[type='checkbox']");
+            console.log(inputs);
+            for(var i = 0; i < inputs.length; i++) {
+                if(inputs[i].title != 'selectAll'){
+                    console.log(cb.checked);
+                    if(cb.checked == true){
+                        if(inputs[i].checked == false){
+                            inputs[i].checked = cb.checked;
+                            inputs[i].onclick.apply(inputs[i]);
+                         }
+                    }
+                    else{
+                        inputs[i].checked = cb.checked;
+                         inputs[i].onclick.apply(inputs[i]);
+                    }
+                }
+            }
+            
+            //For Disable/Enable button
+           //checkAtLeast2CheckboxChecked();
+    } 
+    
+    function showLoadingBar(){
+        document.getElementById("showLoadingBar").style.display = "block";
+    }
+    
+</script>
+<c:APTSMD_CommonHeader pageName1="Merge Documents" objectName="" iconName="account" type="standard"/>
+<apex:form id="form">  
+<!-- No file selected error + show/hide loading bar -->
+<apex:outputPanel id="noFileSelected" >
+    <script type="text/javascript">
+    if('{!alertMessage}' != ''){
+        document.getElementById('showLoadingBar').style.display = "none";
+        setTimeout(function(){
+            window.alert('{!alertMessage}');
+        },100);
+    }
+    </script>
+</apex:outputPanel>
+
+<style>
+    .moved{
+        margin-top:60px;
+    }
+    h2.mainTitle {
+    font-size: 14px;
+}
+</style>
+
+<!-- Loadingbar panel by Japan Bhavsar -->
+<div class="slds-spinner_container" id="showLoadingBar" style="display:none;width: 100%;height: 100%;position: fixed;z-index: 999;background-color: rgba(204, 204, 204, 0.26);">
+    <center>
+            <div class="slds-spinner--large" style="top: 40%;position: absolute;left: 45%;">
+                    <img style="height:50px;width:50px; max-width: 50px;" src="{!$Resource.APTSMD_Loading}" alt="Loading..." />
+        </div>
+    </center>
+</div> 
+<div class="apttusContainer moved">
+   <apex:pageMessages escape="false"></apex:pageMessages>
+   <div class="apttusPanel">
+        <apex:pageblock title="Select Attachments" id="pb">  
+        <apex:pageBlockButtons location="both" id="pbb" styleClass="floatRight buttonCls"> 
+            <apex:commandButton value="Generate" styleClass="apttusBtn disabled" id="generateButtonID" status="loading" 
+            rerender="noFileSelected" onclick="showLoadingBar()" action="{!MergeDocument}"/> 
+            <apex:commandButton value="Cancel" styleClass="apttusBtnWhite slds-button slds-button--brand" action="{!Cancel}"/> 
+        </apex:pageBlockButtons>  
+        <apex:pageBlockTable value="{!lstWrapper}" var="wrapper" id="AttachmentTable" styleClass="marginTop10">                     
+            <apex:column headerClass="textAlignCenter" styleClass="textAlignCenter"> 
+                <apex:facet name="header">    
+                    <apex:inputCheckbox styleClass="form-checkbox outLineNone" title="selectAll" onclick="checkAll(this,'checkedone')"/> 
+                </apex:facet> 
+                <apex:inputCheckbox styleClass="form-checkbox outLineNone" onclick="checkAtLeast2CheckboxChecked(this,'{!wrapper.attachId}')" value="{!wrapper.selected}" id="checkedone"/>            
+            </apex:column>   
+             <apex:column headerValue="Sequence" headerClass="blackBold tableHeaderFont" styleClass=""> 
+                <apex:inputText id="sequenceBox" title="{!wrapper.attachId}" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57" styleClass="apttusInput" value="{!wrapper.sequence}"/>            
+            </apex:column>  
+            <apex:column headerValue="File Name" headerClass="blackBold tableHeaderFont" styleClass=""> 
+                <apex:outputText styleClass="labelFont" value="{!wrapper.Name}"/> 
+            </apex:column>   
+            <apex:column headervalue="Last Modified Date" headerClass="blackBold tableHeaderFont" styleClass=""> 
+                <apex:outputText styleClass="labelFont" value="{0,date,MM/dd/yy}"> <apex:param value="{!wrapper.LastModifiedDate}" /> </apex:outputText>
+            </apex:column>
+        </apex:pageBlockTable> 
+        </apex:pageblock> 
+   </div>
+</div>
+</apex:form> 
+</apex:page>

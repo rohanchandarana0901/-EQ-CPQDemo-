@@ -1,0 +1,40 @@
+<aura:component implements="flexipage:availableForAllPageTypes" controller="APTSMD_ListViewIdGeneric">
+    
+    
+<div style="background-color:white;margin-bottom: 10px;border-radius: 5px;padding: 10px !important;" class="mainDiv" >
+<p  style="width:100%;text-align:center">
+    
+	<div class="slds-grid slds-wrap" style="padding-top: 16px;padding-bottom: 15px;">
+        <div class="slds-col slds-size_3-of-12">
+            <a aura:id="Contextual" class="HideLine" onclick="{!c.backToContexualPricing}">
+                <lightning:icon iconName="standard:pricebook" class="iconstyle" size="large" alternativeText="NDA Wizard"/>
+                <br/>
+                <span class="osOutputLabel">Contextual <br/>Analysis</span>
+            </a>
+        </div>
+        <div class="slds-col slds-size_3-of-12">
+            <a aura:id="Recommender" class="HideLine" onclick="{!c.gotoRecommender}">
+                <lightning:icon iconName="standard:endorsement" class="iconstyle" size="large" alternativeText="New Agreement"/>
+                <br/>
+                <span class="osOutputLabel">Recommender</span>
+            </a>
+        </div>
+        <div class="slds-col slds-size_3-of-12">
+            <a aura:id="Pricing Intelligence" class="HideLine" onclick="{!c.gotoPricingIntelligence}">
+                <lightning:icon iconName="custom:custom17" class="iconstyle" size="large" alternativeText="NDA Wizard"/>
+                <br/>
+                <span class="osOutputLabel">Pricing<br/>Intelligence</span>
+            </a>
+        </div>
+        <div class="slds-col slds-size_3-of-12">
+            <a aura:id="gotoWhiteSpace" class="HideLine" onclick="{!c.gotoWhiteSpace}">
+                <lightning:icon iconName="standard:proposition" class="iconstyle" size="large" alternativeText="MSA Wizard"/>
+                <br/>
+                <span class="osOutputLabel">Whitespace<br/>Analysis</span>
+            </a>
+        </div>         
+        
+    </div>
+</p>
+</div>
+</aura:component>

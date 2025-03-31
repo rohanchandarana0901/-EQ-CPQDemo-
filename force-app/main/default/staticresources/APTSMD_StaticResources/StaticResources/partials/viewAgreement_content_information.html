@@ -1,0 +1,86 @@
+<div layout="column">
+  <div flex class="section-tittle">
+      <font class="section-subheader">&nbsp;&nbsp;Information</font>
+      <md-divider></md-divider>
+      <br/>
+  </div>
+  <div>
+    <div layout="row" class="default-space">
+     <div flex ="5"></div>
+      <div flex ="30">
+        <div class="form-group">
+            <label for="usr"><b>Agreement # </b></label><br/>
+            <label for="usr" class="labelClass">{{agreement.Apttus__FF_Agreement_Number__c}}</label>
+        </div>
+		<div class="form-group">
+           <label for="usr"><b>Agreement Name</b></label><br/>
+           <label for="usr" class="labelClass">{{agreement.Name}}</label>
+        </div>
+		<div class="form-group">
+           <label for="usr"><b>Account Name</b></label><br/>
+           <label for="usr" class="labelClass">{{agreement.Apttus__Account__r.Name}}</label>
+        </div>
+		<div class="form-group">
+           <label for="usr"><b>Agreement Value</b></label><br/>
+           <label for="usr" class="labelClass">{{agreement.Apttus__Total_Contract_Value__c}}</label>
+        </div>	
+          <div class="form-group">
+            <input type="checkbox" ng-model="agreement.Apttus__Perpetual__c" disabled="disabled"/> <b>Is Perpetual?</b>
+        </div>
+
+      </div>
+      <div flex ="5"></div>
+      <div flex ="30">
+        <div class="form-group">
+            <label for="usr"><b>Primary Contact </b></label><br/>
+            <label for="usr" class="labelClass">{{agreement.Apttus__Primary_Contact__r.Name}}</label>
+        </div> 
+		<div class="form-group">
+           <label for="usr"><b>Record Type</b></label><br/>
+           <label for="usr" class="labelClass">{{agreement.RecordType.Name}}</label>
+        </div> 
+		<div class="form-group">
+           <label for="usr"><b>Reference #</b></label><br/>
+           <label for="usr" class="labelClass">{{agreement.Reference_No__c}}</label>
+        </div>
+		<div class="form-group">
+           <label for="usr"><b>Parent Contract</b></label><br/>
+           <label for="usr" class="labelClass">{{agreement.Apttus__Parent_Agreement__r.Name}}</label>
+        </div>
+         <div class="form-group">
+           <input type="checkbox" disabled="disabled"/> <b>Track Version?</b></label>
+        </div>
+      </div>
+      <div flex ="5"></div>
+      <div flex ="30">
+        <div class="form-group">
+           <label for="usr"><b>Agreement Start and End Date </b></label><br/>
+           <label for="usr" class="labelClass">
+		   <span ng-bind="agreement.Apttus__Contract_Start_Date__c | date:'MM/dd/yyyy'"></span> to 
+		   <span ng-bind="agreement.Apttus__Contract_End_Date__c | date:'MM/dd/yyyy'"></span>
+		   </label>
+        </div>
+		    <div class="form-group">
+           <label for="usr"><b>Status Category</b></label><br/>
+           <label for="usr" class="labelClass">{{agreement.Apttus__Status_Category__c}}</label>
+        </div>
+          <div class="form-group">
+           <label for="usr"><b>Status</b></label><br/>
+           <label for="usr" class="labelClass">{{agreement.Apttus__Status__c}}</label>
+        </div>
+          <div class="form-group">
+           <label for="usr"><b>Approval Status</b></label><br/>
+           <label for="usr" class="labelClass">{{agreement.Apttus_Approval__Approval_Status__c}}</label>
+        </div>
+        <div class="form-group">
+            <label for="usr"><b><input type="checkbox" disabled="disabled"/> Confidential</b></label><br/>  
+        </div>
+		
+      </div>
+     
+     
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,32 @@
+<div layout="column">
+  <div flex layout-align="end">
+  </div>
+  <div flex>
+      <table class="table">
+    <thead>
+      <tr>
+        <th>Number</th>
+        <th>Exception</th>
+        <th>Description</th>
+        <th>Approval Status</th>
+		<th>Comments</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="acti in termExceptionJSON">
+        <td>{{acti.Name}}</td>
+        <td>{{acti.Apttus__Exception__c}}</td>
+        <td>{{acti.Apttus__Description__c}}</td>
+        <td>{{acti.Apttus__Approval_Status__c}}</td>
+        <td>{{acti.Apttus__Comments__c}}</td>
+      </tr>
+       
+    </tbody>
+  </table>
+  </div>
+
+
+
+</div>
+
+     

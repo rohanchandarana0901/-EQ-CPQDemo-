@@ -1,0 +1,24 @@
+<aura:component implements="flexipage:availableForAllPageTypes" controller="APTSMD_MDOHomeController">
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+   <aura:attribute name="mdoVersion" type="String" />
+<div style="background-color:white;border-radius: 5px;" class="mainDiv" >
+    <div class=" aligncenter" style="padding-top: 5px;">
+        <div class="tileHeader" style="margin-left: 7px;margin-right: 7px;">
+        	<span>MDO Version</span>
+        </div>
+    	
+    </div>
+    <div class="aligncenter centerContent ">
+        <a aura:id="MDOVersion" class="HideLine" >
+            <br/>
+            <span class="osOutputLabel" style="color: #54698d;">{!v.mdoVersion}</span>
+        </a>
+    	
+    </div>
+    <div class="aligncenter ">
+        <div class="tileFooter">
+            <span ></span>
+            </div>
+    </div>
+</div>
+</aura:component>

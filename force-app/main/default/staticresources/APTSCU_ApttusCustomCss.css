@@ -1,0 +1,1103 @@
+/*
+    File Name: APTSMD_ApttusCustomCSS.css
+    Type: Stylesheet
+    Author: Japan Bhavsar
+    Description: This CSS file contains all the classes which will going to change the design of page and make page as look a like AIC   
+*/
+
+/*
+    Section: Font - Roboto
+*/
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+/* Initialize and Use this font for this style sheet */
+html *{
+    font-family: 'Roboto', sans-serif !important;
+}
+
+body{
+    font-family: 'Roboto', sans-serif !important;
+}
+html, body {
+    height: 100%;
+}
+
+/* 
+    Section : AuraAlohaContentFrame style sheet override
+    Description: This section contains some classes which are use to override existing classes of AuraAlohaContentFrame style sheet.
+*/
+html body.sfdcBody{
+    padding: 0px !important;
+}
+
+/*
+    Section : Apttus Container
+    Description: .apttusContainer class use for making outer container of page
+*/
+.apttusContainer {
+    background-color: #eeede9 !important;
+    background: #eeede9 !important;
+    padding: 15px !important;    
+}
+
+/* 
+    Section: Header Bar 
+    Description: .apttusHeader is new class and .slds-card__header is use for overwrite classes if we use lightning css
+*/
+.apttusHeader, .slds-card__header {
+    background-color: #303030;
+    padding: .875rem 1.25rem !important;
+    color: #fff;
+    margin: 0px;
+}
+
+.headerIMG {
+    height: 25px !important;
+    width: 115px !important;    
+}
+
+/*
+    Section: divScroll
+    Description: to making div scroll
+*/
+.divScroll{
+    overflow-y: auto;
+    width: 99.9%;
+    min-height:150px;
+    max-height: 340px;
+}
+
+
+/*
+    Section: Button
+    Description: 
+*/
+.andsButton, .andsButton.primary, .apttusBtn {
+    text-transform: none !important;
+    /* margin: 4px !important; */
+    display: inline-block !important;
+    color: #fff !important;
+    position: relative !important;
+    height: 36px !important;
+    box-sizing: border-box !important;
+    border-radius: 2px !important;
+    padding: 0 16px !important;
+    border: none !important;
+    transition: all .25s ease !important;
+    transition-property: background-color,color,border !important;
+    vertical-align: bottom !important;
+    background-color: #0079cc !important;
+    border-radius: 2px !important; 
+    font-size: 14px !important;
+    background: #0079cc !important;
+}
+
+.andsButton.primary:active, .andsButton:active, .apttusBtn:active {
+    background-color: #001366 !important;
+    transition: all .25s ease !important;
+}
+
+.andsButton.primary:hover, .andsButton:hover, .apttusBtn:hover {
+    background-color: #001366 !important;
+    transition: all .25s ease !important;
+}
+
+.apttusBtnWhite{
+    text-transform: none !important;
+    /* margin: 4px !important; */
+    display: inline-block !important;
+    color: #0079cc !important;
+    position: relative !important;
+    height: 36px !important;
+    box-sizing: border-box !important;
+    border-radius: 2px !important;
+    padding: 0 16px !important;
+    border: 1px solid #0079cc !important;
+    transition: all .25s ease !important;
+    transition-property: background-color,color,border !important;
+    vertical-align: bottom !important;
+    background-color:  #fff !important;
+    border-radius: 2px !important; 
+    font-size: 14px !important;
+    background: #fff !important;
+}
+
+.apttusBtnWhite:active {
+    background-color: #001366 !important;
+    border: 1px solid #001366 !important;
+    transition: all .25s ease !important;
+    color: #fff !important;
+
+}
+
+.apttusBtnWhite:hover {
+    background-color: #001366 !important;
+    border: 1px solid #001366 !important;
+    transition: all .25s ease !important;
+    color: #fff !important;
+}
+
+
+/* This class is only use for override wizard page button styles  */
+.sf-btn {
+    text-transform: none !important;
+    /* margin: 4px !important; */
+    color: #fff !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    border-radius: 2px !important;
+    padding: 0 16px !important;
+    border: none !important;
+    transition: all .25s ease !important;
+    transition-property: background-color,color,border !important;
+    vertical-align: bottom !important;
+    background-color: #0079cc !important;
+    border-radius: 2px !important; 
+    font-size: 14px !important;
+    background: #0079cc !important;
+}
+
+.sf-btn:active {
+    background-color: #001366 !important;
+    transition: all .25s ease !important;
+}
+
+.sf-btn:hover {
+    background-color: #001366 !important;
+    transition: all .25s ease !important;
+}
+.sf-t3.sf-wizard .sf-btn:after {
+    content: none !important;
+}
+
+.mCustomScrollbar{
+    background: #fff;
+    background-color: #fff;
+}
+
+/* 
+    Section: Nova grid classes override
+    Description: This section is contians some override classes of nova table/grid classes
+*/
+.ands-row .ands-col-1{
+    float: none;
+}
+
+
+
+/*
+    Section : Panel
+    Description: In this section we have override bootstrap panels classes
+*/
+.apttusPanel, .panel{
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    border: 1px solid #c7c7c7 !important;
+    border-radius: 0px !important;
+    margin-bottom: 10px !important;
+    background-color: #fff !important;
+    padding: .875rem 1.25rem !important;
+    display: inline-block;
+
+}
+
+/* 
+    Section: Table
+    Description: This section contains modification of table design structure
+*/
+.apttusTable {
+    border: none !important;
+    border-radius: 0px !important;    
+    width: 96% !important;
+}
+
+.apttusTable td {
+    border: none !important;   
+    color: #4a4a4a; 
+    padding-left: 0px !important;
+}
+
+.apttusTable tr {
+    border: none !important;
+    color: #4a4a4a;
+}
+
+.apttusTable th {
+    border: none !important;
+    color: #4a4a4a;
+}
+
+/* 
+    Section: .slds .slds-card
+    Description: This class is for override slds card's backgroud color
+*/
+.slds .slds-card {
+    background-color: #fff !important;
+    background: #fff !important;    
+}
+
+.slds-card__body {
+    border: 1px solid #c7c7c7;
+    padding: 0px !important;
+    background-color: #fff;
+}
+
+.slds .slds-table .slds-truncate{
+    max-width: 100% !important;
+}
+
+/* 
+    Section: Material Design Card Content
+    Description: This section contains styles for override material card content
+*/
+md-card-content{
+    padding: 0px !important;
+}
+
+/*
+    Section : Apttus Input
+    Description: This Section contains design like angular material 
+*/
+.apttusInput{
+    border: none !important;
+    border-radius: 0px !important;
+    border-bottom: 1px solid rgba(0,0,0,0.12) !important;
+    outline: none !important;
+    box-shadow: none !important;
+    display: inline-block !important;
+    background: none !important;
+    background-color: none !important;
+}
+
+.apttusInput:active, .apttusInput:focus {
+    border-bottom: 2px solid rgb(59,161,217) !important;
+}
+
+/* 
+    Section : Input Date field 
+    Description: This section contains to remove 'X' and up/down arrow in input type date
+*/
+
+input[type=date]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    display: none;
+}
+
+::-webkit-clear-button
+{
+    display: none; /* Hide the button */
+    -webkit-appearance: none; /* turn off default browser styling */
+}
+
+/* 
+    Section: Uniqe Radio Button for all radio button
+    Description: This section contains unique radio button design using css
+*/
+[type="radio"]:checked,
+[type="radio"]:not(:checked) {
+    position: absolute;
+    left: -9999px;
+    font-size: 14px !important;
+}
+[type="radio"]:checked + label,
+[type="radio"]:not(:checked) + label
+{
+    position: relative;
+    padding-left: 28px;
+    cursor: pointer;
+    /* line-height: 20px; */
+    display: inline-block;
+    color: #000;
+    font-size: 14px !important;
+}
+[type="radio"]:checked + label:before,
+[type="radio"]:not(:checked) + label:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 19px;
+    height: 19px;
+    border: 1px solid #ddd;
+    border-radius: 100%;
+    background: #fff;
+    font-size: 14px !important;
+}
+[type="radio"]:checked + label:after,
+[type="radio"]:not(:checked) + label:after {
+    content: '';
+    width: 11px;
+    height: 11px;
+    background: rgb(59,161,217);
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    border-radius: 100%;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+[type="radio"]:not(:checked) + label:after {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+}
+[type="radio"]:checked + label:after {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+
+
+/*
+    Section: This section contains design of common html checkboxes
+    Description: .form-checkbox this class is useful to override the checkboxes design as material 
+                design checkbox input.(just add this .form-checkbox class in your input type checkbox)
+*/
+.form-checkbox
+{
+     -webkit-appearance: none;
+     -moz-appearance: none;
+     appearance: none;
+     display: inline-block;
+     position: relative;
+     background-color: #fff;
+     border: 2px solid rgba(0,0,0,0.54) !important;
+     color: #666;
+     /*top: 10px;*/
+     height: 22px;
+     width: 22px;
+     border: 0;
+     border-radius: 2px;
+     cursor: pointer;     
+     margin-right: 7px;
+     outline: none;
+     margin-top: 0px;
+}
+.form-checkbox:checked::before
+{
+     position: absolute;
+     font: 14px/1 'Open Sans', sans-serif;
+     left: 6px;
+     top: 1px;
+     content: '\02143';
+     color: rgba(64,196,255,1);
+     transform: rotate(40deg);
+}
+.form-checkbox:hover
+{
+     /*background-color: #f7f7f7;*/
+}
+.form-checkbox:checked
+{
+     /*background-color: #f1f1f1;*/
+}
+
+.form-radio
+{
+     -webkit-appearance: none;
+     -moz-appearance: none;
+     appearance: none;
+     display: inline-block;
+     position: relative;
+     background-color: #fff;
+     border: 2px solid rgba(0,0,0,0.54) !important;
+     color: #666;
+     /*top: 10px;*/
+     height: 22px;
+     width: 22px;
+     border: 0;
+     border-radius: 50%;
+     cursor: pointer;     
+     margin-right: 7px;
+     outline: none;
+     margin-top: 0px;
+}
+.form-radio:checked::before
+{
+     position: absolute;
+     font: 14px/1 'Open Sans', sans-serif;
+     left: 6px;
+     top: 1px;
+     content: '\02143';
+     color: rgba(64,196,255,0.87);
+     transform: rotate(40deg);
+}
+.form-radio:hover
+{
+     /*background-color: #f7f7f7;*/
+}
+.form-radio:checked
+{
+     /*background-color: #f1f1f1;*/
+}
+
+
+/*
+    Section : Material Design
+    Description: This section contains changes for material inputs
+*/
+md-select {
+    padding:  0px !important;
+    margin: 0px !important;
+}
+
+md-input-container {
+    padding:  0px !important;
+    margin: 0px !important;
+}
+
+md-input-container .md-errors-spacer{
+    display: none;
+}
+
+/* 
+    Section: Unique Anchor Tag
+*/
+.anchor {
+    color: #337ab7 !important;
+    text-decoration: none;
+}
+
+/*
+    Section: Material TAB design
+*/
+md-tab-item {
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    color: #000 !important;
+    text-transform: capitalize !important;
+}
+
+/*
+    Section: Fonts/Icon override section
+    Description: This section is going to use for override the font for the icon
+*/
+.material-icons {
+    font-family: 'Material Icons' !important;
+    font-weight: normal ;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    cursor: pointer;
+    outline: none;
+}
+
+.fa{    
+    font:Â normal normal normal 14px/1 FontAwesome !important;
+    font-family: FontAwesome !important;
+}
+
+/*
+    Section: Material Design Checkbox
+    Description: This section is use for override style of material desing checkbox
+*/
+md-checkbox.md-default-theme.md-checked .md-icon, md-checkbox.md-checked .md-icon{
+    border-color: rgba(0,0,0,0.54) !important;
+    background: white;
+    background-color: white;    
+}
+
+md-checkbox.md-checked .md-icon:after {
+    color: rgb(59,161,217); 
+    border-color: rgb(59,161,217);
+}
+
+/*
+    Section : Text selection    
+*/
+::-moz-selection { /* Code for Firefox */
+    color: #000 !important;
+    background: lightgrey !important;
+}
+
+::selection {
+    color: #000 !important; 
+    background: lightgray !important;
+}
+
+/*
+    Section: 
+*/
+thead th{
+    position: sticky !important;
+    top: 0;
+    background-color: #e5e7ef;
+    z-index: 1;  
+    box-shadow: 0px 1px 2px #e5e7ef;  
+}
+
+thead th{
+    border-top: none !important;
+}
+
+thead th:hover {
+    background-color:none !important;
+}
+
+/* 
+    Section : Some Useful classes for common use in all
+*/
+.padding0{
+    padding: 0px !important;
+}
+.padding10{
+    padding: 10px !important;
+}
+.paddingTop0{
+    padding-top: 0px !important;
+}
+.paddingTop4{
+    padding-top: 4px;
+}
+.paddingTop5{
+    padding-top: 5px;
+}
+.paddingTop10{
+    padding-top: 10px !important;
+}
+.paddingLeftRight0{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+.paddingLeft5{
+    padding-left: 5px !important;
+}
+.paddingLeft10{
+    padding-left: 10px !important;
+}
+.paddingLeft20{
+    padding-left: 20px !important;
+}
+.paddingRight5{
+    padding-right: 5px !important;
+}
+.paddingRight10{
+    padding-right: 10px !important;
+}
+.paddingRight15{
+    padding-right: 15px !important;
+}
+.paddingBottom5{
+    padding-bottom: 5px !important;
+}
+.paddingBottom10{
+    padding-bottom: 10px !important;
+}
+.marginAuto{
+    margin: auto;
+}
+.margin0{
+    margin: 0px !important;
+}
+.margin10{
+    margin: 10px !important;
+}
+.marginBottom5{
+    margin-bottom: 5px !important;
+}
+.marginBottom10{
+    margin-bottom: 10px !important;
+}
+
+.marginBottom15{
+    margin-bottom: 15px;
+}
+.marginRight10{
+    margin-right: 10px !important;
+}
+.marginTop0{
+    margin-top: 0px !important;
+}
+.marginTop5{
+    margin-top: 5px !important;
+}
+.marginTop15{
+    margin-top: 15px !important;
+}
+.marginTop10{
+    margin-top: 10px !important;
+}
+.marginTop50{
+    margin-top: 50px !important;
+}
+.marginTop100{
+    margin-top: 100px !important;
+}
+.marginTop7{
+    margin-top: 7px !important;
+}
+.marginBottom20{
+    margin-bottom: 20px;
+}
+.marginBottom30 {
+    margin-bottom: 30px;
+}
+.marginBottom50{
+    margin-bottom: 50px !important;
+}
+.marginBottom150{
+    margin-bottom: 150px !important;
+}
+.marginTop15{
+    margin-top: 15px !important;
+}
+.floatRight {
+    float: right !important;
+}
+.floatLeft {
+    float: left !important;
+}
+.blackBold{
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    color: #000 !important;
+    outline: none !important;
+}
+.capitalize{
+    text-transform: capitalize !important;
+}
+.backgroundWhite{
+    background: #fff !important;
+    background-color: #fff !important;    
+}
+.stopResizeTextArea{
+    resize: none;
+}
+.colorBlack{
+    color: #000;
+}
+.colorWhite{
+    color: #fff;
+}
+.displayInline{
+    display: inline !important;
+}
+.displayBlock{
+    display: block !important;
+}
+.displayIB{
+    display: inline-block !important;
+}
+.displayNone{
+    display: none !important;
+}
+.width160{
+    width: 160px;
+}
+.width180{
+    width: 180px;
+}
+.formContainer{
+    margin: 10px 20px;
+    padding: 10px;
+}
+.textAreaHW{
+    height: 7.5em !important;
+    width: 30em !important;
+}
+.radioFieldSetClass{
+    display: -webkit-inline-box !important;
+    position: absolute;
+}
+.outLineNone{
+    outline: none !important;
+}
+.textDecoNone{
+    text-decoration: none !important;
+}
+.boxShadowNone{
+    box-shadow: none !important;
+}
+.borderLeftGrey{
+    border-left: 1px solid #d8dde6;
+}
+
+/*
+    Section: Placeholder styles
+*/
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+   font-weight: 400;
+  }
+  ::-moz-placeholder { /* Firefox 19+ */
+    font-weight: 400;
+  }
+  :-ms-input-placeholder { /* IE 10+ */
+    font-weight: 400;
+  }
+  :-moz-placeholder { /* Firefox 18- */
+    font-weight: 400;
+  }
+
+
+/*
+    Section: Common Header Bar Classes 
+    Description: This section contains classes fot override common header-bar
+*/
+.navbar, .navbar-inverse {
+    background-color: #222 !important;
+    border-color: #080808 !important;
+    height: 57px !important;
+    margin: 0px !important;
+    padding: 0px !important;
+    position: sticky !important;
+    z-index: 10 !important;
+} 
+.navbar-nav{
+    margin-top: 15px !important;
+    font-size: 16px !important;
+    color: white !important;
+}
+.navbar-nav > li {
+    margin-left: 5px !important;
+    font-size: 17px !important;
+}
+
+/*
+    Section: md-switch styles
+    Description: This style is use for override the style for md-switch
+*/
+md-switch.md-checked .md-bar {
+    background-color: #0079cc;
+}
+md-switch.md-checked.md-primary .md-bar{
+    background-color: #75C0F5!important;
+}
+
+/*
+    Section: Md-ripple
+*/
+md-tabs .md-tab .md-ripple-containerÂ {
+    color:Â rgb(128,216,255) !important;
+} 
+
+
+/*
+    Section : Alignment section
+    Description: This section contains all the datatype align ment icon
+*/
+.currencyTextAlign{
+    text-align: right !important;
+    padding-right: 25px !important;
+}
+.numberTextAlign{
+    text-align: right !important;
+    padding-right: 25px !important;
+}
+.normalBlank{
+    color: #000 !important;
+}
+.simpleTextAlign{
+    text-align: left !important;
+}
+.tableHeader{
+    text-align: left !important;
+}
+.tableHeaderFont{
+    font-size: 14px !important;
+}
+.labelFont{
+    font-size: 14px !important;
+}
+.lightBigIcon{
+    color: rgba(0,0,0,0.3) !important;
+    font-size: 26px !important;
+}
+.lightBigIcon:hover{
+    color: #0079cc !important;
+}
+.sectionHeaderFont{
+    font-size: 14px !important;
+}
+.normalTextFont{
+    font-size: 14px !important;
+}
+.verticalBottom{
+    vertical-align: bottom !important;
+}
+.verticalTop{
+    vertical-align: top !important;    
+}
+.verticalMiddle{
+    vertical-align: middle !important;
+}
+.inputLabelVAlign{
+    vertical-align: middle !important;
+}
+.warningText{
+    font-size: 18px; 
+    color: #a94442 !important;
+}
+.warningSmallText{
+    font-size: 12px; 
+    color: #a94442 !important;
+}
+.warnColor{
+    color: #a94442 !important;
+}
+.textAlignCenter{
+    text-align: center !important;
+}
+.textAlignLeft{
+    text-align: left !important;
+}
+.textAlignRight{
+    text-align: right !important; 
+}
+.width50P{
+    width: 50% !important;
+}
+.width20P{
+    width: 20% !important;
+}
+.width10P{
+    width: 10% !important;
+}
+.width30P{
+    width: 30% !important;
+}
+.width5P{
+    width: 5% !important;
+}
+.width2P{
+    width: 2% !important;
+}
+.noFoundMessage{
+    font-size: 16px;
+    color: rgba(0,0,0,0.5);
+}
+.borderRadius0 {
+    border-radius: 2px !important;
+}
+.borderBottomDark{
+    border-bottom: 1px solid rgba(0,0,0,0.7);
+}
+.smallMsgText{
+    font-size: 13px;
+    color: rgba(0,0,0,0.6);
+}
+.height10{
+    height: 10px;
+}
+.height50{
+    height: 50px;
+}
+.maxHeight300{
+    max-height: 300px;
+}
+.maxHeight280{
+    max-height: 280px;
+}
+.width280{
+    width: 280px;
+}
+.width250{
+    width:250px;    
+}
+.width150{
+    width: 150px;
+}
+.width140{
+    width: 140px;
+}
+.width100{
+    width: 100px;
+}
+.width100P{
+    width: 100%;
+}
+.width25P{
+    width: 25%;
+}
+.marginRight30{
+    margin-right: 30px;
+}
+.overFlowY{
+    overflow-y: auto;
+}.overflowX{
+    overflow-x: auto;
+}
+.overflowHidden{
+    overflow: hidden;
+}
+.marginLeft20{
+    margin-left: 20px !important;
+}
+.marginLeft-230{
+    margin-left: -230px;
+}
+.positionAbsolute{
+    position: absolute !important;
+}
+.borderNone{
+    border: none !important;
+}
+.fontWeight400{
+    font-weight: 400;
+}
+.paddingRight0{
+    padding-right: 0px !important;
+}
+.cursorPointer{
+    cursor: pointer;
+}
+/*
+    Section: Glyphicon  icons override
+*/
+.glyphicon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings' !important;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/*
+    Section: Override salesforce classic classes    
+*/
+
+.brandPrimaryFgr {
+    font-size: 12px !important;
+    margin: 0px !important;
+}
+
+.zen .zen-headerBottom {
+	border-top-left-radius: 5px !important ;
+    border-top-right-radius: 5px !important ;
+    background: -moz-linear-gradient(#E5F2F6,#CDE8F0) !important ;
+    background: -webkit-linear-gradient(#E5F2F6,#CDE8F0) !important ;
+    background: linear-gradient(#E5F2F6,#CDE8F0) !important ;
+    -moz-box-shadow: 0 3px 10px hsla(100,0%,0%,.3) !important ;
+    -webkit-box-shadow: 0 3px 10px hsla(100,0%,0%,.3) !important ;
+    box-shadow: 0 3px 10px hsla(100,0%,0%,.3) !important ;
+}
+
+.zen .zen-tabMenu a {
+	font-size: 1.083em !important ;
+    font-weight: bold !important ;
+}
+
+#tabContainer > nav {
+    background: none !important;
+    padding: 0px !important;
+}
+/*
+    Section: Indicator Section
+    description: For Showing Indicator
+*/
+.indicator{
+    background-color:#abffe3;
+    width:25px;
+    height:25px;
+    border-radius:50% !important;
+    font-size: 14px !important;
+}
+
+/*
+    Section: Loading Image Section
+    Description: This section contains all the style for 
+*/
+.myinput{
+    width: 155px !important;
+    background-color: white;
+    color: #16325c;
+    border: 1px solid #d8dde6;
+    border-radius: 4px;
+    transition: border 0.1s linear, background-color 0.1s linear;
+    display: inline-block;
+    padding: 0 0 0 15px;
+    line-height: 34px;
+}
+.loading-container{
+    padding-top: 20%;
+    position: fixed;
+    left: 0px;
+    top:0px;
+    z-index: 999999999;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(198, 198, 198,0.70);
+}
+
+.sortorder:after {
+content: '\25b2';
+}
+.sortorder.reverse:after {
+content: '\25bc';
+}
+.lookupHoverDetail {
+z-index: 99999;
+}
+body .lookupHoverDetail.individualPalette>div>.bPageBlock{
+width:395px;
+}
+
+/*
+    Section: This section is related to all design changes about 
+    Description: This style sheet is going to use for override all the vf pages tags
+*/
+/* Hide bottom button in page block button */
+.pbBottomButtons{
+    display: none !important;
+}
+/* Page top button of page block button in right side */
+.pbButton{
+    float: right !important;
+}
+/* override pbHeader section and make its background white */
+.pbHeader, .pbSubheader{
+    background: #fff !important;
+    background-color: #fff !important;
+    border: none !important;
+}
+/* remove pbBody margin and border */
+.pbBody{
+    margin: 0px !important;
+    background-color: #fff !important;
+    background: #fff !important;
+}
+/* override bPageBlock  for hide border top */
+.bPageBlock {
+    border: none !important;
+}
+
+/*
+    Section: Disable button class override
+    Description: This section is used for override class of disabled class
+*/
+.disabled{
+    border-color: #c4c4c4 !important;
+    color: #909090 !important;
+    pointer-events: none !important;
+    background-color: #e5e5e5 !important;
+    background: #e5e5e5 !important;
+}
+.disabled:hover{
+    border-color: #c4c4c4 !important;
+    color: #909090 !important;
+    background: none !important;
+    background-color: none !important;
+}
+/*
+    Section: Circle class for guidance
+*/
+.circleClass
+{
+    padding: 9px 9px;
+    width: 2px;
+    border-radius: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}

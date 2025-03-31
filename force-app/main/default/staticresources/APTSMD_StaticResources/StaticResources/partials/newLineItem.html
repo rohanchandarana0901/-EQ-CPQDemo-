@@ -1,0 +1,110 @@
+<md-dialog aria-label="Mango (Fruit)"  style="width:50%">
+  
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>New Line Item</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="max-width:800px;max-height:810px; ">
+     <md-content class="md-padding">
+      
+         <div class="form-group default-autocomplete">
+        <label for="usr">Product</label>
+       <md-autocomplete
+          md-search-text-change="searchTextChange(searchTextProduct)"
+          md-search-text="searchTextProduct"
+          md-selected-item-change="selectedItemChange(item)"
+          md-items="item in querySearchProduct(searchTextProduct)"
+          md-item-text="item.displayText"
+          md-min-length="0"
+          placeholder="Product"
+          md-menu-class="autocomplete-custom-template"
+          md-selected-item="agreementObj.productName"
+          >
+
+        <md-item-template>
+          <span class="item-title">
+            <md-icon md-svg-icon="{{envPath}}/img/icons/ic_card_giftcard_black_24px.svg"></md-icon>
+             <strong><span> {{item.displayText}} </span></strong>
+          </span>
+          <span class="item-metadata">
+            <span class="item-metastat">
+              - {{item.description}}
+            </span>
+          </span>
+        </md-item-template>
+      </md-autocomplete>
+      </div>
+
+
+
+
+
+
+        <div class="form-group">
+          <label for="usr">Description</label>
+          <input type="text" class="form-control default-input"  ng-model="newLineItemObj.description">
+        </div> 
+		<div class="form-group">
+          <label for="usr">Duration(Days)</label>
+          <input type="text" class="form-control default-input"  ng-model="newLineItemObj.durationDays">
+        </div>
+        <div class="form-group">
+          <label for="usr">Quantity</label>
+          <input type="text" class="form-control default-input"  ng-model="newLineItemObj.quantity">
+        </div> 
+        <div class="form-group">
+          <label for="usr">Price</label>
+          <input type="text" class="form-control default-input"  ng-model="newLineItemObj.listPrice">
+        </div> 
+         <div class="form-group">
+          <label for="usr">Total Price</label>
+          <input type="text" class="form-control default-input"  ng-model="newLineItemObj.totalPrice">
+        </div>
+		
+      </md-content>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+    <!--  <md-button ng-click="answer('Cancel')" >
+        Cancel
+      </md-button>
+      <md-button ng-click="answer('Save')" >
+        Save
+      </md-button>
+      <md-button ng-click="answer('SaveAndNew')" style="margin-right:20px;" >
+        Save & New
+      </md-button> -->
+       <md-button class="md-raised md-button-border-blue default-btn" ng-click="answer('Cancel')">Cancel</md-button>
+        <md-button class="md-raised md-button-border-blue default-btn" ng-click="answer('Save')">Save</md-button>
+         <md-button class="md-raised md-button-border-blue default-btn" ng-click="answer('SaveAndNew')">Save & New</md-button>
+    </md-dialog-actions>
+ 
+</md-dialog> 
+
+
+
+
+<!-- 
+
+            <div class="modal fade" id="Attachmentwindow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                      <div class="modal-dialog modal-lg" style="margin-top:150px;width:600px !important">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                           Header
+                           <h4 class="modal-title"> <div style="display:inline-flex;" class="modalHeader">Price Matrix</div></h4>
+                          </div>
+                <div class="modal-body" style="height: 397px;padding: 0px">
+                Body
+              </div>
+                        
+                          <div class="modal-footer" style="padding:1rem">
+                            <button type="button " class="slds-button slds-button--neutral newStyleBtn" style="" data-dismiss="modal">Done</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div> -->

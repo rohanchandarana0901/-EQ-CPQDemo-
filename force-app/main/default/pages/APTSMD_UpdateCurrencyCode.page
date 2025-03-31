@@ -1,0 +1,85 @@
+<apex:page controller="APTSMD_UpdateCurrencyCodeCtrl">
+    <apex:slds />
+    <script>
+        function setCurrency() {
+            var currency = document.getElementById('currency').value;
+            var inp = document.getElementById('inprocess');
+            inp.style.display = "block";
+            document.getElementById("response").innerHTML = '';
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.APTSMD_UpdateCurrencyCodeCtrl.setCurrency}',
+                currency,
+                function(result, event) {
+
+                    if (result) {
+                        // Get DOM IDs for HTML and Visualforce elements like this
+                        inp.style.display = "none";
+                        document.getElementById("response").innerHTML =
+                            "<br/>\n<pre><span style='color:green'>" +
+                            'Success' +
+                            "</span></pre>";
+                    } else if (event.type === 'exception') {
+                        inp.style.display = "none";
+                        document.getElementById("response").innerHTML =
+                            event.message + "<br/>\n<pre>" + event.where +
+                            "</pre>";
+                    } else {
+                        inp.style.display = "none";
+                        document.getElementById("response").innerHTML =
+                            "<br/>\n<pre><span style='color:red'>" +
+                            "Please provide valid Currency" +
+                            "</span></pre>";
+                    }
+                }, {
+                    escape: true
+                }
+            );
+        }
+
+    </script>
+    <style>
+        .padwell {
+            padding: 5rem 5rem !important;
+        }
+        
+        td {
+            padding: 0.5rem 0.5rem !important;
+        }
+
+    </style>
+
+    <body>
+        <div class="slds-grid slds-gutters padwell">
+            <table>
+                <tr>
+                    <td width="5%">
+                        Currency
+                    </td>
+                    <td width="30%">
+                        <input type="text" id="currency" placeholder="USD, EUR" required="" class="slds-input"
+                        />
+                    </td>
+                    <td width="20%">
+                        <button onclick="setCurrency()" class="slds-button slds-button_brand">Set Currency</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div id="response"></div>
+                    </td>
+                </tr>
+            </table>
+            <div class="demo-only" id="inprocess" style="height:6rem;display:none;">
+                <div class="slds-spinner_container">
+                    <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                        <span class="slds-assistive-text">Loading</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </body>
+
+</apex:page>

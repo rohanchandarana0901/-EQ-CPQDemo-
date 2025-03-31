@@ -1,0 +1,239 @@
+<apex:page controller="APTSMD_clearAccountControllerWithKeyword" lightningStylesheets="true">
+    <apex:slds ></apex:slds>
+    <html ng-app="myApp" ng-controller="myCtrl">
+
+    <head>
+        <title>Clear Account Data</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+        <style>
+            .slds-scope input {
+                font-size: 14px !important;
+            }
+
+            .show-dropdown {
+                display: block !important;
+                visibility: visible !important
+            }
+
+            .text-align-left {
+                text-align: left !important;
+            }
+
+            .left {
+                float: left !important;
+            }
+
+            .standard-font {
+                font-size: 14px !important;
+            }
+
+            .info-font {
+                font-size: 14px !important;
+            }
+
+            .red-font {
+                font-size: 14px !important;
+                color: red !important;
+            }
+
+            .component {
+                width: 50%;
+                float: right !important;
+                text-align: left !important;
+                display: grid;
+            }
+
+            .help-text {
+                float: left !important;
+                text-align: left !important;
+            }
+
+            .pad-well {
+                padding: 15px 15px;
+            }
+
+            .slds-scope .slds-input {
+                line-height: 2.675rem !important;
+            }
+
+            .rotate {
+                animation: rotate 1.5s linear infinite;
+            }
+
+            @keyframes rotate {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .spinner {
+                display: inline-block;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+            }
+        </style>
+        <script>
+
+            var app = angular.module('myApp', []);
+            app.controller('myCtrl', function ($scope) {
+                $scope.clearDataMsg = 'Clear Data';
+                $scope.accounts = JSON.parse('{!jsonAccounts}');
+                $scope.selectedAccountId = '';
+                $scope.accountName = '';
+                $scope.keyword = '';
+                console.log($scope.accounts);
+                $scope.lookupClick = function () {
+                    var listbox = document.getElementById('listbox-id-1');
+                    listbox.classList.add("show-dropdown");
+
+                }
+                $scope.selectAccount = function (a) {
+                    $scope.selectedAccountId = a.Id;
+                    $scope.accountName = a.Name;
+
+                    var dropdown = document.getElementsByClassName("show-dropdown");
+                    dropdown[0].classList.remove('show-dropdown');
+                    var submit = document.getElementById("submit");
+                    submit.focus();
+                }
+                $scope.clearSelected = function () {
+                    $scope.selectedAccountId = '';
+                    $scope.accountName = '';
+                }
+                $scope.goBack = function () {
+                    window.history.back();
+                }
+                $scope.clearData = function () {
+                    $scope.clearDataMsg = 'Processing';
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.APTSMD_clearAccountControllerWithKeyword.clearData}',
+                        $scope.selectedAccountId, $scope.accountName, $scope.keyword,
+                        function (result, event) {
+                            console.log(result);
+                            console.log(event);
+                            if (event.status) {
+                                window.top.location.href = result;
+                            } else if (event.type === 'exception') {
+                                $scope.clearDataMsg = 'Clear Data';
+                            } else {
+                                $scope.clearDataMsg = 'Clear Data';
+                            }
+                        },
+                        { escape: true }
+                    );
+                }
+
+            });
+        </script>
+    </head>
+
+    <body>
+        <c:APTSMD_CommonHeader pageName1="Clear Account Data" objectName="" iconName="account" type="standard" />
+        <div class="apttusContainer" style="height:100%;">
+            <div class="apttusPanel textAlignCenter marginBottom150" style="margin-top: 70px;">
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_12-of-12 info-font text-align-left">
+                        <b>Note</b>: If only
+                        <b>Account</b> is provided, then all the records for the respective account will be deleted. Otherwise,
+                        the records with matching
+                        <b>Keyword</b> only will be processed for the given account.
+                        <br/>
+                        <br/>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12 red-font text-align-left">
+                        We are only considering non-report accounts for deletion. So, if an account has "Is Include in report" checked, then it will
+                        not be listed in the dropdown. Deleting the records belonging to those accounts will impact MDO reports
+                        and dashboards.
+                        <br/>
+                        <br/>
+                        <br/>
+                    </div>
+
+                </div>
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_6-of-12">
+                        <div class="slds-form-element component">
+                            <label class="slds-form-element__label left standard-font" for="combobox-id-1" id="combobox-label-id-33">Account</label>
+                            <div class="slds-form-element__control">
+                                <div class="slds-combobox_container">
+                                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
+                                        <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                            <input type="text" class="slds-input slds-combobox__input" id="combobox-id-1" aria-autocomplete="list" aria-controls="listbox-id-1"
+                                                aria-expanded="false" aria-haspopup="listbox" autoComplete="off" role="combobox"
+                                                placeholder="Search Accounts" ng-model="accountName" ng-click="lookupClick()"
+                                            />
+
+                                            <span class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                                <svg class="slds-icon slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#search')}"></use>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid" role="listbox">
+                                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                                <li role="presentation" class="slds-listbox__item" ng-repeat="a in accounts | filter: accountName" ng-click="selectAccount(a)">
+                                                    <div id="option1" class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option">
+                                                        <span class="slds-media__figure slds-listbox__option-icon">
+                                                            <span class="slds-icon_container slds-icon-standard-account">
+                                                                <svg class="slds-icon slds-icon_small" aria-hidden="true" id="headerIcon">
+                                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/standard-sprite/svg/symbols.svg#account')}"></use>
+                                                                </svg>
+                                                            </span>
+                                                        </span>
+                                                        <span class="slds-media__body">
+                                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity left standard-font">{{a.Name}}</span>
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <div class="help-text standard-font pad-well">1. All the Proposals, Agreements, Orders, Billing Summary, Billing Schedules, Invoices etc. will
+                            be deleted for the selected Account.</div>
+                    </div>
+                </div>
+                <br/>
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_6-of-12">
+                        <div class="slds-form-element component">
+                            <label class="slds-form-element__label left standard-font" for="text-input-id-46">
+                                Insert Keyword</label>
+                            <div class="slds-form-element__control">
+                                <input type="text" id="text-input-id-46" placeholder="Insert Keyword" ng-model="keyword" class="slds-input" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <div class="help-text standard-font pad-well">2. Out of the Proposals, Agreements, Orders, Billing Summary, Billing Schedules, Invoices etc. for
+                            the selected Account, the records with matching Keyword only will be processed.</div>
+                    </div>
+                </div>
+                <br/>
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_5-of-12">
+                        <button id="submit" class="slds-button slds-button_brand standard-font andsButton" ng-click="clearData()">{{clearDataMsg}}
+                            <svg ng-if="clearDataMsg!='Clear Data'" class="slds-button__icon slds-icon_small slds-button__icon_right spinner rotate"
+                                aria-hidden="true">
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#spinner')}"></use>
+                            </svg>
+                        </button>
+                        <button class="slds-button slds-button_neutral standard-font apttusBtnWhite" ng-click="goBack()">Go Back</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </body>
+
+    </html>
+</apex:page>

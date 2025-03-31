@@ -1,0 +1,909 @@
+<!-- 
+@Name: APTSMD_ManageProposalTerms
+@Author: Tirth Mathuria
+@CreateDate: 17-Aug-2015
+@Description: New Angular JS Based Visual Force Page for Manage Proposal Terms functionality
+@UsedBy: Product Configuration
+******************************************************************
+@ModifiedBy: Narendra Singh
+@ModifiedDate: 27-Aug-2015
+@ChangeDescription: Added Fixed Bar for  Buttons and Header
+******************************************************************/
+@ModifiedBy: Japan Bhavsar, Apttus Lab
+@ModifiedDate: 13-Dec-2018, 09-08-2019
+@ChangeDescription: Chnage UI/UX Part only
+*******************************************************************
+-->
+<apex:page standardStyleSheets="false" lightningStyleSheets="true" standardController="Apttus_Config2__ProductConfiguration__c"
+    extensions="APTSMD_ManageProposalTermsController" showheader="false" sidebar="false"
+    docType="html-5.0">
+    <apex:form >
+        <apex:actionStatus id="buttonActionStatus" onstart="$('#saveLoader').show()" onstop="$('#saveLoader').hide()"
+        />
+        <apex:actionfunction name="saveTerms" action="{!saveDealTerms}" rerender="none" status="buttonActionStatus">
+            <apex:param name="idString" value="" />
+        </apex:actionfunction>
+        <apex:actionfunction name="cancelTerms" action="{!cancelAndBack}" rerender="none"
+        />
+        <html lang="en" ng-app="demoApp" ng-cloak="true">
+
+        <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Deal Terms</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css"
+            />
+
+            <!-- stylesheets for CPQ like formatting -->
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"
+            />
+            <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQCommon.css')}"
+            />
+            <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQOptions.css')}"
+            />
+            <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources, 'CPQDelight.css')}"
+            />
+            <apex:stylesheet value="{!URLFOR($Resource.APTSMD_CustomCSS)}" />
+            <apex:includeScript value="{!URLFOR($Resource.APTSMD_ngResource, 'angularLib/angular.min.js')}"
+            />
+            <apex:includeScript value="{!URLFOR($Resource.APTSMD_ngResource, 'jquery/jquery.min.js')}"
+            />
+            <apex:includeScript value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/js/bootstrap.min.js')}"
+            />
+            <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap.min.css')}"
+            />
+            <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap-theme.min.css')}"
+            />
+            <apex:outputPanel rendered="{!NOT(ISNULL(customCSSStyle))}">
+                <apex:dynamicComponent componentValue="{!customCSSStyle}" />
+            </apex:outputPanel>
+
+            <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap.min.css')}"
+            />
+            <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap-theme.min.css')}"
+            />
+
+
+            <!-- Do not remove this as this all new design depends on this -->
+            <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+            <style>
+                    .buttonUI {
+                    background: rgb(66, 139, 202);
+                    color: white;
+                    width: 70px;
+                    hiehgt: 25;
+                    .buttonUIDisabled {
+                        background-color: white;
+                        color: black;
+                        width: 70px;
+                        hiehgt: 25
+                    }
+
+            </style>
+
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    //extendable serach bar
+                    var searchClicked = false;
+                    $('#search').click(function() {
+                        if (searchClicked == false) {
+                            $('#searchBar').show();
+                            $('#searchBar').animate({
+                                width: "30%"
+                            }, 500);
+
+                        } else if (searchClicked == true) {
+                            $('#searchBar').animate({
+                                width: "0px"
+                            }, 500, "linear", function() {
+                                $(this).hide();
+                            });
+                        }
+                        searchClicked = !searchClicked
+                    });
+                    //end of search bar
+
+                });
+
+
+                var searchValue = '';
+                var exceptionTypeValue = '';
+
+
+                // define the app
+                var demoApp = angular.module('demoApp', []);
+
+                //pagination
+                var contrl = demoApp.controller('DemoCtrl', function($scope,
+                    $filter) {
+
+
+                    $scope.pagesize = {};
+                    $scope.pagesize1 = {};
+                    $scope.pagesize.selected = 10;
+                    $scope.pagesizes = [{
+                        name: "10",
+                        id: 10
+                    }, {
+                        name: "20",
+                        id: 20
+                    }, {
+                        name: "50",
+                        id: 50
+                    }, {
+                        name: "100",
+                        id: 100
+                    }];
+                    $scope.pagesize1.selected = 10;
+                    $scope.pagesizes1 = [{
+                        name: "10",
+                        id: 10
+                    }, {
+                        name: "20",
+                        id: 20
+                    }, {
+                        name: "50",
+                        id: 50
+                    }, {
+                        name: "100",
+                        id: 100
+                    }]; //pagination   
+
+                    $scope.productVal = 0;
+                    $scope.mediaVal = 0;
+
+
+                    $scope.exceptionType = {};
+                    $scope.exceptionType.selected = '';
+
+                    $scope.exceptionTypes = [{
+                        name: "All Terms",
+                        id: ''
+                    }, {
+                        name: "Corporate",
+                        id: "Corporate"
+                    }, {
+                        name: "Other",
+                        id: "Other"
+                    }, {
+                        name: "Procurement",
+                        id: "Procurement"
+                    }, {
+                        name: "Sales",
+                        id: "Sales"
+                    }];
+
+                    //pagination
+                    $scope.curPage = 0;
+                    $scope.curPage1 = 0;
+                    $scope.Math = Math;
+                    $scope.tempdata = [];
+                    $scope.records = [];
+                    $scope.records1 = [];
+                    //pagination     
+
+                    //pagination
+                    $scope.updatePageSize = function() {
+                        $scope.curPage = 0;
+                        $scope.curPage1 = 0;
+                        $scope.itemsPerPage = $scope.pagesize.selected;
+                        $scope.itemsPerPage1 = $scope.pagesize1.selected;
+                        var index1 = 0;
+                        var index2 = 0;
+
+                        if ($scope.tempdata.length > 0) {
+                            for (var i = 0; i < $scope.tempdata.length; i++) {
+                                if ($scope.tempdata[i].Apttus__Approval_Required__c ==
+                                    true) {
+                                    $scope.records[index1] = $scope
+                                        .tempdata[i];
+                                    index1++;
+                                } else if ($scope.tempdata[i].Apttus__Approval_Required__c ==
+                                    false) {
+                                    $scope.records1[index2] =
+                                        $scope.tempdata[i];
+                                    index2++;
+                                }
+                            }
+                        } else {
+                            if ($scope.records.length == 0) {
+                                $scope.records = {!TEListJson
+                                };
+                            }
+                            if ($scope.records1.length == 0) {
+                                $scope.records1 = {!nonTEListJson
+                                };
+                            }
+
+                            //New Code for retrieving Deal Terms for existing Proposal 21-08-2015,Author:Tirth Mathuria
+
+                            $scope.savedTEIDs = {!savedTeIDsJson
+                            };
+
+                            angular.forEach($scope.records,
+                                function(item) {
+
+                                    angular.forEach($scope.savedTEIDs,
+                                        function(subItem) {
+
+                                            if (item.hasOwnProperty(
+                                                    'Id')) {
+                                                if (item[
+                                                        'Id'
+                                                    ] ===
+                                                    subItem
+                                                ) {
+                                                    item.checked =
+                                                        true;
+                                                }
+                                            }
+                                        });
+                                });
+                            angular.forEach($scope.records1,
+                                function(item) {
+
+                                    angular.forEach($scope.savedTEIDs,
+                                        function(subItem) {
+
+                                            if (item.hasOwnProperty(
+                                                    'Id')) {
+                                                if (item[
+                                                        'Id'
+                                                    ] ===
+                                                    subItem
+                                                ) {
+                                                    item.checked =
+                                                        true;
+                                                }
+                                            }
+
+                                        });
+                                });
+                        }
+
+                        $scope.numberOfPages = function() {
+                            return Math.ceil($scope.records.length /
+                                $scope.itemsPerPage);
+                        };
+
+                        $scope.numberOfPages1 = function() {
+                            return Math.ceil($scope.records1.length /
+                                $scope.itemsPerPage1);
+                        };
+                    }
+
+                    $scope.updatePageSizeSearch = function() {
+                            $scope.curPage = 0;
+                            $scope.curPage1 = 0;
+                            var index1 = 0;
+                            var index2 = 0;
+                            $scope.itemsPerPage = $scope.pagesize.selected;
+                            $scope.itemsPerPage1 = $scope.pagesize1.selected;
+                            if ($scope.tempdata.length > 0) {
+                                for (var i = 0; i < $scope.tempdata.length; i++) {
+                                    if ($scope.tempdata[i].Apttus__Approval_Required__c ==
+                                        true) {
+                                        $scope.records[index1] = $scope
+                                            .tempdata[i];
+                                        index1++;
+                                    } else if ($scope.tempdata[i].Apttus__Approval_Required__c ==
+                                        false) {
+                                        $scope.records1[index2] =
+                                            $scope.tempdata[i];
+                                        index2++;
+                                    }
+                                }
+                            } else {
+                                $scope.records = [];
+                                $scope.records1 = [];
+                            }
+                            $scope.numberOfPages = function() {
+                                return Math.ceil($scope.records.length /
+                                    $scope.itemsPerPage);
+                            };
+                            $scope.numberOfPages1 = function() {
+                                return Math.ceil($scope.records1.length /
+                                    $scope.itemsPerPage1);
+                            };
+                        } //Pagination
+
+                    $scope.uncheckRecord = function($index, val) {
+
+
+                        angular.forEach($scope.records, function(
+                            item) {
+
+                            if (item.Apttus__Exception__c ==
+                                val) {
+                                item.checked = false;
+                            }
+
+                        });
+                        angular.forEach($scope.records1, function(
+                            item) {
+
+                            if (item.Apttus__Exception__c ==
+                                val) {
+                                item.checked = false;
+                            }
+
+                        });
+                    }
+                    $scope.makeSearch = function(name, typ) {
+
+                        $scope.reserver = [];
+                        $scope.tempstorage = [];
+                        $scope.tempdata = [];
+                        $scope.records = [];
+                        $scope.records1 = [];
+                        exceptionTypeValue = $scope.exceptionType.selected;
+
+                        $scope.records = {!TEListJson
+                        };
+                        $scope.records1 = {!nonTEListJson
+                        };
+
+                        searchValue = document.getElementById(
+                            'searchBar').value;
+
+                        if (searchValue == '' && exceptionTypeValue ==
+                            '') {
+                            $scope.updatePageSize();
+                        } else {
+                            if (searchValue != '') {
+
+                                var rec = 0;
+                                for (var i = 0; i < $scope.records.length; i++) {
+
+                                    var exception = '';
+                                    var exceptionType = '';
+                                    var description = '';
+
+                                    if ($scope.records[i].Apttus__Exception__c !=
+                                        null) {
+                                        exception = $scope.records[
+                                                i].Apttus__Exception__c
+                                            .toUpperCase();
+                                    }
+                                    if ($scope.records[i].Apttus__Exception_Type__c !=
+                                        null) {
+                                        exceptionType = $scope.records[
+                                                i].Apttus__Exception_Type__c
+                                            .toUpperCase();
+                                    }
+                                    if ($scope.records[i].Apttus__Description__c !=
+                                        null) {
+                                        description = $scope.records[
+                                                i].Apttus__Description__c
+                                            .toUpperCase();
+                                    }
+                                    if (exception.includes(
+                                            searchValue.toUpperCase()
+                                        ) || description.includes(
+                                            searchValue.toUpperCase()
+                                        ) || exceptionType.includes(
+                                            searchValue.toUpperCase()
+                                        )) {
+
+                                        $scope.tempdata[rec++] =
+                                            $scope.records[i];
+                                    }
+                                }
+                                for (var i = 0; i < $scope.records1
+                                    .length; i++) {
+
+                                    var exception = '';
+                                    var exceptionType = '';
+                                    var description = '';
+
+                                    if ($scope.records1[i].Apttus__Exception__c !=
+                                        null) {
+                                        exception = $scope.records1[
+                                                i].Apttus__Exception__c
+                                            .toUpperCase();
+                                    }
+                                    if ($scope.records1[i].Apttus__Exception_Type__c !=
+                                        null) {
+                                        exceptionType = $scope.records1[
+                                                i].Apttus__Exception_Type__c
+                                            .toUpperCase();
+                                    }
+                                    if ($scope.records1[i].Apttus__Description__c !=
+                                        null) {
+                                        description = $scope.records1[
+                                                i].Apttus__Description__c
+                                            .toUpperCase();
+                                    }
+
+                                    if (exception.includes(
+                                            searchValue.toUpperCase()
+                                        ) || description.includes(
+                                            searchValue.toUpperCase()
+                                        ) || exceptionType.includes(
+                                            searchValue.toUpperCase()
+                                        )) {
+                                        $scope.tempdata[rec++] =
+                                            $scope.records1[i];
+                                    }
+                                }
+
+                            } else {
+
+                                angular.extend($scope.tempdata,
+                                    $scope.records, $scope.records1
+                                );
+
+                            }
+
+                            $scope.tempstorage = $scope.tempdata;
+
+                            if (exceptionTypeValue != '') {
+                                $scope.tempstorage = $scope.tempdata;
+                                var rec = 0;
+                                for (var i = 0; i < $scope.tempdata
+                                    .length; i++) {
+                                    if ($scope.tempdata[i].Apttus__Exception_Type__c !=
+                                        null) {
+                                        if ($scope.tempdata[i].Apttus__Exception_Type__c ==
+                                            exceptionTypeValue) {
+                                            $scope.reserver[rec++] =
+                                                $scope.tempdata[i];
+                                        }
+                                    }
+                                }
+
+                                $scope.tempdata = $scope.reserver;
+
+
+                                $scope.reserver = [];
+                            } else {
+                                $scope.tempdata = $scope.tempstorage;
+                            }
+
+                            $scope.tempstorage = $scope.tempdata;
+                            $scope.updatePageSizeSearch();
+                        }
+                    }
+
+
+                    $scope.updatePageSize(); //pagination
+
+                    $scope.selectedIds = '';
+                    //loading image start
+                    var saveDataIcon = false;
+                    var submitIcon = false;
+                    $scope.showLoadingIcon = function() {
+                        return saveDataIcon;
+                    }
+                    $scope.saveData = function() {
+                        submitIcon = true;
+                        angular.forEach($scope.records, function(
+                            item) {
+                            if (item.checked == true) {
+                                $scope.selectedIds += item.Id +
+                                    '-';
+                            }
+                        });
+                        angular.forEach($scope.records1, function(
+                            item) {
+                            if (item.checked == true) {
+                                $scope.selectedIds += item.Id +
+                                    '-';
+                            }
+                        });
+                        saveTerms($scope.selectedIds);
+                    }
+
+
+                    $scope.cancelData = function() {
+                        saveDataIcon = true;
+                        cancelTerms();
+                    }
+
+                    $scope.showLoadingIconOnSubmit = function() {
+                        return submitIcon;
+                    }
+
+                    // resetFilter() - reset filter 
+                    $scope.resetFilter = function() {
+                        $scope.searchBar1 = '';
+                    }
+
+
+                });
+
+                // pagination 
+                angular.module('demoApp').filter('pagination', function() {
+                    return function(input, start) {
+                        start = +start;
+                        return input.slice(start);
+                    };
+                }); // pagination
+
+                // pagination
+                angular.module('demoApp').filter('pagination', function() {
+                    return function(input, start) {
+                        start = +start;
+                        return input.slice(start);
+                    };
+                }); // pagination
+
+
+
+                function removeTerms(obj) {
+                    var selectedTerm = $(obj).closest('tr').find("td:first").text();
+                    alert(selectedTerm);
+
+                    $('table').find('input[type="checkbox"]:checked').each(
+                        function() {
+                            var selectedException = $(this).closest('tr').find(
+                                "td").eq(1).text();
+                            alert(selectedException);
+                        });
+                }
+
+            </script>
+            <style>
+                .numbering {
+                    font-weight: normal!important;
+                    font-size: 1.5rem!important;
+                    color: #000 !important;
+                    outline: none !important;
+                }
+                
+                .hrClass {
+                    display: block;
+                    height: 1px;
+                    border: 0;
+                    border-top: 1px solid #ccc;
+                    margin: 1em 0;
+                    padding: 0;
+                }
+                
+                .SearchFixHeader {
+                    position: fixed;
+                    width: 100%;
+                    background-color: #FFF;
+                    z-index: 99;
+                    margin-top: -5px;
+                    box-shadow: #A5A5A5 0px 1px 8px 1px;
+                    padding-bottom: 5px;
+                }
+                
+                .panel-primary > .panel-heading {
+                    background: rgb(243, 242, 242) !important;
+                }
+                
+                .moved {
+                    margin-top: 43px! important;
+                }
+                
+                .buttonCls {
+                    background: white!important;
+                    border: none !important;
+                    float: right !important;
+                    box-shadow: none!important;
+                }
+                
+                .floatRight {
+                    float: right !important;
+                }
+
+            </style>
+
+            <!-- Google Analytics Script -->
+            <script>
+                (function(i, s, o, g, r, a, m) {
+                    i['GoogleAnalyticsObject'] = r;
+                    i[r] = i[r] || function() {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
+                    a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                    a.async = 1;
+                    a.src = g;
+                    m.parentNode.insertBefore(a, m)
+                })(window, document, 'script',
+                    'https://www.google-analytics.com/analytics.js', 'ga');
+
+                ga('create', 'UA-78889226-1', 'auto');
+                ga('send', 'pageview');
+
+            </script>
+        </head>
+        <c:APTSMD_CommonHeader pageName1="Manage Proposal Term" objectName="" iconName="account"
+            type="standard" />
+
+        <body class="" ng-controller="DemoCtrl" ng-cloak="true">
+
+            <!-- New Header bar by Japan Bhavsar on 12/13/2018 -->
+
+
+            <!-- New container by japan Bhavsar on 12/13/2018 All code goes here -->
+            <div class="apttusContainer moved">
+
+                <!-- Button Section -->
+                <div class="floatRight apttusPanel buttonCls">
+                    <button type='button' class="apttusBtn floatRight" ng-click="saveData()">
+                            Save &amp; Return to Cart
+                        </button>
+                    <button type='button' class="apttusBtnWhite slds-button slds-button--brand floatRight marginRight10"
+                        ng-click="cancelData()">
+                            Cancel
+                        </button>
+                </div>
+
+                <!-- New Filter Panel -->
+                <div class="apttusPanel marginTop55">
+                    <div>
+                        <p class="blackBold margin0" ng-click="showFilter = !showFilter"><i ng-init="showFilter = false;" class="material-icons verticalMiddle">{{showFilter ? 'expand_more' : 'chevron_right'}}</i>&nbsp;Search
+                            Filters</p>
+                    </div>
+                    <div ng-show="showFilter">
+                        <div class="row marginTop10">
+                            <div class="col-md-4 col-sm-6 col-xs-12">
+                                <input type="text" ng-model="searchBar1" class="form-control apttusInput" placeholder="Search..."
+                                    id="searchBar" />
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <select class="form-control apttusInput" id="exceptionType" ng-model="exceptionType.selected"
+                                    ng-options="exceptionType.id as exceptionType.name for exceptionType in exceptionTypes"></select>
+                            </div>
+                            <div class="col-md-1 col-sm-12 col-xs-12 textAlignCenter">
+                                <button type='button' class="apttusBtnWhite slds-button slds-button--brand" ng-click="resetFilter()">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- This is new design of page blocks by Japan Bhavsar on 12/13/2018 -->
+                <div>
+                    <div class="row margin0 padding0">
+                        <div class="col-md-7 col-sm-12 col-xs-12 padding0 paddingRight10">
+                            <div class="apttusPanel">
+                                <div class="marginBottom10">
+                                    <div class="width45P displayIB">
+                                        <label class="blackBold">Records per Page:</label>
+                                        <select class="form-control apttusInput" ng-model="pagesize.selected" ng-change="updatePageSize()"
+                                            ng-options="pagesize.id as pagesize.name for pagesize in pagesizes">
+                                            </select>
+                                    </div>
+                                    <!--
+                                        -->
+                                    <div class="width45P textAlignRight displayIB verticalMiddle">
+                                        <button type="button" class="apttusBtnWhite slds-button slds-button--brand" href="#"
+                                            ng-class="{disabled: curPage == 0}" ng-disabled="curPage == 0"
+                                            ng-click="curPage=0" value="First">
+                                                <i class="fa fa-fast-backward"></i>
+                                            </button>
+                                        <button type="button" class="apttusBtnWhite slds-button slds-button--brand" href="#"
+                                            ng-class="{disabled: curPage == 0}" ng-disabled="curPage == 0"
+                                            ng-click="curPage=curPage-1" value="Previous">
+                                                <i class="fa fa-step-backward"></i>
+                                            </button>
+                                        <label class="numbering">{{curPage + 1}} of {{ numberOfPages() }}</label>
+                                        <button type="button" class="apttusBtnWhite slds-button slds-button--brand" href="#"
+                                            ng-class="{disabled: curPage == Math.floor(records.length/itemsPerPage)}"
+                                            ng-disabled="curPage >= records.length/itemsPerPage - 1"
+                                            ng-click="curPage=curPage+1" value="Next">
+                                                <i class="fa fa-step-forward"></i>
+                                            </button>
+                                        <button type="button" class="apttusBtnWhite slds-button slds-button--brand" href="#"
+                                            ng-class="{disabled: curPage == Math.floor(records.length/itemsPerPage)}"
+                                            ng-disabled="curPage >= records.length/itemsPerPage - 1"
+                                            ng-click="curPage=Math.floor(records.length/itemsPerPage)"
+                                            value="Last">
+                                                <i class="fa fa-fast-forward"></i>
+                                            </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                            <h2 class="panel-title">
+                                                <label id='collapse1' class="blackBold verticalMiddle">
+                                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" onClick="$('#a1').toggle();$('#a2').toggle();">
+                                                        <span style="float:left;display:none" id="a1">
+                                                            <i class="fa fa-plus"></i>
+                                                        </span>
+                                                        <span style="float:left;display:block" id="a2">
+                                                            <i class="fa fa-minus"></i>
+                                                        </span>
+                                                    </a>
+                                                </label>
+                                                <label class="blackBold verticalMiddle">&nbsp;&nbsp;Pre-Approved Language (No approvals Required)</label>
+                                            </h2>
+                                        </div>
+                                        <div class="panel-body panel-collapse collapse in maxHeight300 paddingTop0 overFlowY"
+                                            role="tabpanel" id="collapseOne">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="blackBold tableHeader verticalMiddle tableHeaderFont"></th>
+                                                        <th class="blackBold tableHeader verticalMiddle tableHeaderFont">Proposal Terms</th>
+                                                        <th class="blackBold tableHeader verticalMiddle tableHeaderFont">Term Type</th>
+                                                        <th class="blackBold tableHeader verticalMiddle tableHeaderFont">Description</th>
+                                                        <th class="blackBold tableHeader verticalMiddle tableHeaderFont" width="20px;"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tb" class="ProductSelectionTbody">
+                                                    <tr class="" ng-repeat="line in records | filter:searchBar1| filter:{ Apttus__Exception_Type__c: exceptionType.selected } |pagination: curPage * itemsPerPage|limitTo:itemsPerPage"
+                                                        ng-if="line.APTSMD_Pre_Approved_Language__c==true">
+                                                        <td class="verticalMiddle">
+                                                            <input type="checkbox" id="CheckId" class="form-checkbox verticalMiddle" value="{{line.Apttus__Active__c}}"
+                                                                ng-model="line.checked"
+                                                            />
+                                                        </td>
+                                                        <td class="verticalMiddle normalBlank normalTextFont">{{line.Apttus__Exception__c}}</td>
+                                                        <td class="verticalMiddle normalBlank normalTextFont">{{line.Apttus__Exception_Type__c}}</td>
+                                                        <td class="verticalMiddle normalBlank normalTextFont">{{line.Apttus__Description__c}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 col-sm-12 col-xs-12 padding0">
+                            <div class="apttusPanel">
+                                <div class="panel-heading">
+                                    <label class="blackBold verticalMiddle">
+                                            Selected Terms (Pre-Approved Language)
+                                        </label>
+                                </div>
+                                <div class="panel-body overFlowY paddingTop0" style="max-height: 397px;">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th width="20%" class="blackBold verticalMiddle tableHeader tableHeaderFont">Proposal Terms</th>
+                                                <th width="20%" class="blackBold verticalMiddle tableHeader tableHeaderFont">Term Type</th>
+                                                <th width="50%" class="blackBold verticalMiddle tableHeader tableHeaderFont">Description</th>
+                                                <th width="10%" class="blackBold verticalMiddle tableHeader tableHeaderFont"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tb" class="ProductSelectionTbody">
+                                            <tr ng-repeat="line in records | filter: {checked:true}">
+                                                <td class="verticalMiddle normalBlank normalTextFont" width="20%">{{line.Apttus__Exception__c}}</td>
+                                                <td class="verticalMiddle normalBlank normalTextFont" width="20%">{{line.Apttus__Exception_Type__c}}</td>
+                                                <td class="verticalMiddle normalBlank normalTextFont" width="50%">{{line.Apttus__Description__c}}</td>
+                                                <td class="verticalMiddle normalBlank normalTextFont" width="10%">
+                                                    <i class="material-icons lightBigIcon" ng-click="uncheckRecord($index,line.Apttus__Exception__c)">delete</i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row margin0 padding0">
+                        <div class="col-md-7 col-sm-12 col-xs-12 padding0 paddingRight10">
+                            <div class="apttusPanel">
+                                <div class="marginBottom10">
+                                    <div class="width45P displayIB">
+                                        <label class="blackBold">Records per Page:</label>
+                                        <select class="form-control apttusInput" id="pagesize1" ng-model="pagesize1.selected"
+                                            ng-change="updatePageSize()" ng-options="pagesize1.id as pagesize1.name for pagesize1 in pagesizes1"></select>
+                                    </div>
+                                    <div class="width45P textAlignRight displayIB verticalMiddle">
+                                        <button type="button" class="apttusBtnWhite slds-button slds-button--brand" href="#"
+                                            ng-class="{disabled: curPage1 == 0}" ng-disabled="curPage1 == 0"
+                                            ng-click="curPage1=0" value="First">
+                                                <i class="fa fa-fast-backward"></i>
+                                            </button>
+                                        <button type="button" class="apttusBtnWhite slds-button slds-button--brand" href="#"
+                                            ng-class="{disabled: curPage1 == 0}" ng-disabled="curPage1 == 0"
+                                            ng-click="curPage1=curPage1-1" value="Previous">
+                                                <i class="fa fa-step-backward"></i>
+                                            </button>
+                                        <label class="numbering">{{curPage1 + 1}} of {{ numberOfPages1() }}</label>
+                                        <button type="button" class="apttusBtnWhite slds-button slds-button--brand" href="#"
+                                            ng-class="{disabled: curPage1 == Math.floor(records1.length/itemsPerPage1)}"
+                                            ng-disabled="curPage1 >= records1.length/itemsPerPage1 - 1"
+                                            ng-click="curPage1=curPage1+1" value="Next">
+                                                <i class="fa fa-step-forward"></i>
+                                            </button>
+                                        <button type="button" class="apttusBtnWhite slds-button slds-button--brand" href="#"
+                                            ng-class="{disabled: curPage1 == Math.floor(records1.length/itemsPerPage1)}"
+                                            ng-disabled="curPage1 >= records1.length/itemsPerPage1 - 1"
+                                            ng-click="curPage1=Math.floor(records1.length/itemsPerPage1)"
+                                            value="Last">
+                                                <i class="fa fa-fast-forward"></i>
+                                            </button>
+                                    </div>
+
+                                </div>
+                                <div>
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                            <h2 class="panel-title">
+                                                <label id='collapse2' class="blackBold verticalMiddle">
+                                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseOne" onClick="$('#a3').toggle();$('#a4').toggle();">
+                                                        <font color="white">
+                                                            <span style="float:left;display:none" id="a3">
+                                                                <i class="fa fa-plus"></i>
+                                                            </span>
+                                                            <span style="float:left;display:block" id="a4">
+                                                                <i class="fa fa-minus"></i>
+                                                            </span>
+                                                        </font>
+                                                    </a>
+                                                </label>
+                                                <label class="blackBold verticalMiddle">&nbsp;&nbsp;Non-Standard Language (Approvals Required)</label>
+                                            </h2>
+                                        </div>
+                                        <div class="panel-body panel-collapse collapse in maxHeight300 overFlowY paddingTop0"
+                                            role="tabpanel" id="collapseTwo">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th class="blackBold tableHeader verticalMiddle tableHeaderFont">Proposal Terms</th>
+                                                        <th class="blackBold tableHeader verticalMiddle tableHeaderFont">Term Type</th>
+                                                        <th class="blackBold tableHeader verticalMiddle tableHeaderFont">Description</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tb" class="ProductSelectionTbody">
+                                                    <tr class="" ng-repeat="line in records1| filter:searchBar1| filter:{ Apttus__Exception_Type__c: exceptionType.selected }|pagination: curPage1 * itemsPerPage1|limitTo:itemsPerPage1"
+                                                        ng-if="line.APTSMD_Pre_Approved_Language__c==false">
+                                                        <td class="verticalMiddle">
+                                                            <input type="checkbox" class="form-checkbox verticalMiddle" id="CheckId" value="{{line.Apttus__Active__c}}"
+                                                                ng-model="line.checked"
+                                                            />
+                                                        </td>
+                                                        <td class="verticalMiddle normalBlank normalTextFont">{{line.Apttus__Exception__c}}</td>
+                                                        <td class="verticalMiddle normalBlank normalTextFont">{{line.Apttus__Exception_Type__c}}</td>
+                                                        <td class="verticalMiddle normalBlank normalTextFont">{{line.Apttus__Description__c}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 col-sm-12 col-xs-12 padding0">
+                            <div class="apttusPanel">
+                                <div class="panel-heading">
+                                    <label class="blackBold verticalMiddle">
+                                            Selected Terms (Non-Standard Language)
+                                        </label>
+                                </div>
+                                <div class="panel-body overFlowY paddingTop0" style="max-height: 397px;">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th width="20%" class="blackBold verticalMiddle tableHeader tableHeaderFont">Proposal Terms</th>
+                                                <th width="20%" class="blackBold verticalMiddle tableHeader tableHeaderFont">Term Type</th>
+                                                <th width="50%" class="blackBold verticalMiddle tableHeader tableHeaderFont">Description</th>
+                                                <th width="10%" class="blackBold verticalMiddle tableHeader tableHeaderFont"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tb" class="ProductSelectionTbody">
+                                            <tr ng-repeat="line in records1 | filter: {checked:true}">
+                                                <td class="verticalMiddle normalBlank normalTextFont" width="20%">{{line.Apttus__Exception__c}}</td>
+                                                <td class="verticalMiddle normalBlank normalTextFont" width="20%">{{line.Apttus__Exception_Type__c}}</td>
+                                                <td class="verticalMiddle normalBlank normalTextFont" width="50%">{{line.Apttus__Description__c}}</td>
+                                                <td class="verticalMiddle normalBlank normalTextFont" width="10%">
+                                                    <i class="material-icons lightBigIcon" ng-click="uncheckRecord($index,line.Apttus__Exception__c)">delete</i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </body>
+
+        </html>
+    </apex:form>
+
+</apex:page>

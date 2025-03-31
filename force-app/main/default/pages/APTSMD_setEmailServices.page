@@ -1,0 +1,56 @@
+<apex:page controller="APTSMD_MDOHOMECtrl" showheader="false" sidebar="false" lightningStylesheets="true">
+    <apex:form >
+        <div class="accordion-group">
+                    <div class="accordion-heading">
+                          <table>
+                          <!-- <tr>
+                              <td>
+                                 <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseSeven">
+                                    <font class="hi"><font color="red">Email Services</font></font>
+                                  </a>
+                                </td>
+                              <td>
+                                  <a id="step7"><img src="{!$Resource.Help}"/></a> 
+                              </td>
+                          </tr> -->
+                              
+                      </table>
+                      
+                    </div>
+                    <div id="collapseEight" class="accordion-body collapse">
+                        <div class="accordion-inner">
+                            <apex:pageBlock id="pgBlockEmailServices" >
+                                <apex:outputLink target="_blank" style="color:blue; text-decoration:underline; text-indent: 150px" styleClass="accordian-heading" value="/email-admin/services/listEmailServicesFunction.apexp">Email Services</apex:outputLink>
+                                <div>
+                                    Click on the link above and add a new Email Address to the existing Email Service.
+                                </div>
+                             </apex:pageblock>
+                        </div>
+                        <div class="accordion-inner">
+                                    <apex:pageblock >   
+                                        <apex:pageBlockSection id="pgBlockSection2" collapsible="false" columns="1">
+                                            <apex:pageBlockSectionItem id="idpgRelplyTo" > 
+                                                <apex:inputCheckbox id="idRelplyTo" onchange="Replychange();" value="{!setRelplyTo}" />  Set ReplyTo Mail id  
+                                            </apex:pageBlockSectionItem>
+                                            <apex:pageBlockSectionItem id="idpgsetCompanyLogoInEmails" > 
+                                                <apex:inputCheckbox id="idsetCompanyLogoInEmails" onchange="Replychange();" value="{!setCompanyLogoInEmails}" />  Set Company Logo In Email Templates 
+                                            </apex:pageBlockSectionItem>
+                                            <apex:pageBlockSectionItem id="idpgsetCompanyNameInEmails" > 
+                                                <apex:inputCheckbox id="idsetCompanyNameInEmails" onchange="Replychange();" value="{!setCompanyNameInEmails}" />  Set Company Name In Email Templates 
+                                            </apex:pageBlockSectionItem>
+                                            <apex:pageBlockSectionItem > 
+                                                Set Email Template Names 
+                                                <apex:inputTextarea value="{!EmailTemplates}" style="width:600px;" rows="10"  id="replyTo" />
+                                            </apex:pageBlockSectionItem>
+                                          
+                                      </apex:pageBlockSection>
+                                      <apex:pageBlockButtons location="bottom">
+                                          <apex:commandButton value="Apply Changes" action="{!ProcessEmailReplyto}"/>
+                                          <apex:commandButton value="Set Agreement Service" action="{!setAgreementEmailService}"/>
+                                     </apex:pageBlockButtons> 
+                                  </apex:pageblock>
+                        </div>
+                    </div>
+              </div>
+    </apex:form>
+</apex:page>

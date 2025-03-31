@@ -1,0 +1,270 @@
+<!-- UI/UX Done by Japan Bhavsar on 12/28/2018 -->
+<apex:page controller="APTSMD_PresentQuoteCls" standardStylesheets="false" docType="html-5.0" sidebar="false" lightningStyleSheets="true" applyBodyTag="true" applyHtmlTag="false" showHeader="false">
+    <html lang="en" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <head>
+            <title>Sending For Review</title>
+            <apex:variable var="envPath" value="{!URLFOR($Resource.APTSMD_StaticResources,'/StaticResources')}" />
+            <apex:variable var="envPathCDN" value="{!URLFOR($Resource.APTSMD_StaticResourcesCDN,'/StaticResourcesCDN')}"/>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+            <apex:includeScript value="//ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.min.js"/>
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" media="all"/>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-sanitize.js"></script>
+            <script src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.2.0.js"></script>
+            <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+            <script src="{!envPath}/node_modules/angular-aria/angular-aria.js"></script>
+            <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css' />
+            <link rel="stylesheet" href="{!envPathCDN}/lib/Font-Awesome-master/css/font-awesome.css" />
+            <link rel="stylesheet" href="{!envPathCDN}/lib/ng-table-master/dist/ng-table.css" />
+            <link rel="stylesheet" href="{!envPathCDN}/lib/angular-pickadate-master/dist/angular-pickadate.css"/>
+            <script type="text/javascript" src="{!envPathCDN}/lib/angular-pickadate-master/dist/angular-pickadate.js"></script>
+            <script src="https://getbootstrap.com/2.3.2/assets/js/bootstrap-typeahead.js" type="text/javascript"></script> 
+            <apex:stylesheet value="{!URLFOR($Resource.APTSMD_SLDS,'assets/styles/salesforce-lightning-design-system-vf.css')}"/>
+            
+            <!-- Core of this page (new css design file) -->    
+            <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+            
+            <!-- Angular App Script-->
+            <script>
+                var app=angular.module("sendForReviewApp",['ui.bootstrap']); 
+                app.controller("sendForReviewCtrl",["$scope",function($scope){
+                    Visualforce.remoting.timeout = 120000; // Set timeout at page level
+                    $scope.agrAttachments = {!agreementAttachJSON};
+                    $scope.contactTemplate = {!contactTemplateJSON};
+                    $("#page2").hide();
+                    $scope.errorMsg = false;
+                    
+                    // next() - go to next screen if reuirements are getting matched.
+                    $scope.next=function(){
+                        var boolCheck = $scope.checkAttachmentSelected();
+                        if(boolCheck){
+                            $("#page2").show();
+                            $("#page1").hide();
+                        }
+                        else{
+                            window.alert("Please select at least one attachement first!");
+                            return;
+                        }
+                    }
+                    
+                    // cancel() - Cancel the action and get back to detail page
+                    $scope.cancel=function(){
+                        if($scope.agrAttachments.length > 0){
+                            window.top.location = "/"+$scope.agrAttachments[0].agrWrapper.Id;
+                        }else{
+                            window.history.back();
+                        }
+                    }
+                    
+                    $scope.modelOptions = {
+                        debounce: {
+                          default: 500,
+                          blur: 250
+                        },
+                        getterSetter: true
+                    };
+                   
+                    // sendMail() - Send email method for sending an email.
+                    $scope.sendMail = function(){
+                       
+                        // Confirmation of send email 
+                        var confirm = window.confirm("Are you sure?");
+                        if(!confirm){
+                            return;
+                        }
+                      
+                        if(!$scope.mailDetails.toEmail || !$scope.mailDetails.templateId){
+                            window.alert("Please fill all the required fields first!");
+                            return;
+                        }
+                       
+                        $scope.selectedAtts = [];
+                        angular.forEach($scope.agrAttachments, function(item){
+                           if(item.selected == true){
+                               $scope.selectedAtts.push(item);
+                           }
+                        });
+                        Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.APTSMD_PresentQuoteCls.sendEmail}',angular.toJson($scope.agrAttachments),
+                        angular.toJson($scope.mailDetails),$scope.mailDetails.toId,$scope.mailDetails.templateId, $scope.mailDetails.subject ? $scope.mailDetails.subject : '',
+                            function(result,event){
+                                if((typeof sforce != 'undefined') && (sforce != null) ) {
+                                    // Salesforce1 navigation
+                                    sforce.one.navigateToSObject(result);
+                                }else{
+                                  window.top.location = "/"+result;
+                                }
+                                $scope.$apply();
+                            }
+                        )
+                   }
+                   
+                    // checkAttachmentSelected() - Check that if any of the attachment got selected alrady.
+                    $scope.checkAttachmentSelected=function(){
+                       var selection = false;
+                       angular.forEach($scope.agrAttachments,function(item){
+                           if(item.selected == true){
+                               selection = true;
+                           }
+                       });
+                       return selection;
+                    }
+                   
+                    // goBack() - Go back to page 1
+                    $scope.goBack = function(){
+                        $("#page2").hide();
+                        $("#page1").show();
+                    }
+                    
+                    }])
+            </script>
+            <style>
+                .moved {
+                    margin-top: 54px! important;
+                }
+                .labelCls{
+                    font-size:12px! important;
+                }
+                body input[type="radio"]:before, body input[type="checkbox"]:before, .slds-vf-scope input[type="radio"]:before, .slds-vf-scope input[type="checkbox"]:before{
+                    border:none!important;
+                    position:inherit!important;
+                }
+            </style>
+        </head>
+        <body ng-app="sendForReviewApp" ng-controller="sendForReviewCtrl" ng-cloak="true">
+            
+            <!-- Common Header for Page 1 -->
+            <c:APTSMD_CommonHeader pageName1="Present Proposal" objectName="{{agrAttachments.length > 0 ? agrAttachments[0].agrWrapper.Name : ''}}" iconName="account" type="standard"/>
+            
+            <!-- Apttus Container for Page 1 -->
+            <div class="apttusContainer moved" id="page1">
+                
+                <!-- Apttus Button -->
+                <div class="textAlignRight marginBottom15">
+                    <button class="slds-button slds-button--brand apttusBtn {{checkAttachmentSelected() ? '' : 'disabled'}}" type="button" 
+                        ng-click="next();">Next</button>
+                    <button class="slds-button slds-button--brand apttusBtnWhite" type="button" ng-click="cancel();">Cancel</button>
+                </div>
+                
+                <!-- Apttus Panel -->
+                <div class="apttusPanel">
+                    <p class="blackBold">Please Select Attachment(s) To Proceed</p>
+                    <div class="divScroll" ng-show="agrAttachments.length > 0">
+                         <table class="slds-table table">
+                            <thead>
+                                <tr class="slds-text-title--caps">
+                                    <th class="verticalMiddle tableHeader tableHeaderFont blackBold"></th>
+                                    <th class="verticalMiddle tableHeader tableHeaderFont blackBold cursorPointer"
+                                        ng-click="orderByField='attachWrapper.Name'; reverseSort = !reverseSort">File Name</th>
+                                    <th class="verticalMiddle tableHeader tableHeaderFont blackBold textAlignRight">Size</th>
+                                    <th class="verticalMiddle tableHeader tableHeaderFont blackBold textAlignRight">Last Modified Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="agrAtt in agrAttachments | orderBy:orderByField:reverseSort">
+                                    <td class="verticalMiddle normalTextFont textAlignCenter">
+                                        <input type="checkbox" class="form-checkbox" name="attachCheck" 
+                                            ng-model="agrAtt.selected"/>
+                                    </td>
+                                    <td class="verticalMiddle normalTextFont">
+                                        <a class="anchor" href="/{{agrAtt.attachWrapper.Id}}" target="_blank">
+                                            {{agrAtt.attachWrapper.Name}}
+                                        </a>
+                                    </td>
+                                    <td class="verticalMiddle normalTextFont textAlignRight">{{agrAtt.attachWrapper.BodyLength | number}}</td>
+                                    <td class="verticalMiddle normalTextFont textAlignRight">
+                                        {{agrAtt.attachWrapper.LastModifiedDate| date:'{!dateFormat}'}}&nbsp;&nbsp;
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="width100P smallMsgText textAlignCenter marginBottom15" ng-if="agrAttachments.length == 0">No Attachment(s) found.</div>
+                </div>
+                
+            </div>
+            
+            
+            <!-- Apttus Container for Page 2 -->
+            <div class="apttusContainer moved" id="page2">
+                
+                <!-- Apttus Button -->
+                <div class="textAlignRight marginBottom15">
+                    <button class="slds-button slds-button--brand apttusBtnWhite" ng-click="goBack();">Previous</button>
+                    <button class="slds-button slds-button--brand apttusBtn {{ (!mailDetails.toEmail || !mailDetails.templateId) ? 'disabled' : 'noClass'}}" 
+                        type="button" ng-click="sendMail();">Send</button>
+                    <button class="slds-button slds-button--brand apttusBtnWhite" type="button" ng-click="cancel();">Cancel</button>
+                </div>
+                
+                <!-- Apttus Panel -->
+                <div class="apttusPanel">
+                    <p class="blackBold marginBottom15">Send Email</p>
+                    <div class="row margin0 padding0">
+                        
+                        <div class="col-md-7">
+                            <div class="form-group"> 
+                                <label for="to" class="labelCls">To&nbsp;<span class="warnColor">*</span></label>
+                                <input id="to" ng-required="true" name="to" type="text" typeahead-show-hint="true" typeahead-min-length="0" 
+                                    ng-model="selectTo" ng-value="mailDetails.toEmail=selectTo.Email;mailDetails.toName=selectTo.Name;mailDetails.toId=selectTo.Id" 
+                                    ng-model-options="modelOptions" uib-typeahead="con as con.Name for con in contactTemplate[0].contactWrapper | filter:{Name:$viewValue} | limitTo:8" 
+                                    class="form-control apttusInput"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label class="labelCls">Additional To</label>
+                                <input id="addTo" name="addTo" type="text" typeahead-show-hint="true" typeahead-min-length="0" ng-model="selectaddTo"  
+                                    ng-value="mailDetails.addToId=selectaddTo.Email" ng-model-options="modelOptions" 
+                                    uib-typeahead="con as con.Name for con in contactTemplate[0].userWrapper | filter:{Name:$viewValue} | limitTo:8" 
+                                    class="form-control apttusInput"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label class="labelCls">CC</label>
+                                <input id="CC" name="CC" type="text" typeahead-show-hint="true" typeahead-min-length="0" ng-model="selectCc" 
+                                    ng-value="mailDetails.ccId=selectCc.Email" ng-model-options="modelOptions" 
+                                    uib-typeahead="con as con.Name for con in contactTemplate[0].userWrapper | filter:{Name:$viewValue} | limitTo:8" 
+                                    class="form-control apttusInput"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label class="labelCls">BCC</label>
+                                <input id="relatedTo" name="relatedTo" type="text" typeahead-show-hint="true" typeahead-min-length="0" 
+                                    ng-model="selectBcc" ng-value="mailDetails.bccId=selectBcc.Email" ng-model-options="modelOptions" 
+                                    uib-typeahead="con as con.Name for con in contactTemplate[0].userWrapper | filter:{Name:$viewValue} | limitTo:8" 
+                                    class="form-control apttusInput"/>
+                            </div>
+                        </div>
+                         
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label class="labelCls">Select Email Template&nbsp;<span class="warnColor">*</span></label>
+                                <input id="emailTemplate" ng-required="true" 
+                                    ng-value="mailDetails.templateId=selectemailTemplate.Id" name="emailTemplate" type="text" 
+                                    typeahead-show-hint="true" typeahead-min-length="0" ng-model="selectemailTemplate" ng-model-options="modelOptions" 
+                                    uib-typeahead="con as con.Name for con in contactTemplate[0].templateWrapper | filter:{Name:$viewValue} | limitTo:8" 
+                                    class="form-control apttusInput"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label class="labelCls">Subject</label>
+                                <br/>
+                                <input type="text" ng-init="mailDetails.subject = ''" 
+                                    ng-model="mailDetails.subject" ng-required="true" class="form-control apttusInput"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </body>
+    </html>
+</apex:page>

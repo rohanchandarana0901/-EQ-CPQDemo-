@@ -1,0 +1,31 @@
+<div layout="column">
+  <div flex layout-align="end">
+  </div>
+  <div flex>
+      <table class="table">
+    <thead>
+      <tr>
+        <th>Clause</th>
+        <th>Exception</th>
+        <th>Comments</th>
+        <th>Active</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="acti in clausesJSON">
+        <td>{{acti.Apttus__Clause__c}}</td>
+        <td>{{acti.Apttus__Exception__c}}</td>
+        <td>{{acti.Apttus__Comments__c}}</td>
+        <td><input type="checkbox" ng-model="acti.Apttus__Active__c" disabled="disabled"/></td>
+        
+      </tr>
+       
+    </tbody>
+  </table>
+  </div>
+
+
+
+</div>
+
+     

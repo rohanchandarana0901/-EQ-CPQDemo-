@@ -1,0 +1,52 @@
+<div layout="column">
+
+   <!--<div flex class="sub-header" style="border-bottom: 0px solid #c9c9c9;padding: 5px 20px;">
+      <font class="agreement-subheader" style="border-bottom: 0px;">New Agreement</font>
+       <br/>
+       <md-divider></md-divider> 
+  </div>-->
+  <div ng-if="agreementObj.operationMode == 'Edit'" >
+     <!--  <div>
+          <div flex="70">
+              <div ng-include="envPath+'/partials/ngChevron.html'"></div>
+          </div>
+          <div>
+              <div flex="30" style="text-align: right;"> 
+                <md-button class="md-raised md-accent default-btn">Request</md-button> 
+            </div>
+          </div>
+      </div> -->
+       <div style="margin-top:10px;" ng-include="envPath+'/partials/ngChevron.html'"></div>
+       
+       
+  </div>
+  <div flex class="section-tittle" style="    margin-top: 15px;">
+   		 <font class="section-subheader">&nbsp;&nbsp; Information</font>
+  		<md-divider></md-divider>
+      <br/>
+      <div class="alert alert-danger" id="saveErrorDiv" style="display:none;">
+         Please enter mandatory fields and save again.
+      </div>
+  </div>
+  <div flex>
+   		<div ng-include="envPath+'/partials/createAgreementFields_information.html'"></div>
+  </div>
+   <div flex class="section-tittle">
+   		 <font class="section-subheader">&nbsp;&nbsp; Key Terms</font>
+  		<md-divider></md-divider>
+      <br/>
+       
+  </div>
+  <div flex>
+   		<div ng-include="envPath+'/partials/createAgreementFields_keyTerms.html'"></div>
+  </div>
+   <!--<div flex class="section-tittle">
+   		<font class="section-subheader">&nbsp;&nbsp; Custom</font>
+  		<md-divider></md-divider>
+      <br/>
+       <br/>
+  </div>
+  <div flex>
+   		<div ng-include="envPath+'/partials/createAgreementFields_customFields.html'"></div>
+  </div>-->
+</div>

@@ -1,0 +1,39 @@
+<aura:component implements="flexipage:availableForAllPageTypes" controller="APTSMD_CongaGlobalSolutionsCtrl">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="performanceReportLink" type="String"/>
+    <aura:attribute name="qbrLink" type="String"/>
+    <aura:attribute name="caseBreakdownLink" type="String"/>
+    
+<div style="background-color:white;margin-bottom: 10px;border-radius: 5px;padding: 10px !important;" class="mainDiv" >
+	<div style="margin-left: 7px; margin-bottom: 7px; color: black; font-weight: 700; font-size: 16px;">
+        <span>
+            Conga Global Solutions
+        </span>
+    </div>
+    <p  style="width:100%;text-align:center">
+        <div class="slds-grid slds-wrap" style="padding-top: 16px;padding-bottom: 15px;">
+            <div class="slds-col slds-size_1-of-3">
+                <a aura:id="Performance Report" class="HideLine" onclick="{!c.openPerformanceReportLink}">
+                    <lightning:icon iconName="standard:performance" class="iconstyle" size="large" alternativeText="Performance Report"/>
+                    <br/>
+                    <span class="osOutputLabel">Performance<br/>Report</span>
+                </a>
+            </div>
+            <div class="slds-col slds-size_1-of-3">
+                <a aura:id="Quarterly Business Review" class="HideLine" onclick="{!c.openQbrLink}">
+                    <lightning:icon iconName="standard:timesheet_entry" class="iconstyle" size="large" alternativeText="Quarterly Business Review"/>
+                    <br/>
+                    <span class="osOutputLabel">Quarterly<br/>Business<br/>Review</span>
+                </a>
+            </div>
+            <div class="slds-col slds-size_1-of-3">
+                <a aura:id="Case Breakdown" class="HideLine" onclick="{!c.openCaseBreakdownLink}">
+                    <lightning:icon iconName="standard:report" class="iconstyle" size="large" alternativeText="Case Breakdown"/>
+                    <br/>
+                    <span class="osOutputLabel">Case<br/>Breakdown</span>
+                </a>
+            </div>
+        </div>
+	</p>
+</div>
+</aura:component>

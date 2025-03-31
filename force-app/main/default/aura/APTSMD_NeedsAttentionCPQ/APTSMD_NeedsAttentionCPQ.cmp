@@ -1,0 +1,24 @@
+<aura:component implements="flexipage:availableForAllPageTypes" controller="APTSMD_ProposalCountsCPQ">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="myProposalsList" type="String"/>
+<aura:attribute name="totalProposals" type="Integer"/>
+<div style="background-color:white;border-radius: 5px;" class="mainDiv" >
+    <div class=" aligncenter" style="padding-top: 5px;">
+        <div class="tileHeader" style="margin-left: 7px;margin-right: 7px;">
+        	<span>Needs Attention</span>
+        </div>
+    	
+    </div>
+    <div class="aligncenter centerContent">
+    	<a aura:id="NDA Wizard" class="HideLine" onclick="{!c.gotoList}">
+            <span class="osOutputLabel" style="color: #54698d;">{!v.totalProposals}</span>
+        </a>
+    </div>
+    <div class="aligncenter ">
+        <div class="tileFooter">
+            <span >Proposals are Pending<br/>for Approvals</span>
+        </div>
+    	
+    </div>
+</div>
+</aura:component>

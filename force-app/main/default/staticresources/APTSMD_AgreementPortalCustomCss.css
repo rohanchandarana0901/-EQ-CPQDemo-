@@ -1,0 +1,421 @@
+/*
+    File Name: APTSMD_ApttusCustomCSS.css
+    Type: Stylesheet
+    Author: Japan Bhavsar
+    Description: This CSS file contains all the classes which will going to change the design of page and make page as look a like AIC   
+*/
+
+/*
+    Section: Font - Roboto
+*/
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+/* Initialize and Use this font for this style sheet */
+html {
+    font-family: 'Roboto', sans-serif !important;
+}
+
+body{
+    font-family: 'Roboto', sans-serif !important;
+}
+.maxIconResize{
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
+}
+.footer {
+    background-color: #303030 !important;
+    color: #fff;
+    font-size: 14px;
+    line-height: 25px;
+    bottom: 0;
+    width: 100%;
+    position: fixed;
+}
+.logoStyle{
+    height:30px;
+    margin-left:20px;
+}
+.loginlink{
+    cursor:pointer;
+    color:white !important;
+}
+.logoCSS{
+    height:30px;
+    margin-left:20px;
+}
+.portalName{
+    font-stretch: extra-condensed;
+    color:#080808;
+}
+.headerMenu {
+    float: right;
+    font-style: normal;
+    font-size:15px;
+    margin-top: 0.5vw;
+    cursor:pointer;
+}
+.headerMenuItem {
+    float: right;
+    font-style: normal;
+    font-size:18px;
+    margin-top: 0.5vw;
+    color:#0070d2;
+    cursor:pointer;
+}
+.footer-copy-link{
+    color:white;
+}
+.modal-dialog{
+    width: 30vw;
+}
+.attachmentDialog{
+    width: 60%;
+    height:95%;
+}
+.attachmentContent{
+    height:95%;
+}
+.attachmentBody{
+    height:90%;
+}
+form[role=login] {
+    color: #5d5d5d;
+    background: #f2f2f2;
+    padding: 26px;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+form[role=login] img {
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 35px;
+}
+form[role=login] input,
+form[role=login] button {
+    font-size: 18px;
+    margin: 16px 0;
+}
+form[role=login] > div {
+    text-align: center;
+}
+    
+.form-links {
+    text-align: center;
+    margin-top: 1em;
+    margin-bottom: 50px;
+}
+.form-links a {
+    color: #fff;
+}
+.fa-2x {
+    font-size: 1.5em !important;
+    color:white;
+}
+.md-headline1 {
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 32px;
+    color: #185A7D;
+    text-align: center;
+}
+.searchInput{
+    margin-bottom: 0px;
+}
+.fixed_headers {
+    width:100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+.fixed_headers thead tr {
+    display: block;
+    position: relative;
+}
+.fixed_headers tbody {
+    display: block;
+    overflow: auto;
+    width: 100%;
+    height: 13.6vw;
+}
+.fixed_headersOperation{
+    width:100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+.fixed_headersOperation tbody{
+    display: block;
+    overflow: auto;
+    width: 100%;
+    height: 26vw;
+}
+        
+.fixed_headersOperation thead tr {
+    display: block;
+    position: relative;
+}
+.floatRight{
+    float:right;
+}
+.alignCenter{
+    text-align: center;
+}
+.buttonTextColor{
+    color: white!important;
+}
+.agreementViewMargin{
+    margin-left: 0.5%;
+}
+.searchContainer{
+    width:70%;
+}
+.paginationCSS{
+    margin-left: 0vw;
+}
+.paginationButton{
+    margin-left: 0px;
+}
+.numberOfPagesCSS{
+    width:35px
+}
+.agreementViewTable{
+    max-width:99%;
+    width:99%;
+}
+
+.column1{
+    text-align: center;
+    min-width: 8vw;
+}
+.column2{
+    text-align: center;
+    min-width: 15vw;
+}
+.column3{
+    text-align: center;
+    min-width: 10vw;
+}
+.column4{
+    text-align: center;
+    min-width: 12vw;
+}
+.column5{
+    text-align: center;
+    min-width: 9vw;
+}
+.column6{
+    text-align: center;
+    min-width: 9vw;
+}
+.column7{
+    text-align: center;
+    min-width: 5vw;
+}
+.column8{
+    text-align: center;
+    min-width: 9vw;
+}
+.column9{
+    text-align: center;
+    min-width: 9vw;
+}
+.column10{
+    text-align: center;
+    min-width: 6vw;
+}
+.agreementNameLink{
+    cursor:pointer;
+    color:#0070d2 !important;
+}
+.agreementViewBody{
+    overflow-x: hidden;
+}
+.pageSizeCSS{
+    width:50px;
+    margin-left:2px
+}
+.homePageCarouselImage{
+    height:30vw;
+}
+.awardsCSS{
+    width:130vw;
+}
+.confirmModelBody{
+    height:30% !important;
+}
+.confirmModelContent{
+    height:53% !important;
+}
+.agreementDocument{
+    height:95%;
+}
+.agreementDocumentTable{
+    height: 100%;
+}
+.zeroBorder{
+    border:0px !important;
+}
+.operationActionsHeader{
+    height:20%;
+}
+.operationActionsTable{
+    height: 100%;
+}
+.operationTCA{
+    height:60%;
+}
+.operationTCABody{
+    overflow-x: hidden;
+    width:100%;
+}
+.stopXOverflow{
+    overflow-x: hidden;
+}
+.clauseText{
+    text-decoration: none;
+    color:#0070d2;
+}
+.clauseTextDisplay{
+    margin-left:10px;
+}
+.clauseContent{
+    margin-left:45px;
+    color:black;
+}
+.clauseData{
+    margin-left:25px;
+    margin-top:10px;
+    color:#080808;
+}
+.addendumData{
+    margin-left:5px;
+    margin-top:5px;
+    color:#080808;
+}
+.reportsImages{
+    width:100% !important;
+}
+.awardCSS{
+    margin-bottom:30px !important;
+}
+/*
+    Section: 
+*/
+thead th{
+    position: sticky;
+    top: 0;
+    background-color: #e5e7ef;
+    z-index: 1;  
+    box-shadow: 0px 1px 2px #e5e7ef;  
+}
+
+thead th{
+    border-top: none !important;
+}
+
+thead th:hover {
+    background-color:none !important;
+}
+.modal-header{
+    background-color: #303030 !important;
+    color:white;
+}
+.modal-headerOverride{
+    background-color: #ffffff !important;
+}
+
+/* MD CSS */
+.material-icons.md-18 { 
+    font-size: 18px !important;
+    color:white !important ;
+}
+        .md-card .md-card-content {
+            display: block;
+            padding: 12px;
+        }
+        .md-button.md-primary.md-fab:not([disabled]):hover {
+            background-color: #0070d2 !important;
+            color:white !important;
+            
+        }
+        .md-button.md-fab.md-mini {
+            line-height: 26px !important;
+            width: 29px !important;
+            height: 29px !important;
+            color:white !important;
+        } 
+        .md-toolbar.md-default-theme.md-hue-3:not(.md-menu-toolbar), md-toolbar.md-hue-3:not(.md-menu-toolbar) {
+            background-color: #303030 !important;
+            min-height: 0.2vw;
+        }
+        .md-toolbar.md-default-theme.md-hue-2:not(.md-menu-toolbar), md-toolbar.md-hue-2:not(.md-menu-toolbar) {
+            background-color: #303030 !important;
+            color: white;
+            min-height: 2.5vw;
+        }
+        .md-toolbar-tools {
+            background-color: white !important;
+        }
+       .selectdemoSelectHeader 
+          .selectdemoSelectHeader .demo-header-searchbox {
+            border: none;
+            outline: none;
+            height: 100%;
+            width: 100%;
+            padding: 0; }
+          .selectdemoSelectHeader .demo-select-header {
+            box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0.14), 0 0 0 0 rgba(0, 0, 0, 0.12);
+            padding-left: 10.667px;
+            height: 48px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: auto; }
+      .selectdemoSelectHeader md-content._md {
+        max-height: 240px; }
+       .md-headline {
+            font-size: 21px;
+            font-weight: 400;
+            line-height: 32px;
+            color: #185A7D;
+        }
+        
+        .md-button.md-default-theme.md-hue-3.md-accent.md-raised:not([disabled]):hover, .md-button.md-hue-3.md-accent.md-raised:not([disabled]):hover, .md-button.md-default-theme.md-hue-3.md-accent.md-fab:not([disabled]):hover, .md-button.md-hue-3.md-accent.md-fab:not([disabled]):hover {
+            color: white;
+            background-color: #0070d2 !important;
+        }
+        .md-button.md-default-theme.md-hue-3.md-accent.md-raised, .md-button.md-hue-3.md-accent.md-raised, .md-button.md-default-theme.md-hue-3.md-accent.md-fab, .md-button.md-hue-3.md-accent.md-fab {
+            color: white;
+            background-color: #0070d2 !important;
+        }
+        .progressLineardemoBasicUsage body { padding: 20px; }
+        .menudemoCustomTrigger .md-menu-demo {
+            padding: 24px; 
+        }
+        .menudemoCustomTrigger .menu-demo-container {
+            min-height: 200px; 
+        }
+        .inputdemoErrorsAdvanced {
+        }
+        .inputdemoErrorsAdvanced .hint {
+            position: absolute;
+            left: 2px;
+            right: auto;
+            bottom: 7px;
+            font-size: 12px;
+            line-height: 14px;
+            transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+            color: grey; 
+        }
+        .inputdemoErrorsAdvanced .hint.ng-hide,
+        .inputdemoErrorsAdvanced .hint.ng-enter,
+        .inputdemoErrorsAdvanced .hint.ng-leave.ng-leave-active {
+            bottom: 26px;
+            opacity: 0; 
+        }
+        .inputdemoErrorsAdvanced .hint.ng-leave,
+        .inputdemoErrorsAdvanced .hint.ng-enter.ng-enter-active {
+            bottom: 7px;
+            opacity: 1; 
+        }

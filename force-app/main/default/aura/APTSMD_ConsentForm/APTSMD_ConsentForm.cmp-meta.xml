@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>61.0</apiVersion>
+    <description>MDO: Consent form to submit information like name, company name, date, etc. to generate consent form and send it for in person sign.</description>
+</AuraDefinitionBundle>

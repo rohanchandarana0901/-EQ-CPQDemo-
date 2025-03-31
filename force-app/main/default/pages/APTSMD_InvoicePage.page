@@ -1,0 +1,222 @@
+<!-- 
+        Apttus Comply
+        WizardModeler
+         
+        @2014 Apttus Inc. All rights reserved.
+     -->
+    <apex:page standardController="Apttus_Billing__Invoice__c" sidebar="false" extensions="APTSMD_InvoicePageController">
+     
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_TransactionUI,'/js/jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_TransactionUI,'/js/jquery-ui.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_TransactionUI,'/js/jquery.creditCardValidator.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_TransactionUI,'/js/jquery.tablePagination.0.5.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_TransactionUI,'/js/jquery.tipsy.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_TransactionUI,'/js/jquery.selectbox-0.2-custom-jquery1.9.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_TransactionUI,'/js/custom-radio-check.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_TransactionUI,'/js/jquery.nicescroll.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_TransactionUI,'/fancybox/jquery.fancybox-1.3.4.js')}" /> 
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_TransactionUI,'/js/custom.js')}" />
+    
+    <script>
+    $ = jQuery.noConflict();
+    
+    
+    </script>
+    
+    
+    <link rel="stylesheet" href="{!URLFOR($Resource.APTSMD_TransactionUI,'/fancybox/jquery.fancybox-1.3.4.css')}" /> 
+    <link rel="stylesheet" href="{!URLFOR($Resource.APTSMD_TransactionUI,'/css/jquery-ui.css')}" />
+    <link rel="stylesheet" href="{!URLFOR($Resource.APTSMD_TransactionUI,'/css/style.css')}" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"/>
+    <style>
+        .invoice-info-box.estimate-detail-area{
+            margin-right:8px;
+        }
+        .invoice-estimate-box .estimate-bar{
+            margin-bottom: 5px;
+        }
+    </style>
+    <c:APTSMD_GoogleAnalytics />
+    <div class="outer-wrapper">
+        <div class="invoice-left-panel" style="box-shadow:none;padding-top: 10px !important;">
+          <div class="invoice-sumry-box">   
+            <div class="invoice-hdr">
+                <h2>Invoice</h2>
+                <div class="invoice-stamp">
+                    <div class="invoice-bill-id">{!invoice.Name}</div>
+                    <div class="invoice-date">
+                    <apex:outputText value="{0, date, MMMM d','  yyyy}">
+                        <apex:param value="{!invoice.Apttus_Billing__InvoiceDate__c}" />
+                    </apex:outputText>
+                    </div>
+                <!-- /invoice-stamp --></div>
+               <div class="clear"></div> 
+            <!-- /invoice-hdr --></div>
+            <div class="clear"></div>
+            
+            <div class="invoice-body">  
+                <div class="due-date-box">
+                <span class="due-date-label">Due Date</span>
+                <span class="due-date-stamp">
+                <apex:outputText value="{0, date, MM/dd/yyyy}">
+                    <apex:param value="{!invoice.Apttus_Billing__DueDate__c}" />
+                </apex:outputText>
+                </span>
+            <!-- /due-date-box --></div>
+                <div class="clear"></div>
+                <div class="invoice-total-box">
+                    <div class="invoice-bar">
+                        <span class="invoice-label">Invoice Total</span>
+                        <span class="invoice-value">
+                        <apex:outputText value="{0, number,{!Apttus_Billing__Invoice__c.CurrencyIsoCode} ###,###,##0.00}" >
+                            <apex:param value="{!invoice.Apttus_Billing__TotalInvoiceAmount__c}"/> 
+                        </apex:outputText> 
+                        </span>
+                    <!-- /invoice-bar --></div>
+                    <div class="invoice-bar">
+                        <span class="invoice-label">Credits</span>
+                        <!-- <span class="invoice-value">$0.00</span> -->
+                        <span class="invoice-value">
+                        <apex:outputText value="{0, number,{!Apttus_Billing__Invoice__c.CurrencyIsoCode} ###,###,##0.00}" >
+                            <apex:param value="{!invoice.APTSMD_Credit_Amount__c}"/> 
+                        </apex:outputText>
+                        </span>
+                    <!-- /invoice-bar --></div>
+                    <div class="invoice-bar">
+                        <span class="invoice-label">Payments</span>
+                        <span class="invoice-value">
+                        <apex:outputText value="{0, number,{!Apttus_Billing__Invoice__c.CurrencyIsoCode} ###,###,##0.00}" >
+                            <apex:param value="{!invoice.APTSMD_Total_Payment_Amount__c}"/> 
+                        </apex:outputText>
+                        </span>
+                    <!-- /invoice-bar --></div>
+                    
+                    <div class="clear"></div>
+                    <div class="invoice-subtotal-box">
+                        <span class="invoice-label">Amount Due</span>
+                        <span class="invoice-value">
+                        <apex:outputText value="{0, number,{!Apttus_Billing__Invoice__c.CurrencyIsoCode} ###,###,##0.00}" >
+                            <apex:param value="{!invoice.Apttus_Billing__TotalDueAmount__c}"/> 
+                        </apex:outputText>                        
+                        </span>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                
+                
+            
+            </div>
+           </div>
+        </div>
+        <div class="invoice-wrapper" style="margin-top: 0px !important;">
+            <div class="invoice-detail-block">
+                <div class="invoice-info-box account-detail-area">
+                    <h3 style="margin-bottom:3px;">Status</h3>
+                    <span class="invoice-ac-id" style="text-transform: capitalize;">{!invoice.Apttus_Billing__Status__c}</span>
+                    <br/>
+                    <h3 style="margin-bottom:3px;">Days Outstanding</h3>
+                    <span class="invoice-ac-id" style="text-transform: capitalize;">{!invoice.Apttus_Billing__DaysOutstanding__c}</span>
+                    <br/>
+                    <h3 style="margin-bottom:3px;">Payment Status</h3>
+                    <span class="invoice-ac-id" style="text-transform: capitalize;">{!invoice.Apttus_Billing__PaymentStatus__c}</span>
+                    <br/>
+                    <h3 style="margin-bottom:3px;">Document</h3>
+                    <span class="invoice-ac-id" style="text-transform: capitalize;">
+                        <a href="/sfc/servlet.shepherd/document/download/{!attachmentId}?operationContext=S1" target="_blank">
+                            <i class="fas fa-file-pdf" style="color: #390000;font-size: 30px;"></i>                 
+                        </a>
+                    </span>
+                <!-- /invoice-info-box -->
+                </div>
+                
+                <div class="invoice-info-box bill-detail-area">
+                    <h3 style="margin-bottom:10px;">Account Number</h3>
+                    <span class="invoice-ac-id">{!invoice.Apttus_Billing__BillToAccountId__r.AccountNumber}</span>
+                    <br/><br/>
+                    <h3 style="margin-bottom:10px;">Bill To</h3>
+                    <div class="v-card-box">
+                        <h4 style="margin-bottom:10px;"><a href="/{!Invoice.Apttus_Billing__BillToAccountId__c}" target="_blank">{!Invoice.Apttus_Billing__BillToAccountId__r.Name}</a></h4>
+                        <ul class="invoice-list-box">
+                            <li class="email-info"><i></i><a href="mailto:{!email}">{!email}</a></li>
+                            <li class="phone-info"><i></i>{!invoice.Apttus_Billing__BillToAccountId__r.Phone}</li>
+                            <li>
+                                <p>{!invoice.Apttus_Billing__BillingStreet__c}</p>
+                                <p>{!invoice.Apttus_Billing__BillingCity__c} &nbsp;{!invoice.Apttus_Billing__BillingCountry__c}</p>
+                                <p>{!invoice.Apttus_Billing__BillingPostalCode__c}</p>
+                            </li>
+                        </ul>
+                    <!-- /v-card-box --></div>
+                <!-- /invoice-info-box --></div>
+                <div class="invoice-info-box estimate-detail-area">
+                    <div class="invoice-estimate-box">
+                        <div class="estimate-bar">
+                            <span class="estimate-label">One Time Fees</span>
+                            <span class="estimate-value">
+                            <apex:outputText value="{0, number,{!Apttus_Billing__Invoice__c.CurrencyIsoCode} ###,###,##0.00}" >
+                                <apex:param value="{!invoice.Apttus_Billing__TotalOneTimeFeeAmount__c}"/> 
+                            </apex:outputText> 
+                            </span>
+                        <!-- /invoice-bar --></div>
+                        <div class="estimate-bar">
+                            <span class="estimate-label">Recurring Fees</span>
+                            <span class="estimate-value">
+                            <apex:outputText value="{0, number,{!Apttus_Billing__Invoice__c.CurrencyIsoCode} ###,###,##0.00}" >
+                                <apex:param value="{!invoice.Apttus_Billing__TotalRecurringFeeAmount__c}"/> 
+                            </apex:outputText> 
+                            </span>
+                        <!-- /invoice-bar --></div>
+                        <div class="estimate-bar">
+                            <span class="estimate-label">Usage Fees</span>
+                            <span class="estimate-value">
+                            <apex:outputText value="{0, number,{!Apttus_Billing__Invoice__c.CurrencyIsoCode} ###,###,##0.00}" >
+                                <apex:param value="{!invoice.Apttus_Billing__TotalUsageFeeAmount__c}"/> 
+                            </apex:outputText>                             
+                            </span>
+                        <!-- /invoice-bar --></div>
+                        <apex:outputPanel rendered="{! (!ISBLANK(invoice.Apttus_Billing__TotalAdditionalFeeAmount__c)) }">
+                        	<div class="estimate-bar">
+                                <span class="estimate-label">Additional Fees</span>
+                                <span class="estimate-value">
+                                <apex:outputText value="{0, number,{!Apttus_Billing__Invoice__c.CurrencyIsoCode} ###,###,##0.00}" >
+                                    <apex:param value="{!invoice.Apttus_Billing__TotalAdditionalFeeAmount__c}"/> 
+                                </apex:outputText> 
+                                </span>
+                            <!-- /invoice-bar --></div>
+                        </apex:outputPanel>  
+                         <!--<div class="estimate-bar">
+                            <span class="estimate-label">Misc Fees</span>
+                            <span class="estimate-value">TBD</span>
+                        <!-- /invoice-bar </div>-->
+                        <div class="clear spacer5"></div>
+                        <div class="estimate-subtotal-box">
+                            <div class="clear spacer5"></div>
+                            <span class="estimate-label" style="margin-bottom: 5px;">Sub Total</span>
+                            <span class="estimate-value" style="margin-bottom: 5px;"><apex:outputText value="{0, number, {!Apttus_Billing__Invoice__c.CurrencyIsoCode} ###,###,###,###,##0.00}"><apex:param value="{!invoice.Apttus_Billing__TotalFeeAmount__c}" /></apex:outputText></span>
+                        <!-- /invoice-subtotal-box --></div>
+                       <!-- <div class="estimate-bar">
+                            <span class="estimate-label">Discounts</span>
+                            <span class="estimate-value">TBD</span>
+                        <!-- /invoice-bar </div> -->
+                        <div class="estimate-bar">
+                            <span class="estimate-label">Taxes</span>
+                            <span class="estimate-value"><apex:outputText value="{0, number, {!Apttus_Billing__Invoice__c.CurrencyIsoCode} ###,###,###,###,##0.00}"><apex:param value="{!invoice.Apttus_Billing__TotalTaxAmount__c}" /></apex:outputText></span>
+                        <!-- /invoice-bar --></div> 
+                        <div class="clear spacer10"></div>
+                        <div class="estimate-grandtotal-box">
+                            <span class="estimate-label">Total</span>
+                            <span class="estimate-value"><apex:outputText value="{0, number, {!Apttus_Billing__Invoice__c.CurrencyIsoCode} ###,###,###,###,##0.00}"><apex:param value="{!invoice.Apttus_Billing__TotalInvoiceAmount__c}" /></apex:outputText></span>
+                        <!-- /invoice-subtotal-box --></div>
+                        <div class="clear"></div>
+                            <!--<span class="amt-type">All Amounts in {!Apttus_Billing__Invoice__c.CurrencyIsoCode} </span>-->
+                    <!-- /invoice-total-box --></div>
+                
+                <!-- /invoice-info-box --></div>
+            <!-- /invoice-detail-block  --></div>
+           
+        <!-- /invoice-wrapper --></div>
+        <div class="clear"></div>
+        <div class="table-loader-box" style="display:none">                  
+                     
+                </div>
+    <!-- /outer-wrapper --> </div>
+    </apex:page>

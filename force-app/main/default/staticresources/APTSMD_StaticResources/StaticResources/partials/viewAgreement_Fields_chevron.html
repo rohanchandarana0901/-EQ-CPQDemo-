@@ -1,0 +1,17 @@
+<div layout="column" ng-controller="AppCtrl as ctrl">
+	<div>
+		<div layout="row">
+			<div flex="70" class="sub-header agreement-subheader" style="border-bottom: 2px;" >
+				 <font class="agreement-subheader" style="border-bottom: 0px; ">{{agreement.Name}}</font>
+				
+			</div>
+			<!-- <div flex="30" style="text-align: right;"> 
+				 <md-button class="md-raised md-accent default-btn">Request</md-button>
+			</div> -->
+		</div>
+	</div>
+	<div>
+		<!-- <ng-chevron chevronconfig="ctrl.chevronconfig"></ng-chevron> -->
+		 <div ng-include="envPath+'/partials/ngChevron.html'"></div>
+	</div>
+</div>

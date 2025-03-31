@@ -1,0 +1,15 @@
+<aura:component implements="flexipage:availableForAllPageTypes">
+    <div style="background-color:white;border-radius: 5px;padding: 10px !important;" class="mainDiv" >
+        <p  style="width:100%;text-align:center">
+            <div class="slds-grid slds-wrap" style="padding-top: 16px;padding-bottom: 15px;">
+            	<div class="slds-col slds-size_12-of-12">
+                 <a aura:id="NDA Wizard" class="HideLine" onclick="{!c.createACW}">
+                    <img src="{!$Resource.APTSMD_RequesterNewAgmtActionIcon}" class="img-icon" alternativeText="New Agreement"/>
+                    <br/>
+                    <span class="osOutputLabel">New Agreement</span>
+                </a>
+        	   </div>
+            </div>
+        </p>
+    </div>
+</aura:component>

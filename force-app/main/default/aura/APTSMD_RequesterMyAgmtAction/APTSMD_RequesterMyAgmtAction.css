@@ -1,0 +1,25 @@
+.THIS {
+}
+.THIS .HideLine{
+    text-decoration:none !important;
+}
+.THIS .mainDiv{
+    padding: 10px !important;
+}
+.THIS .osOutputLabel {
+    font-size: .75rem;
+    color: #54698D;
+    font-weight: bold;
+    font-family: 'Salesforce Sans',Arial,sans-serif;
+}
+.THIS .iconstyle{
+    margin-bottom: 5px;
+}
+.THIS .img-icon{
+    max-width:100%;
+    max-height:100%; 
+    height: 175px;
+    width: 225px;
+    background: #48a9c5;
+    border-radius: 10px;
+}

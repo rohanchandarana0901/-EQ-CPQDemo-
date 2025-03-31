@@ -1,0 +1,79 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId" controller="APTSMD_CustomLinksController">
+<lightning:notificationsLibrary aura:id="notifLib"/>
+<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+<aura:attribute name="preSaleConfigVal" type="APTSMD_Apttus_PreSales_Config_Settings2__c"/>
+<aura:attribute name="eCommerceURL" type="String"/>
+<ltng:require styles="/resource/slds080/assets/styles/salesforce-lightning-design-system-vf.css" />
+
+<div style="border: 1px solid lightgray; padding: 5px; margin-bottom: 10px; border-radius: 5px;background-color:white">
+	<div style="margin-bottom: 7px; color: black; font-weight: 700; font-size: 16px;">
+        <span>
+            <!--<img src="/resource/APTSMD_ApttusLogo" id="apttuslogo" alt="Quick Links" border="0"/>-->
+            Quick Links
+        </span>
+    </div>
+    
+    <div class="full forcePageBlockSectionRow">
+        <p class="full forcePageBlockItem forcePageBlockItemView" style="width:100%;text-align:center">
+        <div class="slds">
+			<div class="slds-grid slds-wrap">
+                <div class="slds-col  slds-size_1-of-4 ">
+                    <a aura:id="NDA Wizard" onclick="{!c.createNDA}" class="HideLine">
+                        <lightning:icon iconName="custom:custom18" size="medium" alternativeText="NDA Wizard"/>
+                    	<br/>
+                    	<span class="osOutputLabel">NDA Wizard</span>
+                    </a>                    
+                </div>
+                <div class="slds-col  slds-size_1-of-4 ">
+                    <a aura:id="MSA Wizard" onclick="{!c.createMSA}" class="HideLine">
+                        <lightning:icon iconName="standard:service_contract" size="medium" alternativeText="MSA Wizard"/>
+                    	<br/>
+                    	<span class="osOutputLabel">MSA Wizard</span>
+                    </a>                    
+                </div>
+                <div class="slds-col  slds-size_1-of-4 ">
+                    <a aura:id="Agreement Creation Wizard" onclick="{!c.createACW}" class="HideLine">
+                        <lightning:icon iconName="standard:contract" size="medium" alternativeText="Agreement Creation Wizard"/>
+                    	<br/>
+                    	<span class="osOutputLabel">Agreement <br/>Creation<br/>Wizard</span>
+                    </a>                    
+                </div>
+                <div class="slds-col  slds-size_1-of-4 ">
+                    <a aura:id="Contract Portal" class="HideLine" onclick="{!c.redirectToPortal}">
+                        <lightning:icon iconName="standard:portal" size="medium" alternativeText="Contract Portal"/>
+                    	<br/>
+                    	<span class="osOutputLabel">Contract<br/>Portal</span>
+                    </a>                    
+                </div>
+                <div class="slds-col  slds-size_1-of-4 ">
+                    <a aura:id="Contextual Pricing Analysis" class="HideLine" onclick="{!c.backToContexualPricing}">
+                        <lightning:icon iconName="standard:pricebook" size="medium" alternativeText="Contextual Pricing Analysis"/>
+                    	<br/>
+                    	<span class="osOutputLabel">Contextual <br/>Pricing<br/>Analysis</span>
+                    </a>                    
+                </div>
+                <!-- <div class="slds-col  slds-size_1-of-4 ">
+                    <a aura:id="Agreement Portal" class="HideLine" onclick="{!c.goToOfflineImport}">
+                        <lightning:icon iconName="doctype:gpres" size="medium" alternativeText="Intelligent Import"/>
+                    	<br/>
+                    	<span class="osOutputLabel">Apttus <br/>Intelligent <br/>Import</span>
+                    </a>    
+                </div> -->
+                <div class="slds-col  slds-size_1-of-4 ">
+                    <aura:if isTrue="{!v.preSaleConfigVal.APTSMD_Is_Ecommerce_Enabled_Org__c==True}">
+                        <a aura:id="Ecommerce" class="HideLine" onclick="{!c.goToWebstore}">
+                            <lightning:icon iconName="custom:custom93" size="medium" alternativeText="Ecommerce"/>
+                            <br/>
+                            <span class="osOutputLabel">Ecommerce</span>
+                    	</a>                        
+                        
+                    </aura:if>
+                </div>
+                <div class="slds-col  slds-size_1-of-4 ">
+                </div>
+            </div>
+        </div>
+        </p>
+    </div>
+</div>  
+</aura:component>

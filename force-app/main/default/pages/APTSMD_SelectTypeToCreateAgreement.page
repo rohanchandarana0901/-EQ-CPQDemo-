@@ -1,0 +1,33 @@
+<apex:page standardController="Apttus_Proposal__Proposal__c" extensions="APTSMD_SelectTypeToCreateAgreementCtrl" lightningStylesheets="true">
+    
+    <apex:form >
+        <apex:outputPanel id="message">
+            <p/><apex:outputText value="{!$Label.apttus__selectagreementrecordtypeinstruction}" /><p/>
+        </apex:outputPanel>
+        <apex:pageBlock title="{!$Label.apttus__selectagreementrecordtype}" mode="edit">
+            <apex:pageMessages />
+            <apex:pageBlockButtons location="bottom" >
+                <apex:commandButton action="{!doContinue}" value="{!$Label.apttus__continue}" />
+                <apex:commandButton action="{!doCancel}" value="{!$Label.apttus__cancel}" immediate="true"/>
+            </apex:pageBlockButtons>
+            <apex:outputLabel >Record Type of new record&nbsp;&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+            <apex:selectList value="{!selectedField}" size="1">
+                <apex:selectOptions value="{!listOfFields}"></apex:selectOptions>
+            </apex:selectList>
+        </apex:pageBlock>
+        <apex:pageBlock mode="detail">
+            <apex:pageBlockTable value="{!rtWrapperList}" 
+                                 var="item" 
+                                 columns="2">
+                <apex:column headerValue="{!$Label.apttus__recordtypename}" >
+                    <apex:outputText value="{!item.recordTypeName}"/>
+                </apex:column>
+                <apex:column headerValue="{!$ObjectType.RecordType.Fields.Description.Label}" >
+                    <apex:outputText value="{!item.description}"/>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+    
+    
+</apex:page>

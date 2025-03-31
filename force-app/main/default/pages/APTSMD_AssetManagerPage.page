@@ -1,0 +1,8 @@
+<!-- 
+    Name: APTSMD_AssetManagerPage
+    Description: This page is used to create an opportunity and go to cart page
+    Author: Japan Bhavsar
+    @2012-2013 Apttus Inc.
+ -->
+<apex:page standardController="Account" extensions="APTSMD_AssetManagerController" action="{!init}">
+</apex:page>

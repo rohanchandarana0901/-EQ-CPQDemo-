@@ -1,0 +1,187 @@
+<apex:component access="global" controller="APTSMD_CustomAgreementApprovalCls">
+    
+    <apex:attribute name="agrID" description="This field is used to get agreementId" 
+                     type="string" assignTo="{!AgreementId}" />
+    <apex:attribute name="recipientNm" description="This field is used to get approver name" 
+                     type="string" assignTo="{!recipientName}" />
+    <apex:attribute name="receipientId" description="This field is used to get approver Id" 
+                     type="string" assignTo="{!recipientIdString}" />
+     <apex:attribute name="reqId" description="This field is used to get approval request Id" 
+     type="string" assignTo="{!appReqId}" />
+
+    <html>
+        <style>
+            th{
+            background-color:#2C4E64;
+            color:white;
+            }
+            a{
+                color: -webkit-link;
+                cursor: pointer;
+                text-decoration: underline;
+            }
+            thead{
+                background-color:#2C4E64;
+            }
+            table{
+                border-collapse:collapse;
+            }
+        </style>
+        
+        <body bgcolor="#E8E8E8" style="font-family:Calibri;font-size:16px;background-color:#E8E8E8">
+            <font face="Calibri">
+                <table bgcolor="white" cellpadding="32" align="center" width="80%">
+                    <tbody bgcolor="white">
+                        <tr bgcolor="white">
+                            <td>
+                    
+                                <!-- To CHANGE IMAGE REPLACE URL BELOW WITH IMAGE LOCATION  HEMAL and NICK -->
+                                <img align="right" src="{!approvalSysPropertiesInstanceUrl}/servlet/servlet.ImageServer?id={!lstDocument.Id}&oid={!$Organization.Id}" alt="Tier 1" width="auto" height="50" style="margin-right: 4px;"/>
+
+                                <p>
+                                    Dear {!recipientName},
+                                </p>
+                                <p>
+                                    Approval Request for Agreement '{!agreement.name}' has been submitted for your approval.
+                                    <br/><b>The Agreement summary is as follows:</b><br/>
+                                </p>
+                                
+                                <table cellpadding="6" border="1" bordercolor="black" marginInline="50" style="max-width: 100%;border-collapse:collapse;border-color:black;table-layout: fixed;word-wrap: break-word;" bgcolor="white">
+                                    <tr>
+                                        <td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">Agreement Name &nbsp;&nbsp;</font></td><td><apex:outputField value="{!agreement.name}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td bgcolor="#2C4E64" style="width: 180px;font-weight:bold"><font color="white">Agreement Number &nbsp;&nbsp;</font></td><td><apex:outputField value="{!agreement.Apttus__FF_Agreement_Number__c}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">Account Name &nbsp;&nbsp;</font></td><td><apex:outputField value="{!agreement.APTSMD_AccountName__c}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">Status Category &nbsp;&nbsp;</font></td><td><apex:outputField value="{!agreement.Apttus__Status_Category__c}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">Status  &nbsp;&nbsp;</font></td><td><apex:outputField value="{!agreement.Apttus__Status__c}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">Start Date &nbsp;&nbsp;</font></td><td><apex:outputField value="{!agreement.Apttus__Contract_Start_Date__c}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">End Date &nbsp;&nbsp;</font></td><td><apex:outputField value="{!agreement.Apttus__Contract_End_Date__c}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">Total Agreement Value &nbsp;&nbsp;</font></td><td><apex:outputField value="{!agreement.Apttus__Total_Contract_Value__c}"/></td>
+                                    </tr>
+                                    <!--<tr>-->
+                                    <!--    <th>Effective Discount &nbsp;&nbsp;</th> <td><apex:outputField value="{!ProductConfig.APTSMD_Effective_Discount__c}"/></td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                    <!--    <th>Grand Total  &nbsp;&nbsp;</th><td><apex:outputField value="{!ProductConfig.APTSMD_Grand_Total__c}"/></td>-->
+                                    <!--</tr>-->
+                                </table>
+                                
+                                <p>Click on the link below to access the Agreement:
+                                    <a href="{!approvalSysPropertiesInstanceUrl}/{!agreement.Id}">
+                                        <font style="color: -webkit-link;color:blue;cursor: pointer;text-decoration: underline;display:inline-block">
+                                            {!agreement.Name}
+                                        </font>
+                                    </a>
+                                </p>
+                                
+                                <p width="100%" style="width: 100%;"><b>Note:</b> If replying via email,<b> APPROVE</b>, <b>APPROVED</b>, <b>YES</b>, <b>REJECT</b>, <b>REJECTED</b>, or <b>NO</b> must be in the very first line of the reply email. Also, any comment must be in the second line followed by a <b>BLANK</b> line. The comments will be stored with the approval request. Otherwise, click the link below to <b> Reassign</b>,<b> Approve</b>, <b>Reject</b> or <b>Add Comment</b> through salesforce.</p>
+                                
+                                <p>
+                                    <a href="{!approvalSysPropertiesInstanceUrl}/apex/Apttus_Approval__ApprovalSummaryLaunch?id={!appReqId}&pageMode=reassign">
+                                        <font style="color: -webkit-link;cursor: pointer;text-decoration: underline;display:inline-block;color:blue;">
+                                            Reassign
+                                        </font>
+                                    </a>
+                                    
+                                    &nbsp;&nbsp;||&nbsp;
+                                    <a href="{!approvalSysPropertiesInstanceUrl}/apex/Apttus_Approval__ApprovalSummaryLaunch?id={!appReqId}&pageMode=approveReject">
+                                        <font style="color: -webkit-link;cursor: pointer;text-decoration: underline;display:inline-block;color:blue;">
+                                            Approve/Reject
+                                        </font>
+                                    </a>
+                                    
+                                    &nbsp;&nbsp;||&nbsp;
+                                    <a href="{!approvalSysPropertiesInstanceUrl}/apex/Apttus_Approval__ApprovalSummaryLaunch?id={!appReqId}&pageMode=addComment">
+                                        <font style="color: -webkit-link;cursor: pointer;text-decoration: underline;display:inline-block;color:blue;">
+                                            Add Comment
+                                        </font>
+                                    </a>
+                                </p>
+                                
+                                <b>Requestor: </b><apex:outputField value="{!AppReqDetail.Apttus_Approval__Initial_Submitter__r.Name}"/> <br/>
+                                <b>Status: </b><apex:outputField value="{!AppReqDetail.Apttus_Approval__Approval_Status__c}"/> <br/>
+                                <b>Date: </b><apex:outputField value="{!AppReqDetail.Apttus_Approval__Date__c}"/> <br/>
+                                <!--<b>Requestor Comments: </b><apex:outputField value="{!AppReqDetail.Apttus_Approval__Request_Comments__c}"/><br/>-->
+                                <!--<b>Internal Comments: </b><apex:outputField value="{!AppReqDetail.Apttus_Approval__Internal_Comments__c}"/><br/>-->
+                                <!--<b>Submission1 Comments: </b><apex:outputField value="{!AppReqDetail.Apttus_Approval__SubmissionComment1__c}"/><br/>-->
+                                <!--<b>Submission2 Comments: </b><apex:outputField value="{!AppReqDetail.Apttus_Approval__SubmissionComment2__c}"/><br/>-->
+                                <!--<b>Submission3 Comments: </b><apex:outputField value="{!AppReqDetail.Apttus_Approval__SubmissionComment3__c}"/><br/>-->
+
+                                <p align="left">
+                                    <b>
+                                        <u>
+                                            Approvals
+                                        </u>
+                                    </b>
+                                </p>
+                                
+                                <table bgcolor="white" cellpadding="6" border="1" width="100%" bordercolor="black" style="border-collapse:collapse;table-layout: fixed;word-wrap: break-word;">
+                                    <thead>
+                                        <th align="center" style="width: 80px;">Step Name</th>
+                                        <th align="center" style="width: 68px;">Approval Status</th>
+                                        <th align="center" style="width: 78px;">Date</th>
+                                        <th align="center" style="width: 64px;">Assigned (/Actual) Approver</th>
+                                        <th align="center" style="width: 59px;">Depends On</th>
+                                        <th align="center" style="width: 85px;">Approver Comments</th>
+                                        <!--<th align="center">Requestor Comments</th>-->
+                                    </thead>
+                                    <apex:repeat value="{!ApprovalHistory}" var="Item">
+                                        <tr>
+                                            <td align="left" style="width: 93px;">
+                                                <apex:outputField value="{!Item.Apttus_Approval__Step_Name__c}"/> 
+                                            </td>
+                                            
+                                            <td align="left" style="color:{!IF(Item.Apttus_Approval__Approval_Status__c!='Reassigned' && Item.Apttus_Approval__Approval_Status__c!='Not Submitted' && Item.Apttus_Approval__Approval_Status__c!='Assigned','#387C35',IF(Item.Apttus_Approval__Approval_Status__c=='Not Submitted','#736F6E','#E36F1E'))}">
+                                                <apex:outputField value="{!Item.Apttus_Approval__Approval_Status__c}"/>
+                                            </td>                                                
+                                            
+                                            <td align="right">
+                                                <apex:outputField value="{!Item.Apttus_Approval__Date__c}"/>
+                                            </td>                                                                    
+                                            
+                                            <td align="left">
+                                                <apex:outputField value="{!Item.APTSMD_Assigned_To_Actual_Approver__c}"/>
+                                            </td> 
+                                            
+                                            <td align="left">
+                                                <apex:outputField value="{!Item.Apttus_Approval__DependsOn__c}"/>
+                                            </td> 
+                                            
+                                            <td align="left"> 
+                                                <apex:outputField value="{!Item.Apttus_Approval__Approver_Comments__c}"/>
+                                            </td>  
+                                        </tr>
+                                    </apex:repeat>
+                                </table>
+                                
+                                <p>
+                                    Thanks,<br/>{!AppReqDetail.Apttus_Approval__Initial_Submitter__r.Name}
+                                </p> 
+                                <font color="white">
+                                    <apex:outputText value="Approval Request ID: " />
+                                    <apex:outputText value="{!appReqId}" />
+                                    <br/>
+                                    <apex:outputText value="Approval User ID: "/>
+                                    <apex:outputText value="{!recipientIdString}" />
+                                </font>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </font>
+        </body>
+    </html>
+</apex:component>

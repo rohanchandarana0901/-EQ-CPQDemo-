@@ -1,0 +1,2 @@
+<apex:page controller="DemoCustomUsageTierController" action="{!createUsageTiers}">
+</apex:page>

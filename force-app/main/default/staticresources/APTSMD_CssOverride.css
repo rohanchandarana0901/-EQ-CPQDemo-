@@ -1,0 +1,102 @@
+/*added by vivek as on 14/04/2022 to center align category label*/
+.block-refine-subcategories__children li a {
+	/*padding: 0.5rem; */
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem !important;
+}
+
+/*added by vivek as on 24/08/2020 to fix search icon alignment on product search textbox catalogue page*/
+.search-area-search-term {
+    display: contents !important;
+}
+.product-dialog-height {
+	    max-height: 32rem !important;
+}
+.product-dialog-height > .ands-dialog-footer {
+	display: none !important; 
+}
+.header-totals > .subheader{
+	width:600px;
+}
+/* .proposal-summary__display > .proposal-summary__current {
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40%;
+    display: inline-block;
+    vertical-align: middle;
+} */
+proposal-summary{
+    width: 600px;
+}
+.custom-action-dialog {
+    width:80%;
+}
+/*added by vivek to increase price ramp dialog size Dt. 19-08-2019*/
+.ramp-dialog, .usage-tier-dialog, .selected-asset-dialog {
+    max-height: 50%;
+    min-height: 20%;
+    left: 35%;
+    max-width: 90%;
+}
+.svg-container{
+	
+	overflow: visible !important; 
+}
+svg {
+  height: 150% !important;
+  width: 100% !important;    
+    
+}
+/*added by Jigar as on 18/03/2021 to fix the CSS issue in the constraint rule popup.*/
+.listing-icon{
+	width: 15% !important;
+}
+.listing-title{
+	vertical-align: middle !important;
+}
+.listing-price{
+	padding-top: 15% !important;
+}
+.listing-action-area{
+	padding-top: 2.5% !important;
+}
+/*added by Jigar as on 23/04/2021 to fix the CSS issue of the catalog actions.*/
+.display-actions-top-centered {
+	display: flex;
+	flex: auto;
+	flex-direction: row-reverse;
+	padding-right: 1.5rem;
+	padding-top: 0.125rem;
+}
+/*added by vivek to hide line item menu actions as on 6 dec 2021*/
+/*To hide price ramp
+#lla-price-ramp {
+	display: none;
+}
+
+To hide related-lines
+#lla-related-lines {
+	display: none;
+}
+
+To hide multiple adjustments
+#lla-adjustments {
+	display: none;
+}
+
+To hide usage tier
+#lla-usage-tier {
+	display: none;
+}
+
+To hide incentives
+#lla-incentives {
+	display: none;
+}
+
+To hide water fall
+#lla-price-waterfall {
+	display: none;
+}
+*/

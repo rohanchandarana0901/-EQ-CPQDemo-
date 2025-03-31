@@ -1,0 +1,64 @@
+<apex:page sidebar="false" showHeader="true" docType="html-4.01-strict">
+<div id="tabstrip" style="display:none;"> <ul> 
+<li class="k-state-active">Transactions All</li>
+<li>Transactions Complete</li>
+<li>Transactions Sent</li>
+<li>Transactions Draft</li>
+<li>Transactions Declined</li>
+
+</ul>
+<!-- Transactions All -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="APXT_CongaSign__Transaction__c" DelayLoad="false"  ViewID="a9fHs000000grfY" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+
+<!-- Transactions Complete -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="APXT_CongaSign__Transaction__c" DelayLoad="false"  ViewID="a9fHs000000grfZ" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+ 
+ 
+<!-- Transactions Sent-->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="APXT_CongaSign__Transaction__c" DelayLoad="true"  ViewID="a9fHs000000grfg" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+<!-- Transactions Draft -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="APXT_CongaSign__Transaction__c" DelayLoad="true"  ViewID="a9fHs000000grfi" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+
+<!-- Transactions Declined -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="APXT_CongaSign__Transaction__c" DelayLoad="true"  ViewID="a9fHs000000grfh" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+ 
+</div>
+<script>
+$(document).ready(function() {
+    $("#tabstrip").kendoTabStrip({
+      activate: function(e){
+        setTimeout(function(){          $(window).resize();        });
+      }
+    });
+    $("#tabstrip").css("display", "block");
+});
+ </script>
+</apex:page>

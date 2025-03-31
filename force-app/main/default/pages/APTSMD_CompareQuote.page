@@ -1,0 +1,889 @@
+<!-- UI/UX Chnages made by Japan Bhavsar, modified by Apttus Lab on 09-08-2019 -->
+<apex:page standardStyleSheets="false" standardController="Opportunity" extensions="APTSMD_MultipleQuoteCompareController"
+    title="Quote Compare" sidebar="false" showHeader="false" lightningStyleSheets="true">
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        ng-app="ngApp">
+
+    <head>
+
+        <!-- stylesheets for CPQ like formatting -->
+        <apex:slds />
+
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQCommon.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQOptions.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources, 'CPQDelight.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_CustomCSS)}" />
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap.min.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap-theme.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap-theme.min.css')}"
+        />
+        <apex:outputPanel rendered="{!NOT(ISNULL(customCSSStyle))}">
+            <apex:dynamicComponent componentValue="{!customCSSStyle}" />
+        </apex:outputPanel>
+        <apex:stylesheet value="{!$Resource.Apttus_Config2__ConfigStyles}" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        />
+        <script src="{!URLFOR($Resource.APTSMD_ngResource, 'jquery/jquery.min.js')}"></script>
+        <link href="https://gitcdn.github.io/bootstrap-toggle/2.1.0/css/bootstrap-toggle.min.css"
+            rel="stylesheet" />
+        <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.js"></script>
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.1.0/js/bootstrap-toggle.min.js"></script>
+        <script src="{!URLFOR($Resource.APTSMD_ngResource, 'angularLib/angular-route.min.js')}"></script>
+        <script src="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/js/bootstrap.js')}"></script>
+        <script src="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/js/bootstrap.min.js')}"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker.css"
+        />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker.min.css"
+        />
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js'></script>
+
+        <!--<link rel="stylesheet" href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.10/angular-material.css"
+        />-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.10/angular-material.min.css" integrity="sha512-lUExuDw/YQOmNO0LN2XplczGTyTxTEUvXBPKOnfBNloscpdzpfrYBiyWtPeyF0guAgihG/6RrOfDpoyywWMk/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        
+        <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-animate.min.js'></script>
+        <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-aria.min.js'></script>
+        <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-messages.min.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.js'></script>
+        <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/t-114/svg-assets-cache.js'></script>
+        <!--<script src='https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.10/angular-material.js'></script>-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.1/angular-material.js" integrity="sha512-ubrioXp1YyKCrLVzg68ZvLejBz5giN2J1XDmOV+JxN9bkkWbtooESyAtPW1j//3f97oBzCHEIy19eWgHPGXZRg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        
+        <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+
+        <script>
+            function doCancel() {
+                saveDataIcon2 = true;
+                window.top.location = '/' + '{!opportunityId}';
+
+            }
+
+            var app = angular.module("ngApp", ['ngMaterial', 'ngMessages',
+                'material.svgAssetsCache'
+            ]);
+            //controller
+            app.controller("quoteController", ["$scope", "$window",
+                function($scope, $window) {
+
+                    //variable declaration
+                    $scope.predicate = 'Name';
+                    $scope.reverse = true;
+                    $scope.selection = [];
+                    $scope.opttyId = '{!opportunityId}';
+                    $scope.exceptionType = {};
+                    $scope.exceptionType.selected = '';
+                    $scope.propStatus = jQuery.parseJSON(
+                        '{!propStatusJSON}');
+                    $scope.PLIPageFields = {!PLIPageFieldsJSON
+                    };
+                    $scope.PLILineFields = {!PLILineFieldsJSON
+                    };
+                    $scope.PropeFields = {!PropFieldsJSON
+                    };
+                    $scope.Quotes = {!QuotelistJson
+                    };
+                    $scope.columns = 'All';
+                    $scope.propDateFieldSet = {!propDateFieldsJSON
+                    };
+                    $scope.filterDate = {
+                        dateFrom: null,
+                        dateTo: null
+                    };
+
+                    $scope.initializeDatepicker = function() {
+                        $('.datepicker').datepicker({
+                            autoclose: true
+                        });
+                    };
+
+                    $scope.doCancel = function() {
+                        saveDataIcon2 = true;
+                        window.top.location = '/' +
+                            '{!opportunityId}';
+                    }
+
+                    $scope.saveDataIcon = false;
+                    $scope.showLoadingIcon = function() {
+                        return $scope.saveDataIcon;
+                    }
+                    var saveDataIcon2 = false;
+                    $scope.showLoadingIcon1 = function() {
+                            return saveDataIcon2;
+                        }
+                        //list of all quotes
+
+                    // getSelectedQuoteCount - get count of selected quotes
+                    $scope.getSelectedQuoteCount = function() {
+                        var count = 0;
+                        angular.forEach($scope.Quotes, function(i,
+                            k) {
+                            if (i.selected) {
+                                count = count + 1;
+                            }
+                        });
+                        return count;
+                    }
+
+
+                    $scope.reset = function() {
+                        $scope.search = {};
+                        $scope.columns = 'All';
+                        $scope.filterDate.dateFrom = null;
+                        $scope.filterDate.dateTo = null;
+                    };
+
+                    $scope.order = function(predicate) {
+                        $scope.reverse = ($scope.predicate ===
+                                predicate) ? !$scope.reverse :
+                            false;
+                        $scope.predicate = predicate;
+                    };
+
+                    //compare layout  
+                    $scope.content = false;
+                    $scope.quoteLIMap = [];
+                    var processStepVal = '{!processStep}';
+                    if (processStepVal == 'compare')
+                        $scope.compareStep = true;
+
+                    $scope.GetQuote = function(quote) {
+                        var idx = $scope.selection.indexOf(quote.Id);
+                        if (idx > -1) {
+                            $scope.selection.splice(idx, 1);
+                        } else {
+                            $scope.selection.push(quote.Id);
+                        }
+                        //for page direction
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.APTSMD_MultipleQuoteCompareController.doPageDirection}',
+                            JSON.stringify($scope.selection),
+                            function(result, event) {
+                                if (result != null) {
+                                    $scope.quoteLIMap = result;
+
+                                    // Code Added By Mehul Parmar - Start
+                                    angular.forEach($scope.quoteLIMap,
+                                        function(keyquotes) {
+                                            angular.forEach(
+                                                keyquotes
+                                                .quote,
+                                                function(
+                                                    proposal
+                                                ) {
+                                                    angular
+                                                        .forEach(
+                                                            keyquotes
+                                                            .pliList,
+                                                            function(
+                                                                plirecord
+                                                            ) {
+                                                                if (
+                                                                    plirecord
+                                                                    .Apttus_QPConfig__LineType__c ==
+                                                                    'Product/Service'
+                                                                ) {
+                                                                    plirecord
+                                                                        .APTSMD_collapseOptions__c =
+                                                                        true;
+                                                                }
+                                                            }
+                                                        );
+                                                });
+                                        });
+                                    // Code Added By Mehul Parmar - End
+                                    $scope.compareStep = true;
+                                    $scope.$apply();
+                                }
+                            });
+
+
+                        //for line direction:
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.APTSMD_MultipleQuoteCompareController.doLineDirection}',
+                            JSON.stringify($scope.selection),
+                            function(result, event) {
+                                if (result != null) {
+                                    $scope.productPLIMap =
+                                        result;
+                                    $scope.compareStep = true;
+                                    $scope.$apply();
+                                }
+                            });
+                    }
+
+                    $scope.getSelectedLineItems = function() {
+                            var flag = false;
+                            angular.forEach($scope.Quotes, function(
+                                quote) {
+                                if (quote.selected == true) {
+                                    flag = true;
+                                }
+                            });
+                            return flag;
+                        }
+                        // to toggle the icon of particular table
+                    $scope.changeIcon = function(id) {
+                        var ele = document.querySelector("#a2-" +
+                            id + " i");
+                        angular.element(ele).toggleClass(
+                            "glyphicon-minus glyphicon-plus");
+                    };
+
+                    $scope.generateDocument = function() {
+                            $scope.saveDataIcon = true;
+                            Visualforce.remoting.Manager.invokeAction(
+                                '{!$RemoteAction.APTSMD_MultipleQuoteCompareController.doSave}',
+                                $scope.opttyId, angular.toJson(
+                                    $scope.quoteLIMap),
+                                function(result, event) {
+                                    $scope.saveDataIcon = false;
+                                    $scope.$apply();
+                                    //window.location.href = "/apex/generatecomparequote?id="+result;
+                                    $window.open(
+                                        '/apex/APTSMD_GenerateCompareQuote?id=' +
+                                        result, '_blank');
+                                });
+                        }
+                        // Code added By Mehul Parmar
+                    $scope.collapseOptionPanel = function(proposalId,
+                        Lineitem) {
+                        var ele = document.querySelector("#ct" +
+                            Lineitem.Id + " i");
+                        if (angular.element(ele).hasClass(
+                                "glyphicon-triangle-right")) {
+                            angular.element(ele).removeClass(
+                                "glyphicon-triangle-right").addClass(
+                                "glyphicon-triangle-bottom");
+                        } else {
+                            angular.element(ele).removeClass(
+                                " glyphicon-triangle-bottom").addClass(
+                                "glyphicon-triangle-right");
+                        }
+                        angular.forEach($scope.quoteLIMap, function(
+                            keyquotes) {
+                            angular.forEach(keyquotes.quote,
+                                function(proposal) {
+                                    if (keyquotes.quote
+                                        .Id ==
+                                        proposalId) {
+                                        angular.forEach(
+                                            keyquotes
+                                            .pliList,
+                                            function(
+                                                plirecord
+                                            ) {
+                                                if (
+                                                    plirecord
+                                                    .Id !=
+                                                    Lineitem
+                                                    .Id &&
+                                                    plirecord
+                                                    .Apttus_QPConfig__LineNumber__c ==
+                                                    Lineitem
+                                                    .Apttus_QPConfig__LineNumber__c
+                                                ) {
+                                                    plirecord
+                                                        .APTSMD_collapseOptions__c = !
+                                                        plirecord
+                                                        .APTSMD_collapseOptions__c;
+                                                }
+                                            });
+                                    }
+
+                                });
+                        });
+                    }
+                    $scope.clearFilters = function(search) {
+                        $scope.search = {};
+                    }
+
+                    $scope.isObjectEmpty = function(card) {
+                        return Object.keys(card).length === 0;
+                    }
+
+                    // Code Ended - Added By Mehul Parmar
+                    // Applies to Angular $routeProvider.
+                    var sitePrefix = '{!$Site.Prefix}';
+                    if (sitePrefix == '') sitePrefix = '/apex';
+                }
+            ]);
+            app.filter("fieldsFilter", function() {
+                return function(items, filterObj) {;
+                    var result = [];
+
+
+                    var result = [];
+                    if (filterObj != '' && filterObj != undefined &&
+                        Object.keys(filterObj).length != 0) {
+
+                        var searchHeaders = Object.keys(filterObj);
+                        var SearchValue = filterObj[searchHeaders].toLowerCase();
+                        angular.forEach(items, function(eachProp) {
+                            if (eachProp[searchHeaders] !=
+                                undefined && eachProp[
+                                    searchHeaders].toString()
+                                .toLowerCase().indexOf(
+                                    SearchValue) >= 0) {
+                                result.push(eachProp);
+                            }
+
+                        });
+                    } else {
+                        result = items;
+                    }
+
+                    return result;
+                }
+            });
+            app.filter("myfilter", function() {
+                return function(items, from, to, searchField) {
+                    if (from != null) {}
+                    if (to != null) {}
+                    //console.log(from != null);
+                    var result = [];
+                    angular.forEach(items, function(eachProp) {
+                        if (from != null) {
+                            if (to != null) {
+                                if (from.length > 0 && to.length >
+                                    0) {
+                                    if (new Date(from) <=
+                                        new Date(eachProp[
+                                            searchField
+                                        ]) && new Date(to) >=
+                                        new Date(eachProp[
+                                            searchField
+                                        ])) {
+                                        result.push(
+                                            eachProp);
+                                    }
+                                } else if (from.length > 0) {
+                                    if (new Date(from) <=
+                                        new Date(eachProp[
+                                            searchField
+                                        ])) {
+                                        result.push(
+                                            eachProp);
+                                    }
+                                } else if (to.length > 0) {
+                                    if (new Date(to) >= new Date(
+                                            eachProp[
+                                                searchField
+                                            ])) {
+                                        result.push(
+                                            eachProp);
+                                    }
+                                } else {
+                                    result.push(eachProp);
+                                }
+                            } else {
+                                if (from.length > 0) {
+                                    if (new Date(from) <=
+                                        new Date(eachProp[
+                                            searchField
+                                        ])) {
+                                        result.push(
+                                            eachProp);
+                                    }
+                                } else {
+                                    result.push(eachProp);
+                                }
+                            }
+                        } else if (to != null) {
+                            if (to.length > 0) {
+                                if (new Date(to) >= new Date(
+                                        eachProp[
+                                            searchField])) {
+                                    result.push(eachProp);
+                                }
+                            } else {
+                                result.push(eachProp);
+                            }
+
+                        } else {
+                            result.push(eachProp);
+                        }
+                    });
+                    return result;
+                };
+            });
+
+            app.filter('dataFormatting', function($filter) {
+                var angularDateFilter = $filter('date');
+                var angularCurrrencyFilter = $filter('currency');
+                //var angularPercentFilter = $filter('number');
+
+                return function(data, dataType) {
+                    if (dataType == 'DATE') {
+                        return angularDateFilter(data, 'MM/dd/yyyy');
+                    } else if (dataType == 'CURRENCY') {
+                        return angularCurrrencyFilter(data, "$");
+                    } else if (dataType == 'PERCENT' && data !=
+                        undefined) {
+                        //return angularPercentFilter(data, "%");
+                        return $filter('number')(data, 2) + '%';
+                    } else {
+                        return data;
+                    }
+                }
+            });
+            app.filter('escapeSpecialChar', function($filter) {
+                return function(data) {
+                    var filtered = angular.element('<div>').html(data).text(); 
+                    return filtered;
+                }
+            });
+            app.directive('toggleCheckbox', function() {
+                // based on https://github.com/minhur/bootstrap-toggle/issues/19
+
+                return {
+                    restrict: 'A',
+                    require: 'ngModel',
+                    link: function(scope, element, attributes,
+                        ngModelController) {
+                        element.on('change.toggle', function(event) { // note that ".toogle" is our namespace, used further down to remove the handler again
+                            var checked = element.prop(
+                                'checked');
+                            ngModelController.$setViewValue(
+                                checked);
+                        });
+
+                        ngModelController.$render = function() {
+                            element.bootstrapToggle(
+                                ngModelController.$viewValue ?
+                                'on' : 'off');
+                        };
+
+                        scope.$on('$destroy', function() {
+                            // clean up
+                            element.off('change.toggle');
+                            element.bootstrapToggle(
+                                'destroy');
+                        });
+
+                        // we set the 'checked' property once so the Bootstrap toggle is initialized to the correct value, i.e.,  without flashing the 'off' state and then switch to the 'on' state in case of an initial value of 'true';
+                        // this is not needed if your markup already contains the correct 'checked' property;
+                        // note that we can't use ngModelController.$viewValue since at this stage, it's still uninitialized as NaN
+                        var initialValue = scope.$eval(attributes.ngModel);
+                        element.prop('checked', initialValue);
+                    }
+                };
+            });
+
+        </script>
+
+        <!-- Google Analytics Script -->
+        <script>
+            (function(i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function() {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script',
+                'https://www.google-analytics.com/analytics.js', 'ga');
+
+            ga('create', 'UA-78889226-1', 'auto');
+            ga('send', 'pageview');
+
+        </script>
+
+        <style>
+            /*added by vivek on 22 June 2023 to resolve icon margin*/
+            svg#headerIcon{
+                width: 3rem !important;
+                height: 3rem !important;
+            }
+            .backgroundGray{
+                background: #F3F2F2 !important;
+            }
+            .actions {
+                margin-top: 65px;
+                height: 47px;
+            }
+            
+            .search-bar {
+                background: #f3f2f2;
+                border-bottom: 1px solid #dddbda ! important;
+            }
+            
+            .scrollit {
+                overflow-y: scroll;
+                height: 145px;
+            }
+            
+            .sortorder:after {
+                content: '\25b2';
+            }
+            
+            .sortorder.reverse:after {
+                content: '\25bc';
+            }
+            
+            .header {
+                position: fixed;
+                top: 0;
+                z-index: 1000;
+            }
+            
+            .header1 {
+                position: fixed;
+            }
+            
+            .scrollableTable > tbody {
+                display: block;
+                height: 145px;
+                overflow: auto;
+            }
+            
+            .scrollableTable > thead,
+            .scrollableTable > tbody tr {
+                display: table;
+                width: 100%;
+                table-layout: fixed;
+            }
+            
+            .scrollableTable {
+                width: 100%
+            }
+            
+            .tableHeaders {
+                font-weight: bold !important;
+                font-size: 1.4rem !important;
+            }
+            
+            #Linetable td {
+                color: #44596C !important;
+            }
+            
+            md-switch {
+                margin: 0 !important;
+            }
+            
+            md-switch .md-label {
+                font-size: 13px;
+            }
+        
+        </style>
+
+        <script>
+            $(document).ready(function() {
+                //date picker
+            });
+
+        </script>
+    </head>
+
+    <body ng-controller="quoteController" id="mycontroller" ng-cloak='true'>
+
+
+        <!-- New Header-bar -->
+        <c:APTSMD_CommonHeader pageName1="Compare Quote" objectName="" iconName="account"
+            type="standard" />
+
+        <!-- Define Apttus container  -->
+        <div class="apttusContainer moved">
+
+            <!-- button section -->
+            <div class="actions">
+                <button class="apttusBtn floatRight marginLeft10" ng-click='generateDocument();'>
+            Generate Document
+        </button>
+                <button class="apttusBtnWhite slds-button slds-button--brand floatRight " onclick="doCancel();">
+            Back
+        </button>
+            </div>
+
+            <!-- New Filter Design By Japan Bhavsar -->
+            <div class="panel  apttusPanel">
+                <div>
+                    <p class="blackBold margin0 displayIB marginTop5" ng-click="showFilter = !showFilter"><i ng-init="showFilter = false;" class="material-icons verticalMiddle">{{showFilter ? 'expand_more' : 'chevron_right'}}</i>&nbsp;Search
+                        Filters</p>
+                    <div class="floatRight">
+                        <md-switch ng-model="content" aria-label="Layout Direction:" ng-true-value="true"
+                            ng-false-value="false" class="md-primary">Switch to Line View</md-switch>
+                    </div>
+                </div>
+                <div ng-show="showFilter">
+
+                    <div class="row margin0 padding0 marginTop10">
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                            <div class="dropDown searchPicklis" style="padding-left: 2px;">
+                                <select class="form-control apttusInput" ng-model="columns" ng-change="clearFilters(columns)">>
+                                    <option value="" selected="selected">All</option>
+                                    <option ng-value="eachPropField.fieldAPIName" ng-repeat="eachPropField in PropeFields">{{eachPropField.fieldLabel}}</option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12" ng-if="propDateFieldSet[columns] != 'DATE'">
+                            <div class="dropDown searchPicklist">
+                                <input type="text" class="form-control apttusInput" ng-model="search[columns]" placeholder="Enter some text to search"
+                                    style="width:100%" ng-disabled="columns == 'All'"
+                                />
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12" ng-if="propDateFieldSet[columns] == 'DATE'">
+                            <div class="searchPicklist"><b>
+                            <input class="form-control apttusInput span2 datepicker" type = "text" ng-init="initializeDatepicker();" ng-model="filterDate.dateFrom" id="dp1" placeholder = "From Date" name="date" data-date-format="mm/dd/yyyy" ng-if="propDateFieldSet[columns] == 'DATE'"/></b>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12" ng-if="propDateFieldSet[columns] == 'DATE'">
+                            <div class="searchPicklist"><b>
+                            <input class="form-control apttusInput span2 datepicker" type = "text" ng-init="initializeDatepicker();" ng-model="filterDate.dateTo"  id="dp2" placeholder = "To Date" name="date" data-date-format="mm/dd/yyyy" ng-if="propDateFieldSet[columns] == 'DATE'"/></b>
+                            </div>
+                        </div>
+                        <div class="col-md-1 col-sm-6 col-xs-12">
+                            <div ng-click="reset()">
+
+                                <button class="apttusBtnWhite slds-button slds-button--brand">
+                                Clear
+                            </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Quote Selection Screen begins-->
+            <div class="panel panel-primary apttusPanel" id="accordion">
+                <div class="panel-heading padding0 marginTop5 marginBottom5">
+                    <h4 class="panel-title search-bar">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true"
+                            aria-controls="collapseOne" onClick="$('#a1').toggle();$('#a2').toggle();">
+                            <font color="">
+                                <span style="float:left;display:none" id="a1">
+                                <i class="material-icons">chevron_right</i></span>
+                                <span style="float:left;display:block" id="a2">
+                                <i class="material-icons">expand_more</i>
+                           </span></font>
+                        </a><label class="blackBold margin0 paddingTop4">&nbsp;Select Quotes for Comparison</label>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in">
+
+                    <div class="panel-body" style="padding: 0px;">
+                        <table class="table table-bordered table-hover scrollableTable marginTop5" border="0">
+                            <thead>
+                                <tr>
+                                    <th style="width:3%"></th>
+                                    <th id="thStyle" class="tableHeader tableHeaderFont blackBold">
+                                        <a href='' class="blackBold outlineNone textDecoNone cursorPointer" ng-click="order('Name')">Quote Id</a>
+                                    </th>
+
+
+                                    <th id="thStyle" class="tableHeader tableHeaderFont blackBold" ng-repeat="eachPropeFields in PropeFields"
+                                        ng-if="eachPropeFields.fieldAPIName != 'Name'"
+                                        ng-class="(eachPropeFields.getType == 'CURRENCY' || eachPropeFields.getType == 'DOUBLE' || eachPropeFields.getType == 'PERCENT') ? 'textAlignCenter' : 'simpleTextAlign'">
+                                        <a href='' class="blackBold outlineNone textDecoNone cursorPointer" ng-click="order(eachPropeFields.fieldAPIName)">{{eachPropeFields.fieldLabel}}</a>
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="Quote in Quotes | fieldsFilter:search | myfilter:filterDate.dateFrom:filterDate.dateTo:columns | orderBy:predicate:reverse">
+                                    <td align='center' class="verticalMiddle borderNone simpleTextAlignCenter" style="width:3%"><input type='checkbox' class="form-checkbox outlineNone marginTop0"
+                                            ng-checked="selection.indexOf(Quote.id) > -1 || master"
+                                            ng-model='Quote.selected' ng-click='GetQuote(Quote);'
+                                        /></td>
+
+                                    <td align='left' class="verticalMiddle borderNone" ng-if="Quote.Apttus_Proposal__Primary__c== true"><a href="/{{Quote.Id}}" target='_blank'>{{Quote.Name}}</a>&nbsp;&nbsp;&nbsp;
+                                        <i
+                                            style="font-size: 1.5em !important;" class="fa fa-product-hunt fa-2x"></i>
+                                    </td>
+                                    <td align='left' class="verticalMiddle borderNone" ng-if="Quote.Apttus_Proposal__Primary__c== false"><a href="/{{Quote.Id}}" target='_blank'>{{Quote.Name}}</a></td>
+
+                                    <td class="verticalMiddle borderNone" ng-repeat="eachPropeFields in PropeFields"
+                                        ng-if="eachPropeFields.fieldAPIName != 'Name'"
+                                        ng-class="(eachPropeFields.getType == 'CURRENCY' || eachPropeFields.getType == 'DOUBLE' || eachPropeFields.getType == 'PERCENT') ? 'currencyTextAlign' : 'simpleTextAlign'">
+                                        <span ng-if="eachPropeFields.fieldAPIName != 'Apttus_Proposal__Primary_Contact__c'">{{Quote[eachPropeFields.fieldAPIName] | dataFormatting : eachPropeFields.getType}}</span>
+                                        <a ng-if="eachPropeFields.fieldAPIName == 'Apttus_Proposal__Primary_Contact__c'"
+                                            href="/{{Quote.Apttus_Proposal__Primary_Contact__c}}"
+                                            target='_blank'>{{Quote.Apttus_Proposal__Primary_Contact__r.Name}}</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="textAlignRight smallMsgText">
+                        Selected Quotes: {{getSelectedQuoteCount()}}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!--Quote Selection Screen ends -->
+
+            <!--Quote Comapre Screen begins -->
+            <div id="idCompareQuotes" ng-show="compareStep">
+                <div class="" id="accordion">
+                    <!-- Page Direction begins-->
+                    <div id="PageDirDiv" ng-show="content == false">
+                        <div class="panel panel-primary apttusPanel" ng-repeat="key in quoteLIMap">
+                            <div class="panel-heading padding0 paddingRight5 backgroundGray" style="background: #F3F2F2 !important;">
+                                <h4 class="panel-title">
+                                    <table class="width100P marginBottom10 marginTop5">
+                                        <tr>
+                                            <td class="tableHeader tableHeaderFont blackBold verticalMiddle">
+                                                <a class="blackBold outlineNone textDecoNone" href="/{{key.quote.Id}}" target='_blank'>{{key.quote.Name}}</a>                                                &nbsp;|&nbsp;&nbsp;Name:&nbsp;
+                                                <a
+                                                    class="blackBold outlineNone textDecoNone"
+                                                    href="/{{key.quote.Id}}" target='_blank'
+                                                    style="">{{key.quote.Apttus_Proposal__Proposal_Name__c}}</a>&nbsp;|&nbsp;&nbsp;Status:&nbsp;{{key.quote.Apttus_Proposal__Approval_Stage__c}}
+                                            </td>
+                                            <td style="width:15%;" class="tableHeader tableHeaderFont blackBold verticalMiddle">
+                                                <font color="">Total Amount: {{key.quote.Initial_Price_Display__c|
+                                                    currency:propList.currencyCode:2}}</font>
+                                            </td>
+                                            <td style="width:10%;" class="tableHeader tableHeaderFont blackBold verticalMiddle">
+                                                <font color="" align='right'>Discount %: {{key.quote.Effective_Discount__c|number
+                                                    :2}}</font>
+                                            </td>
+                                            <td style="width:15%;" class="tableHeader tableHeaderFont blackBold verticalMiddle">
+                                                <font color="" align='right'>Net Amount: {{key.quote.Discounted_Price_Display__c|
+                                                    currency:propList.currencyCode:2}}</font>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </h4>
+                            </div>
+                            <div class="panel-body" style="padding : 0px;">
+                                <table id="collapseLI-{{key.quote.Id}}" class="table table-bordered table-hover overflowX">
+                                    <thead>
+                                        <tr>
+                                            <th class="tableHeader tableHeaderFont blackBold">&nbsp;&nbsp;Product / Option Name</th>
+                                            <th class="tableHeader tableHeaderFont blackBold" ng-repeat="eachPLIPageField in PLIPageFields"
+                                                ng-class="(eachPLIPageField.getType == 'CURRENCY' || eachPLIPageField.getType == 'DOUBLE' || eachPLIPageField.getType == 'PERCENT') ? 'currencyTextAlign' : 'simpleTextAlign'">{{eachPLIPageField.fieldLabel}}</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tr ng-repeat="pli in key.pliList">
+                                        <td align='left' style="width:35%;" class="verticalMiddle borderNone" ng-if="pli.APTSMD_Option_Name__c== null"
+                                            ng-show="pli.Apttus_QPConfig__LineType__c == 'Product/Service'">
+                                            <div id="ct{{pli.Id}}"><i class="glyphicon glyphicon-triangle-right"
+                                                    style="cursor:pointer;color:#3F7AB7;"
+                                                    ng-click="collapseOptionPanel(key.quote.Id,pli)"
+                                                    ng-show="pli.Apttus_QPConfig__HasOptions__c==true"></i>&nbsp;&nbsp;
+                                                <a
+                                                    href="/{{pli.Apttus_Proposal__Product__r.Id}}"
+                                                    target='_blank'>{{pli.Apttus_Proposal__Product__r.Name | escapeSpecialChar}}</a>
+                                            </div>
+                                        </td>
+                                        <td class="verticalMiddle borderNone" align='left' style="width:35%;" ng-if="pli.APTSMD_Option_Name__c!= null"
+                                            ng-show="pli.APTSMD_collapseOptions__c == true && pli.Apttus_QPConfig__LineType__c == 'Option'">
+                                            <div style="display:inline-flex;">
+                                                <ul class="fa-ul">
+                                                    <li><i class="fa-li fa fa-check"></i></li>
+                                                </ul><a href="/{{pli.Apttus_QPConfig__OptionId__c}}"
+                                                    target='_blank' style="float:left;">{{pli.APTSMD_Option_Name__c | escapeSpecialChar}}</a></div>
+                                        </td>
+
+                                        <td class="verticalMiddle borderNone" ng-repeat="eachPLIPageField in PLIPageFields"
+                                            ng-show="pli.APTSMD_collapseOptions__c == true"
+                                            ng-class="(eachPLIPageField.getType == 'CURRENCY' || eachPLIPageField.getType == 'DOUBLE' || eachPLIPageField.getType == 'PERCENT') ? 'currencyTextAlign' : 'simpleTextAlign'">
+                                            <span ng-if="eachPLIPageField.fieldAPIName != 'APTSMD_Option_Name__c' && eachPLIPageField.fieldAPIName != 'Apttus_QPConfig__Guidance__c'">{{pli[eachPLIPageField.fieldAPIName] | dataFormatting : eachPLIPageField.getType}}</span>
+                                            <div ng-if="eachPLIPageField.fieldAPIName == 'APTSMD_Option_Name__c' || eachPLIPageField.fieldAPIName == 'Apttus_QPConfig__Guidance__c'"
+                                                class="circleClass" style="background-color:{{pli[eachPLIPageField.fieldAPIName]}}"></div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Page Direction ends-->
+
+                    <!-- Line Item Design By Japan Bhavsar -->
+                    <div id="LineDirDiv" ng-show="content == true">
+                        <div class="backgroundWhite overflowX" ng-show="getSelectedLineItems()">
+                            <table class="table table-hover margin0" ng-style="{'width' : (quoteLIMap.length > 2 ? '2200px' : '100%')}"
+                                style="{{quoteLIMap.lenght > 2 ? 'width:2000px;' : 'width:1200px;'}}">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th class="paddingTop10 paddingBottom10 textAlignCenter" ng-repeat="key in quoteLIMap | orderBy: '-quote.Id'">
+                                            <h4 class="panel-title">
+                                                <font color="" class="tableHeaders blackBold"><span><a class="outlineNone blackBold textDecoNone" href="/{{key.quote.Id}}"  target='_blank'>{{key.quote.Name}} </a>: {{key.quote.Apttus_Proposal__Proposal_Name__c}}</span></font>
+                                            </h4>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-show="getSelectedLineItems()">
+                                        <td class="verticalMiddle colorBlack">Product / Option Name</td>
+                                        <td class="verticalMiddle colorBlack">Charge Type</td>
+                                        <td class="verticalMiddle colorBlack">Price Type</td>
+                                        <td class="verticalMiddle colorBlack">Price Method</td>
+                                        <td ng-repeat="key in quoteLIMap" class="borderLeftGrey">
+                                            <table class="width100P">
+                                                <tr>
+                                                    <td class="verticalMiddle colorBlack" ng-style="{'width' : (100/PLILineFields.length) +'%'}"
+                                                        ng-repeat="eachPLILineField in PLILineFields"
+                                                        ng-class="(eachPLILineField.getType == 'CURRENCY' || eachPLILineField.getType == 'DOUBLE' || eachPLILineField.getType == 'PERCENT') ? 'currencyTextAlign paddingRight0 paddingLeft5' : 'simpleTextAlign paddingRight0 paddingLeft5'">{{eachPLILineField.fieldLabel}}</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr ng-repeat="item in productPLIMap | orderBy:[ 'ProductDetails.productName','-ProductDetails.optionName']"
+                                        ng-show="getSelectedLineItems()">
+                                        <td class="verticalMiddle" ng-if="item.ProductDetails.optionName==null"><a href="/{{item.ProductDetails.productId}}"
+                                                target='_blank'>{{item.ProductDetails.productName | escapeSpecialChar}}</a></td>
+                                        <td class="verticalMiddle" ng-if="item.ProductDetails.optionName!=null">
+                                            <div style="display:inline-flex;">
+                                                <ul class="fa-ul">
+                                                    <li><i class="fa-li fa fa-check"></i></li>
+                                                </ul><a href="/{{item.ProductDetails.optionId}}"
+                                                    target='_blank'>{{item.ProductDetails.optionName | escapeSpecialChar}}</a></div>
+                                        </td>
+                                        <td class="verticalMiddle">{{item.ProductDetails.chargeType}}</td>
+                                        <td class="verticalMiddle">{{item.ProductDetails.priceType}}</td>
+                                        <td class="verticalMiddle">{{item.ProductDetails.priceMethod}}</td>
+
+                                        <td class="verticalMiddle borderLeftGrey" ng-repeat="pliWrapper in item.LineItemList">
+                                            <table class="width100P">
+                                                <tr>
+                                                    <td class="verticalMiddle" ng-style="{'width' : (100/PLILineFields.length) +'%'}"
+                                                        ng-repeat="eachPLILineField in PLILineFields"
+                                                        ng-class="(eachPLILineField.getType == 'CURRENCY' || eachPLILineField.getType == 'DOUBLE' || eachPLILineField.getType == 'PERCENT') ? 'currencyTextAlign paddingRight0 paddingLeft5' : 'simpleTextAlign paddingRight0 paddingLeft5'">
+                                                        {{pliWrapper.proposalLI[eachPLILineField.fieldAPIName] | dataFormatting : eachPLILineField.getType}}
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Quote Comapre Screen ends -->
+
+            <br/>
+            <br/>
+            <br/>
+
+        </div>
+    </body>
+
+    </html>
+
+</apex:page>

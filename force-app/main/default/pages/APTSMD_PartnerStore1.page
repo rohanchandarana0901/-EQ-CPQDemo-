@@ -1,0 +1,25 @@
+<apex:page standardStylesheets="false" showHeader="false" sidebar="false" docType="html-5.0" applyHtmlTag="false" applyBodyTag="false">
+<head>
+<meta charset="utf-8" />
+<title>Partner Commerce</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#1976d2" />
+<link rel="stylesheet" href="{!URLFOR($Resource.APTSMD_PartnerStore1,'styles.css')}" />
+<script>
+window.sv = {
+resource: '{!URLFOR($Resource.APTSMD_PartnerStore1)}/'
+};
+</script>
+</head>
+<body>
+<app-root></app-root>
+<noscript>Please enable JavaScript to continue using this application.</noscript>
+<script src="{!URLFOR($Resource.APTSMD_PartnerStore1, 'runtime.js')}"></script>
+<script src="{!URLFOR($Resource.APTSMD_PartnerStore1, 'polyfills-es5.js')}"></script>
+<script src="{!URLFOR($Resource.APTSMD_PartnerStore1, 'polyfills.js')}"></script>
+<script src="{!URLFOR($Resource.APTSMD_PartnerStore1, 'scripts.js')}"></script>
+<script src="{!URLFOR($Resource.APTSMD_PartnerStore1, 'main.js')}"></script>
+</body>
+</apex:page>

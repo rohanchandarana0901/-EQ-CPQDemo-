@@ -1,0 +1,36 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,forceCommunity:availableForAllPageTypes">
+   <ltng:require styles="/resource/SLDS0102/assets/styles/salesforce-lightning-design-system-ltng.css" />
+    <aura:attribute name="recordId" type="Id" description="The Id of the record"/> 
+    <ltng:require styles="/resource/slds080/assets/styles/salesforce-lightning-design-system-vf.css" />
+    
+    <div style="border: 1px solid lightgray; padding: 5px; margin-bottom: 10px; border-radius: 5px;background-color:white">
+    <div style="color: gray; font-weight: 700; font-size: 16px;">
+        <!-- Apttus Logo Image + Title of Actions -->
+        <span class="header-label">
+			<!--<img src="{!$Resource.APTSMD_ApttusLogo}" id="apttuslogo" alt="Opportunity Actions" border="0"/>-->
+        	Opportunity Actions
+        </span>
+    </div>
+    <br/>
+    <div class="full forcePageBlockSectionRow">
+
+        <p class="full forcePageBlockItem forcePageBlockItemView" style="width:100%;text-align:center">
+            <div class="slds">
+                <div class="slds-grid slds-grid--align-spread">
+                    <!-- Quote Actions -->
+                	<div class="slds-col slds-size--3-of-12"> 
+                        <a aura:id="proposalQuote" onclick="{!c.createQuote}">
+                            <lightning:icon iconName="standard:quotes" size="medium" alternativeText="Quote"/>
+                            <br/>
+                            <span class="osOutputLabel">Quote</span>
+                        </a>
+                    </div>                   
+                    <!-- This divs has to be used if want to add extra actions -->
+                    <div class="slds-col slds-size--3-of-12"></div>
+                    <div class="slds-col slds-size--3-of-12"></div>
+                </div>
+            </div>
+        </p>
+    </div>
+    </div>
+</aura:component>

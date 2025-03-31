@@ -1,0 +1,31 @@
+<div layout="column">
+  <div flex layout-align="end">
+  </div>
+  <div flex>
+      <table class="table">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Due Date</th>
+        <th>Status</th>
+        <th>Priority</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="acti in activiyJSON">
+        <td>{{acti.Subject}}</td>
+        <td><p style="float:right" ng-bind="acti.ActivityDate | date:'MM/dd/yyyy'"></p></td>
+        <td>{{acti.Status}}</td>
+        <td>{{acti.Priority}}</td>
+        
+      </tr>
+       
+    </tbody>
+  </table>
+  </div>
+
+
+
+</div>
+
+     

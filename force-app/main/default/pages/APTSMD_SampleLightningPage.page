@@ -1,0 +1,1391 @@
+<apex:page standardStylesheets="false" sidebar="false" title="Agreements" showHeader="false" controller="APTSMD_SampleLightningPageController">
+    <apex:slds >
+        <html ng-app="myApp" ng-clock="" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+        <head>
+            <title>Agreement Portal</title>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+            <script src="https://cdn.rawgit.com/cornflourblue/angu-fixed-header-table/master/angu-fixed-header-table.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/store.js/1.3.14/store.min.js"></script>
+            <script src="app.js"></script>
+        </head>
+        <style>
+            .linkSet {
+                text-decoration: none;
+            }
+
+            /*added to remove hover blue box when we click on sortable arrow*/
+
+            .slds-button:focus {
+                box-shadow: 0 0 0px #0070d2 !important;
+            }
+
+            .table {
+                border-collapse: collapse;
+            }
+
+            .JCLRgrip .JColResizer {
+                cursor: col-resize !important;
+            }
+
+            .margin_left {
+                margin-left: 3%;
+            }
+
+            .non-active {
+                pointer-events: none;
+            }
+
+            .margin_left23Per {
+                margin-left: 23%;
+            }
+
+            input[type="date"]::-webkit-inner-spin-button {
+                -webkit-appearance: none !important;
+                display: none !important;
+            }
+        </style>
+        <script>
+            $(document).ready(function () { });
+            var myApp = angular.module('myApp', []);
+            myApp.filter('pagination', function () {
+                return function (input, start) {
+                    if (!input || !input.length) {
+                        return;
+                    }
+                    start = +start;
+                    return input.slice(start);
+                }
+            });
+            myApp.controller('AppCtrl', ['$scope', function ($scope) {
+
+
+                $scope.sizes = [5, 10, 25, 50, 100, 200, 300, 400, 500];
+                $scope.active = false;
+                $scope.isInformationActive = true;
+
+                $scope.eContractingAgreement;
+                $scope.eContractingAccount;
+                $scope.eContractingContact;
+
+                $scope.isLoading = false;
+                $scope.curPage = 0;
+                $scope.pageSize = 10;
+                $scope.filtered = 0;
+                $scope.numberPages = 0;
+                $scope.tabName = 'eContracting';
+                $scope.sortColumnName = '';
+                $scope.arrow = 0;
+                $scope.srnumber = 0;
+                $scope.mouseStart;
+                $scope.newWidth;
+                $scope.currentEle;
+                
+                $scope.showErrorMessage = false;
+                $scope.showWarningMessage = false;
+                $scope.showErrorMessageText = '';
+                $scope.showWarningMessageText = '';
+                
+            $scope.statusValuesList = {!statusValuesListJSON};
+            $scope.statusCategoryValuesList = {!statusCategoryValuesListJSON};
+            $scope.RecordTypeNames = {!RecordTypeNamesJSON};
+            $scope.sort = function (keyname) {
+                $scope.sortKey = keyname;
+                $scope.sortColumnName = keyname;
+                $scope.reverse = !$scope.reverse;
+                if ($scope.arrow == 0)
+                    $scope.arrow = 1;
+                else if ($scope.arrow == 1)
+                    $scope.arrow = 2;
+                else if ($scope.arrow == 2)
+                    $scope.arrow = 1;
+                else
+                    $scope.arrow = 0;
+            }
+
+            $scope.getSortColumnName = function (keyname) {
+                if ($scope.sortColumnName == keyname) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            $scope.upArrow = function () {
+                if ($scope.arrow == 2) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            $scope.downArrow = function () {
+                if ($scope.arrow == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            $scope.nextPage = function () {
+                $scope.curNo = $scope.curNo + 1;
+                $scope.curPage = $scope.curPage + 1;
+            }
+
+            $scope.previousPage = function () {
+                $scope.curNo = $scope.curNo - 1;
+                $scope.curPage = $scope.curPage - 1;
+            }
+
+            $scope.firstPage = function () {
+                $scope.curNo = 1;
+                $scope.curPage = 0;
+            }
+
+            $scope.hideFirst = function () {
+                if ($scope.curPage != 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            $scope.lastPage = function () {
+                $scope.curNo = $scope.numberPages + 1;
+                $scope.curPage = $scope.numberOfPages();
+            }
+
+            $scope.hideLast = function () {
+                if ($scope.curPage != $scope.numberOfPages()) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            $scope.search = function () {
+                $scope.curNo = 1;
+                $scope.curPage = 0;
+            }
+            
+            
+            $scope.numberOfPages = function () {
+                if ($scope.filtered == undefined) {
+                    return 0;
+                }
+                return Math.ceil($scope.filtered.length /
+                    $scope.pageSize) - 1;
+            };
+
+            $scope.updatePageSize = function (size) {
+                $scope.curNo = 1;
+                $scope.curPage = 0;
+                $scope.pageSize = parseInt(size);
+
+            }
+            
+           
+            $scope.allAccountNames = [];
+            $scope.allAccountIds = [];
+            $scope.allContactNames = [];
+            $scope.allContactIds = [];
+            $scope.commonQueryPart ='select Id, name, RecordType.Name, Apttus__Contract_Start_Date__c, Apttus__Contract_End_Date__c, CreatedDate, Apttus__Primary_Contact__r.Name, Apttus__FF_Agreement_Number__c, Apttus__Account__r.Id, Apttus__Account__r.Name, Apttus__Status_Category__c, Apttus__Status__c, Apttus__Total_Contract_Value__c from Apttus__APTS_Agreement__c '; 
+            $scope.allAgreementQuery = $scope.commonQueryPart +  'order by CreatedDate desc';
+            $scope.eContractingAgreementData = function (query) {
+                $scope.inProcess = true;
+                Visualforce.remoting.Manager.invokeAction(
+                    "{!$RemoteAction.APTSMD_SampleLightningPageController.getAgreement}",query,
+                    function (result, event) {
+                        $scope.inProcess = false;
+                        if (event.status) {
+                            $scope.isLoading = false;
+                            $scope.eContractingAgreement = angular.fromJson(result);
+                            if($scope.eContractingAgreement.length <= 0){
+                                $scope.showWarningMessage = true;
+                                $scope.showWarningMessageText = 'No records found!';
+                            }
+                        } else if (event.type === 'exception') {
+                            $scope.showErrorMessage = true;
+                            $scope.showErrorMessageText =  event.message;
+                        } else {
+                            $scope.showErrorMessage = true;
+                            $scope.showErrorMessageText =  event.message;
+                        }
+                        $scope.$apply();
+                    }, {
+                        escape: false
+                    }
+                );
+            }
+            $scope.eContractingAccountData = function () {
+                Visualforce.remoting.Manager.invokeAction(
+                    "{!$RemoteAction.APTSMD_SampleLightningPageController.getAccounts}",
+                    function (result, event) {
+                        if (result != null) {
+                            $scope.isLoading = false;
+                            $scope.eContractingAccount = angular.fromJson(result);
+                            for (let i = 0; i < $scope.eContractingAccount.length; i++) {
+                                $scope.allAccountNames[i] = $scope.eContractingAccount[i].accountName;
+                                $scope.allAccountIds[i] = $scope.eContractingAccount[i].accountId;
+                            }
+                            $scope.$apply();
+                        }
+                    }, {
+                        escape: false
+                    }
+                );
+            }
+            $scope.eContractingContactData = function () {
+                Visualforce.remoting.Manager.invokeAction(
+                    "{!$RemoteAction.APTSMD_SampleLightningPageController.getContacts}",
+                    function (result, event) {
+                        if (result != null) {
+                            $scope.isLoading = false;
+                            $scope.eContractingContact = angular.fromJson(result);
+                            for (let i = 0; i < $scope.eContractingContact.length; i++) {
+                                $scope.allContactNames[i] = $scope.eContractingContact[i].contactName;
+                                $scope.allContactIds[i] = $scope.eContractingContact[i].contactId;
+                            }
+                            $scope.$apply();
+                        }
+                    }, {
+                        escape: false
+                    }
+                );
+
+            }
+            $scope.eContractingAgreementData($scope.allAgreementQuery);
+            $scope.eContractingAccountData();
+            $scope.eContractingContactData();
+
+            //Advanced Search Data
+            $scope.viewdata = {
+                availableOptions: [{
+                    id: 'Apttus__Account__r.Name',
+                    name: 'Account Name'
+                }, {
+                    id: 'Name',
+                    name: 'Agreement Name'
+                }, {
+                    id: 'Apttus__FF_Agreement_Number__c',
+                    name: 'Agreement Number'
+                }, {
+                    id: 'Apttus__Contract_Start_Date__c',
+                    name: 'Agreement Start Date'
+                }, {
+                    id: 'Apttus__Contract_End_Date__c',
+                    name: 'Agreement End Date'
+                }, {
+                    id: 'CreatedDate',
+                    name: 'Created Date'
+                }, {
+                    id: 'Apttus__Primary_Contact__r.Name',
+                    name: 'Primary Contact'
+                }, {
+                    id: 'RecordType.Name',
+                    name: 'Record Type'
+                }, {
+                    id: 'Apttus__Status_Category__c',
+                    name: 'Status Category'
+                }, {
+                    id: 'Apttus__Status__c',
+                    name: 'Status'
+                }, {
+                    id: 'Apttus__Total_Contract_Value__c',
+                    name: 'Total Agreement Value'
+                }],
+                selectedOption: {
+                    id: 'Name',
+                    name: 'Agreement Name'
+                } //This sets the default value of the select in the ui
+            }
+
+            $scope.viewoperator = {
+
+                availableOptions: [{
+                    id: '0',
+                    name: '='
+                }, {
+                    id: '1',
+                    name: '!='
+                }, {
+                    id: '2',
+                    name: '<'
+                }, {
+                    id: '3',
+                    name: '>'
+                }, {
+                    id: '4',
+                    name: '<='
+                }, {
+                    id: '5',
+                    name: '>='
+                }, {
+                    id: '6',
+                    name: 'Contains'
+                }
+
+                ],
+                selectedOption: {
+                    id: '0',
+                    name: 'Contains'
+                } //This sets the default value of the select in the ui
+            };
+
+            var itemSearchData = new Object();
+            itemSearchData.viewdata = $scope.viewdata;
+            itemSearchData.viewoperator = $scope.viewoperator;
+            itemSearchData.setSelectedTextBoxValue= '';
+            itemSearchData.setSelectedDateValue= '';
+            itemSearchData.setSelectedPicklistValue= '';
+            itemSearchData.varPicklistValues = '';
+            itemSearchData.valueboxTypeToShow = 'TextBox';
+            itemSearchData.sequence = 1;
+            
+            itemSearchData.isSelectAdvancedSearchFieldNameOpen = false;
+            itemSearchData.selectAdvancedSearchFieldNameClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+            itemSearchData.isSelectAdvancedSearchOperatorOpen = false;
+            itemSearchData.selectAdvancedSearchOperatorClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+            itemSearchData.isSelectAdvancedSearchValueOpen = false;
+            itemSearchData.selectAdvancedSearchValueClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+            
+            $scope.itemSearchDataArray = [];
+            $scope.itemSearchDataArray.push(itemSearchData);
+            
+             $scope.addNewConditionRow = function(item, index){
+                if($scope.itemSearchDataArray.length < 5)
+                {
+                    var itemSearchData = new Object();
+                    itemSearchData.viewdata = $scope.viewdata;
+                    itemSearchData.viewoperator = $scope.viewoperator;
+                    itemSearchData.valueboxTypeToShow = 'TextBox';
+                    itemSearchData.varPicklistValues = '';
+                    itemSearchData.setSelectedTextBoxValue= '';
+                    itemSearchData.setSelectedDateValue= '';
+                    itemSearchData.setSelectedPicklistValue= '';
+                    itemSearchData.sequence = (index+2);
+                    
+                    itemSearchData.isSelectAdvancedSearchFieldNameOpen = false;
+                    itemSearchData.selectAdvancedSearchFieldNameClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                    itemSearchData.isSelectAdvancedSearchOperatorOpen = false;
+                    itemSearchData.selectAdvancedSearchOperatorClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                    itemSearchData.isSelectAdvancedSearchValueOpen = false;
+                    itemSearchData.selectAdvancedSearchValueClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                    $scope.itemSearchDataArray.splice((index+1),0,itemSearchData);
+                    
+                    let i=1;
+                    $scope.conditionText = '1';
+                    $scope.itemSearchDataArray.forEach(function(obj){
+                        obj.sequence = i++;
+                    });
+
+                    for(var j=2; j<=$scope.itemSearchDataArray.length; j++){
+                        $scope.conditionText = $scope.conditionText + ' AND ' + j ;
+                    }
+                    $scope.showWarningMessage = false;
+                    $scope.showWarningMessageText = '';
+                }else{
+                    $scope.showWarningMessage = true;
+                    $scope.showWarningMessageText = 'You can\'t add more than five conditions.';
+                }
+            }
+            
+            $scope.removeConditionRow = function(item, index){
+                if($scope.itemSearchDataArray.length > 1){
+                    $scope.itemSearchDataArray.splice(index,1); 
+                    console.log($scope.itemSearchDataArray);
+                    let i=1;
+                    $scope.conditionText = '1';
+                    $scope.itemSearchDataArray.forEach(function(obj){
+                        obj.sequence = i++;
+                    });
+                    
+                    for(var j=2; j<=$scope.itemSearchDataArray.length; j++){
+                        $scope.conditionText = $scope.conditionText + ' AND ' + j ;
+                    }
+                    $scope.showWarningMessage = false;
+                    $scope.showWarningMessageText = '';
+                }else{
+                    $scope.showWarningMessage = true;
+                    $scope.showWarningMessageText = 'At least one condition is required for advanced search.';
+                }
+            }
+
+
+            $scope.selectingFieldName = function (item, fieldData) {
+                var fieldNameId = fieldData.id;
+                if (fieldNameId == 'Apttus__Contract_Start_Date__c' || fieldNameId == 'Apttus__Contract_End_Date__c' || fieldNameId == 'CreatedDate') {
+                        item.valueboxTypeToShow = 'DatePickerBox';
+                        item.varPicklistValues = '';
+                } else if (fieldNameId == 'RecordType.Name' || fieldNameId == 'Apttus__Status_Category__c' || fieldNameId == 'Apttus__Primary_Contact__r.Name' || fieldNameId == 'Apttus__Status__c' || fieldNameId == 'Apttus__Account__r.Name') {
+                    item.valueboxTypeToShow = 'DropdownBox';
+                    if (fieldNameId == 'RecordType.Name') {
+                        item.varPicklistValues = $scope.RecordTypeNames;
+                    } else if (fieldNameId == 'Apttus__Status_Category__c') {
+                        item.varPicklistValues = $scope.statusCategoryValuesList;
+                    } else if (fieldNameId == 'Apttus__Status__c') {
+                        item.varPicklistValues = $scope.statusValuesList;
+                    } else if (fieldNameId == 'Apttus__Primary_Contact__r.Name') {
+                        item.varPicklistValues = $scope.allContactNames;
+                    } else if (fieldNameId == 'Apttus__Account__r.Name') {
+                        item.varPicklistValues = $scope.allAccountNames;
+                    }
+                } else {
+                        item.valueboxTypeToShow = 'TextBox';
+                        item.varPicklistValues = '';
+                }
+                item.setSelectedFieldNameValue = fieldData.name;
+                item.setSelectedFieldNameId = fieldData.id;
+                item.setSelectedPicklistValue= '';
+                item.setSelectedTextBoxValue = '';
+                item.setSelectedDateValue = '';
+                item.setSelectedOperatorValue = '';
+            }
+            
+            $scope.setSelectedOperatorValue = '';
+            $scope.selectingOperator = function (item, operatorData) {
+                item.setSelectedOperatorValue = operatorData.name;
+            }
+
+            $scope.setselectedPicklistValue = '';
+            $scope.selectingPicklistValue = function (item, picklistvalue) {
+                item.setSelectedPicklistValue = picklistvalue;
+            }
+            
+            //Search Data
+            $scope.standardSearchClearInput = function () {
+                $scope.searchText = '';
+            }
+            
+            $scope.isAllFieldPopulated = false;
+            $scope.checkAllFieldsPopultaed = function(){
+                console.log($scope.itemSearchDataArray);
+                var localFieldChecker = false;
+                $scope.itemSearchDataArray.forEach(function(obj){
+                    if(!((obj.setSelectedFieldNameId !='') && (obj.setSelectedOperatorValue !='') && (obj.setSelectedTextBoxValue!='' || obj.setSelectedPicklistValue!='' || obj.setSelectedDateValue!=''))){
+                        localFieldChecker = true;
+                    }
+                });
+                $scope.isAllFieldPopulated = localFieldChecker? false : true
+                return $scope.isAllFieldPopulated;
+            }
+            $scope.conditionText = '1';
+            $scope.typeConditionApplySearch = function () {
+                 $scope.showWarningMessage = false;
+              $scope.showWarningMessageText = '';         
+              $scope.showErrorMessage = false;
+              $scope.showErrorMessageText = '';
+              
+                if($scope.checkAllFieldsPopultaed()){
+                    $scope.searchAgreemenetData = $scope.commonQueryPart + 'where ';
+                    if($scope.conditionText != ''){
+                        var finalExpressionString = [];
+                        for (var i = 0; i < $scope.conditionText.length; i++) {
+                            var ch = $scope.conditionText.charAt(i);
+                            if (ch >= '0' && ch <= '9') {
+                                var expressionObj = $scope.getExpressionFromSequence(parseInt(ch));
+                                finalExpressionString.push(expressionObj);
+                            }else{
+                                finalExpressionString.push(ch);
+                            } 
+                        }
+                    }
+                    $scope.searchAgreemenetData = $scope.searchAgreemenetData + finalExpressionString.join('');
+                    $scope.eContractingAgreementData($scope.searchAgreemenetData);
+                }else{
+                    $scope.showWarningMessage = true;
+                    $scope.showWarningMessageText = 'Please fill all the fields in advanced search.';
+                }
+            }
+            
+            $scope.getExpressionFromSequence = function (number) {
+                var expressionBuild = '';    
+                $scope.itemSearchDataArray.forEach(function(obj){
+                    if(obj.sequence == parseInt(number)){
+                       if(obj.setSelectedTextBoxValue!=''){
+                            if(obj.setSelectedOperatorValue=='Contains' && obj.setSelectedFieldNameId!='Apttus__Total_Contract_Value__c'){
+                                expressionBuild = obj.setSelectedFieldNameId + ' Like ' +'\'%'+ obj.setSelectedTextBoxValue +'%\'';
+                            }else{
+                                expressionBuild = (obj.setSelectedFieldNameId!='Apttus__Total_Contract_Value__c') ? (obj.setSelectedFieldNameId +' '+obj.setSelectedOperatorValue +'\'' +obj.setSelectedTextBoxValue +'\'') : (obj.setSelectedFieldNameId +' ' +obj.setSelectedOperatorValue +' '+ obj.setSelectedTextBoxValue);
+                            }
+                       }
+                       else if(obj.setSelectedPicklistValue!=''){
+                            if(obj.setSelectedOperatorValue=='Contains'){
+                                expressionBuild = obj.setSelectedFieldNameId + ' Like ' +'\'%'+ obj.setSelectedPicklistValue +'%\'';
+                            }else{
+                                expressionBuild = obj.setSelectedFieldNameId +' '+ obj.setSelectedOperatorValue +'\'' +obj.setSelectedPicklistValue +'\'';
+                            }
+                       }
+                       else if(obj.setSelectedDateValue!=''){
+                            var date = new Date(obj.setSelectedDateValue),
+                             mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+                             day = ("0" + date.getDate()).slice(-2);
+                            var convertedDate = (obj.setSelectedFieldNameId!='CreatedDate') ?  [date.getFullYear(), mnth, day].join("-") : date.toISOString();
+                            if(obj.setSelectedFieldNameId=='CreatedDate' && (obj.setSelectedOperatorValue=='Contains' || obj.setSelectedOperatorValue=='=' || obj.setSelectedOperatorValue=='!=')){
+                                obj.setSelectedOperatorValue = '>';
+                            }
+                            expressionBuild  = obj.setSelectedFieldNameId +' '+ obj.setSelectedOperatorValue +' ' +convertedDate;
+                      }
+                    }
+                });  
+                return expressionBuild;
+            }
+
+            $scope.clearAllSearchData = function () {
+              $scope.showWarningMessage = false;
+              $scope.showWarningMessageText = '';         
+              $scope.showErrorMessage = false;
+              $scope.showErrorMessageText = '';
+              
+             $scope.itemSearchDataArray.forEach(function(obj){
+                obj.viewdata = $scope.viewdata;
+                obj.viewoperator = $scope.viewoperator;
+                obj.setSelectedTextBoxValue= '';
+                obj.setSelectedDateValue= '';
+                obj.setSelectedPicklistValue= '';
+                obj.varPicklistValues = '';
+                obj.valueboxTypeToShow = 'TextBox';
+                //obj.sequence = 1;
+                
+                obj.isSelectAdvancedSearchFieldNameOpen = false;
+                obj.selectAdvancedSearchFieldNameClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                obj.isSelectAdvancedSearchOperatorOpen = false;
+                obj.selectAdvancedSearchOperatorClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                obj.isSelectAdvancedSearchValueOpen = false;
+                obj.selectAdvancedSearchValueClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                
+                obj.setSelectedFieldNameValue = '';
+                obj.setSelectedFieldNameId = '';
+                obj.setSelectedPicklistValue= '';
+                obj.setSelectedTextBoxValue = '';
+                obj.setSelectedDateValue = '';
+                obj.setSelectedOperatorValue = '';
+             });
+             $scope.eContractingAgreementData($scope.allAgreementQuery);
+            }
+
+            $scope.isStandardSearchVisible = true;
+            $scope.searchFilterClass = 'slds-section slds-m-horizontal_small slds-is-close';
+            $scope.standardSearchPanelClass = 'slds-tabs_default__item slds-is-active';
+            $scope.advancedSearchPanelClass = 'slds-tabs_default__item';
+            $scope.tab1Class = 'slds-tabs_default__content slds-show';
+            $scope.tab2Class = 'slds-tabs_default__content slds-hide';
+
+            $scope.checkforexpandcollapse = function () {
+                $scope.isVisibledView = !$scope.isVisibledView;
+                $scope.searchFilterClass = $scope.isVisibledView ?
+                    'slds-section slds-m-horizontal_small slds-is-open' :
+                    'slds-section slds-m-horizontal_small slds-is-close';
+            }
+
+            $scope.changeStandardAdvancedSearch = function () {
+                $scope.isStandardSearchVisible = !$scope.isStandardSearchVisible;
+                if ($scope.isStandardSearchVisible) {
+                    $scope.standardSearchPanelClass = 'slds-tabs_default__item slds-is-active';
+                    $scope.advancedSearchPanelClass = 'slds-tabs_default__item';
+                    $scope.tab1Class = 'slds-tabs_default__content slds-show';
+                    $scope.tab2Class = 'slds-tabs_default__content slds-hide';
+                    
+                    $scope.itemSearchDataArray.forEach(function(obj){
+                        obj.isSelectAdvancedSearchFieldNameOpen = false;
+                        obj.selectAdvancedSearchFieldNameClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                        obj.isSelectAdvancedSearchOperatorOpen = false;
+                        obj.selectAdvancedSearchOperatorClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                        obj.isSelectAdvancedSearchValueOpen = false;
+                        obj.selectAdvancedSearchValueClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                    });
+                    
+                } else {
+                    $scope.standardSearchPanelClass = 'slds-tabs_default__item';
+                    $scope.advancedSearchPanelClass = 'slds-tabs_default__item slds-is-active';
+                    $scope.tab1Class = 'slds-tabs_default__content slds-hide';
+                    $scope.tab2Class = 'slds-tabs_default__content slds-show';
+                }
+            }
+ 
+            $scope.selectAdvancedSearchFieldName = function (item) {
+                item.isSelectAdvancedSearchFieldNameOpen = !item.isSelectAdvancedSearchFieldNameOpen;
+                item.selectAdvancedSearchFieldNameClass = item.isSelectAdvancedSearchFieldNameOpen ?
+                    'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open' :
+                    'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                    
+                $scope.itemSearchDataArray.forEach(function(obj){
+                    if(obj.sequence!=item.sequence){
+                        obj.isSelectAdvancedSearchFieldNameOpen = false;
+                        obj.selectAdvancedSearchFieldNameClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                    }
+                    obj.isSelectAdvancedSearchOperatorOpen = false;
+                    obj.selectAdvancedSearchOperatorClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                    obj.isSelectAdvancedSearchValueOpen = false;
+                    obj.selectAdvancedSearchValueClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                });    
+            }
+            
+            $scope.selectAdvancedSearchOperator = function (item) {
+                item.isSelectAdvancedSearchOperatorOpen = !item.isSelectAdvancedSearchOperatorOpen;
+                item.selectAdvancedSearchOperatorClass = item.isSelectAdvancedSearchOperatorOpen ?
+                    'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open' :
+                    'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                    
+                   
+                $scope.itemSearchDataArray.forEach(function(obj){
+                     if(obj.sequence!=item.sequence){
+                            obj.isSelectAdvancedSearchOperatorOpen = false;
+                            obj.selectAdvancedSearchOperatorClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                        }
+                    
+                    obj.isSelectAdvancedSearchFieldNameOpen = false;
+                    obj.selectAdvancedSearchFieldNameClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                    obj.isSelectAdvancedSearchValueOpen = false;
+                    obj.selectAdvancedSearchValueClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                });
+            }
+            
+            $scope.selectAdvancedSearchValue = function (item) {
+                item.isSelectAdvancedSearchValueOpen = !item.isSelectAdvancedSearchValueOpen;
+                item.selectAdvancedSearchValueClass = item.isSelectAdvancedSearchValueOpen ?
+                    'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open' :
+                    'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                
+                
+                $scope.itemSearchDataArray.forEach(function(obj){
+                    if(obj.sequence!=item.sequence){
+                        obj.isSelectAdvancedSearchValueOpen = false;
+                        obj.selectAdvancedSearchValueClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                    }
+                    
+                    obj.isSelectAdvancedSearchFieldNameOpen = false;
+                    obj.selectAdvancedSearchFieldNameClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                    obj.isSelectAdvancedSearchOperatorOpen = false;
+                    obj.selectAdvancedSearchOperatorClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
+                });
+            }
+            }]);
+            
+            var selecteCount = 0;
+
+            function selectAll() {
+                var s = document.getElementsByName("options");
+                var j = document.getElementById("mainCheckBox");
+                var count = 0;
+                for (i = 0; i < s.length; i++) {
+                    if (j.checked == true) {
+                        s[i].checked = true;
+                        count = count + 1;
+                    } else
+                        s[i].checked = false;
+                }
+                var s1 = document.getElementById("selectedCount");
+                selecteCount = count;
+                s1.innerText = selecteCount;
+            }
+
+            function checkChange(item) {
+                if (item.checked == true) {
+                    selecteCount = selecteCount + 1;
+                } else {
+                    selecteCount = selecteCount - 1;
+                }
+                var s1 = document.getElementById("selectedCount");
+                s1.innerText = selecteCount;
+            }
+
+            var startLength;
+
+            function dragStart(event, current) {
+
+                startLength = event.pageX;
+                current.style.cursor = "col-resize !important";
+            }
+
+            function dragEnd(event, current) {
+
+                var screenWidth = window.screen.width;
+                var difference = event.pageX - startLength;
+                current = current.parentElement.parentElement;
+                var existingWidthCol = parseFloat(current.style.width.substr(0,
+                    current.style.width.length - 1));
+                var table = current.closest('table');
+                var existingWidthTable = parseFloat(table.style.width.substr(0,
+                    table.style.width.length - 1));
+                difference = (difference * 100) / screenWidth;
+                current.style.width = existingWidthCol + difference + "%";
+                table.style.width = existingWidthTable + difference + "%";
+
+            }
+
+        </script>
+
+        <div class="slds-m-horizontal_small">
+            <div class="slds-page-header">
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-account">
+                                    <svg class="slds-icon slds-page-header__icon" aria-hidden="true">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/standard-sprite/svg/symbols.svg#account')}"></use>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span class="slds-page-header__title slds-truncate" title="All Agreements">Agreements</span>
+                                        </h1>
+                                    </div>
+                                </div>
+                                <p class="slds-page-header__name-meta">All Agreements</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <body ng-controller="AppCtrl">
+            <div class="slds-clearfix slds-m-vertical_x-small slds-m-horizontal_small">
+                <div class="slds-float_right">
+                    <button class="slds-button slds-button_neutral">Refresh</button>
+                    <button class="slds-button slds-button_brand">Edit</button>
+                    <button class="slds-button slds-button_brand">Save</button>
+                </div>
+            </div>
+            
+            <!--Error Messages-->
+            <div ng-show="showErrorMessage" class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error ng-hide" role="alert" >
+              <span class="slds-assistive-text">error</span>
+              <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small" title="Description of icon when needed">
+                <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                  <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#error')}"></use>
+                </svg>
+              </span>
+              <h2>{{showErrorMessageText}}</h2>
+              <div class="slds-notify__close">
+                <button class="slds-button slds-button_icon slds-button_icon-small slds-button_icon-inverse" ng-click="showErrorMessage = false" title="Close">
+                  <svg class="slds-button__icon" aria-hidden="true">
+                    <use xlink:href="{!URLFOR($Asset.SLDS,'/assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+                  </svg>
+                  <span class="slds-assistive-text">Close</span>
+                </button>
+              </div>
+            </div>
+            
+            <!--Warning Messages-->
+            <div ng-show="showWarningMessage" class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning ng-hide" role="alert">
+              <span class="slds-assistive-text">warning</span>
+              <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
+                <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                  <use xlink:href="{!URLFOR($Asset.SLDS,'/assets/icons/utility-sprite/svg/symbols.svg#warning')}"></use>
+                </svg>
+              </span>
+              <h2>{{showWarningMessageText}}</h2>
+              <div class="slds-notify__close">
+                <button class="slds-button slds-button_icon slds-button_icon-small" ng-click="showWarningMessage =false" title="Close">
+                  <svg class="slds-button__icon" aria-hidden="true">
+                    <use xlink:href="{!URLFOR($Asset.SLDS,'/assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+                  </svg>
+                  <span class="slds-assistive-text">Close</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="slds-section slds-m-horizontal_small" ng-class="searchFilterClass" id="sectionbar">
+                <h3 class="slds-section__title">
+                    <button aria-controls="expando-unique-id" ng-click="checkforexpandcollapse();" aria-expanded="false" class="slds-button slds-section__title-action">
+                        <svg class="slds-section__title-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
+                            <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#switch')}"></use>
+                        </svg>
+                        <span class="slds-truncate" title="Section Title">Search Filter</span>
+                    </button>
+                </h3>
+                <div aria-hidden="true" class="slds-m-horizontal_small slds-section__content" id="expando-unique-id">
+                    <div class="slds-tabs_default">
+                        <ul class="slds-tabs_default__nav" role="tablist">
+                            <li id="StandardSerchId" ng-click="changeStandardAdvancedSearch();" ng-class="standardSearchPanelClass" title="Item One"
+                                role="presentation">
+                                <a class="slds-tabs_default__link non-active" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1"
+                                    id="tab-default-1__item">Standard Search</a>
+                            </li>
+                            <li id="AdvancedSerchId" ng-click="changeStandardAdvancedSearch();" ng-class="advancedSearchPanelClass" title="Item Two"
+                                role="presentation">
+                                <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2"
+                                    id="tab-default-2__item">Advanced Search</a>
+                            </li>
+                        </ul>
+                        <div id="tab-default-1" ng-class="tab1Class" role="tabpanel" aria-labelledby="tab-default-1__item">
+                            <div class="slds-form-element__control slds-input-has-icon">
+                                <svg class="slds-m-left_small slds-icon slds-input__icon slds-input-has-icon_left slds-icon-text-default" aria-hidden="true">
+                                    <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#search')}"></use>
+                                </svg>
+                                <input id="StandardSearchInputId" placeholder="Search this list..." class="slds-input slds-p-left_x-large" type="text" name="searchText"
+                                    ng-change="search()" ng-model="searchText" value="" style="width: 25rem;" />
+                                <button class="slds-button slds-button_neutral" ng-click="standardSearchClearInput();">Clear</button>
+                            </div>
+
+                        </div>
+                        <div id="tab-default-2" ng-class="tab2Class" role="tabpanel" aria-labelledby="tab-default-2__item">
+                            <table style="width:auto;">
+                            <thead>
+                                <tr>
+                                  <th scope="col">
+                                    <div class="slds-m-around_xx-small" title="Field Name">Field Name</div>
+                                  </th>
+                                  <th scope="col">
+                                    <div  class="slds-m-around_xx-small" title="Operator">Operator</div>
+                                  </th>
+                                  <th scope="col">
+                                    <div class="slds-m-around_xx-small" title="Value">Value</div>
+                                  </th>
+                                  <th scope="col">
+                                    <div class="slds-m-around_xx-small"><p>&#xA0;</p></div>
+                                  </th>
+                                  <th scope="col">
+                                    <div class="slds-m-around_xx-small"><p>&#xA0;</p></div>
+                                  </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                 <tr ng-repeat='item in itemSearchDataArray track by $index'>
+                                      <td data-label="Field Name">
+                                        <div class="slds-form-element slds-m-around_xx-small">
+                                            <div class="slds-form-element__control">
+                                                <div class="slds-combobox_container slds-size_small">
+                                                    <div id="selectFieldNameID" ng-class="item.selectAdvancedSearchFieldNameClass" aria-expanded="true" ng-click="selectAdvancedSearchFieldName(item)"
+                                                        aria-haspopup="listbox" role="combobox">
+                                                        <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                                            <input type="text" class="slds-input slds-combobox__input" id="combobox-unique-id-25" aria-activedescendant="{{expression.expressionId}}"
+                                                                aria-controls="{{expression.expressionId}}" autoComplete="off" role="textbox"
+                                                                ng-value="item.setSelectedFieldNameValue" placeholder="Select Field"
+                                                                readonly="readonly" />
+                                                            <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                                                                <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                                                    <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#down')}"></use>
+                                                                </svg>
+                                                            </span>
+                                                        </div>
+                                                        <div id="{{expression.expressionId}}" role="listbox" class="slds-dropdown slds-dropdown_fluid slds-dropdown_length-with-icon-7">
+                                                            <ul class="slds-listbox slds-listbox_vertical" ng-repeat="fieldData in item.viewdata.availableOptions" role="presentation">
+                                                                <li role="presentation" ng-click="selectingFieldName(item, fieldData)" class="slds-listbox__item">
+                                                                    <div id="{{expression.expressionId}}" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-media_center"
+                                                                        role="option">
+                                                                        <span class="slds-media__figure">
+                                                                            <svg class="slds-icon slds-icon_x-small slds-listbox__icon-selected" aria-hidden="true">
+                                                                                <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#check')}"></use>
+                                                                            </svg>
+                                                                        </span>
+                                                                        <span class="slds-media__body">
+                                                                            <span class="slds-truncate"> {{fieldData.name}}</span>
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                         </div>
+                                      </td>
+                                      <td data-label="Operator">
+                                        <div class="slds-form-element slds-m-around_xx-small">
+                                            <div class="slds-form-element__control">
+                                            <div class="slds-combobox_container slds-size_small">
+                                                <div id="selectOperatorID" ng-class="item.selectAdvancedSearchOperatorClass" aria-expanded="true" ng-click="selectAdvancedSearchOperator(item)"
+                                                    aria-haspopup="listbox" role="combobox">
+                                                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                                        <input type="text" class="slds-input slds-combobox__input" id="combobox-unique-id-25" aria-activedescendant="listbox-option-unique-id-01"
+                                                            aria-controls="listbox-unique-id1" autoComplete="off" role="textbox"
+                                                            ng-value="item.setSelectedOperatorValue" placeholder="Select Operator"
+                                                            readonly="readonly" />
+                                                        <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                                                            <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                                                <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#down')}"></use>
+                                                            </svg>
+                                                        </span>
+                                                    </div>
+                                                    <div id="listbox-unique-id1" role="listbox" class="slds-dropdown slds-dropdown_fluid slds-dropdown_length-with-icon-7">
+                                                        <ul class="slds-listbox slds-listbox_vertical" ng-repeat="operator in viewoperator.availableOptions" role="presentation">
+
+                                                            <li role="presentation" ng-click="selectingOperator(item, operator)" class="slds-listbox__item">
+                                                                <div id="listbox-option-unique-id-01" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-media_center"
+                                                                    role="option">
+                                                                    <span class="slds-media__figure">
+                                                                        <svg class="slds-icon slds-icon_x-small slds-listbox__icon-selected" aria-hidden="true">
+                                                                            <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#check')}"></use>
+                                                                        </svg>
+                                                                    </span>
+                                                                    <span class="slds-media__body">
+                                                                        <span class="slds-truncate"> {{operator.name}}</span>
+                                                                    </span>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                      </td>
+                                      <td data-label="Value">
+                                        <div class="slds-form-element slds-m-around_xx-small">
+                                            
+                                                <div ng-show="(item.valueboxTypeToShow=='TextBox')" class="slds-form-element__control">
+                                                    <input type="text" ng-model="item.setSelectedTextBoxValue" id="text-input-id-1" placeholder="Enter Value" required="" class="slds-input" />
+                                                </div>
+                                
+                                            <div ng-show="(item.valueboxTypeToShow=='DatePickerBox')" class="slds-form-element__control">
+                                                <input type="date" ng-model="item.setSelectedDateValue" required="" class="slds-input" />
+                                            </div>
+                                            <div ng-show="(item.valueboxTypeToShow=='DropdownBox')" class="slds-form-element__control">
+                                            <div class="slds-combobox_container slds-size_small">
+                                                    <div id="selectedValueId" ng-class="item.selectAdvancedSearchValueClass" aria-expanded="true" ng-click="selectAdvancedSearchValue(item);"
+                                                        aria-haspopup="listbox" role="combobox">
+                                                        <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                                            <input type="text" class="slds-input slds-combobox__input" id="combobox-unique-id-27" aria-activedescendant="listbox-option-unique-id-01"
+                                                                aria-controls="listbox-unique-id2" autoComplete="off" role="textbox"
+                                                                ng-value="item.setSelectedPicklistValue" placeholder="Select Value"
+                                                                readonly="readonly" />
+                                                            <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                                                                <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                                                    <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#down')}"></use>
+                                                                </svg>
+                                                            </span>
+                                                        </div>
+                                                        <div id="listbox-unique-id2" role="listbox" class="slds-dropdown slds-dropdown_fluid slds-dropdown_length-with-icon-7">
+                                                            <ul class="slds-listbox slds-listbox_vertical" ng-repeat="picklistValue in item.varPicklistValues" role="presentation">
+                                                                <li role="presentation" ng-click="selectingPicklistValue(item, picklistValue)" class="slds-listbox__item">
+                                                                    <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-media_center" role="option">
+                                                                        <span class="slds-media__figure">
+                                                                            <svg class="slds-icon slds-icon_x-small slds-listbox__icon-selected" aria-hidden="true">
+                                                                                <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#check')}"></use>
+                                                                            </svg>
+                                                                        </span>
+                                                                        <span class="slds-media__body">
+                                                                            <span class="slds-truncate">{{picklistValue}}</span>
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                                            </div>
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div class="slds-truncate slds-form-element slds-m-around_xx-small">
+                                            <div class="slds-form-element__control slds-p-top_xxx-small">
+                                                <button class="slds-button slds-button_neutral slds-p-around_x-small" ng-click="addNewConditionRow(item, $index)">
+                                                     <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                                                        <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                                            <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#add')}"></use>
+                                                        </svg>
+                                                     </span>
+                                                </button>
+                                            </div>    
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div class="slds-truncate slds-form-element slds-m-around_xx-small">
+                                            <div class="slds-form-element__control slds-p-top_xxx-small">
+                                                <button class="slds-button slds-button_neutral slds-p-around_x-small" ng-click="removeConditionRow(item, $index)">
+                                                    <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                                                        <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                                            <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#delete')}"></use>
+                                                        </svg>
+                                                    </span>    
+                                                </button> 
+                                            </div>    
+                                        </div>
+                                      </td>
+                                 </tr>     
+                            </tbody>
+                            </table>
+                            <div class="slds-form-element__control slds-m-top_medium">
+                                    <input placeholder="Type Condition" class="slds-input" type="text" name="conditionText" ng-model="conditionText" value="" style="width: 25rem;" />
+                                    <button class="slds-m-left_xx-small slds-button slds-button_neutral" ng-click="typeConditionApplySearch();">Apply</button>
+                                    <button class="slds-button slds-button_neutral" ng-click="clearAllSearchData();">Clear Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <article class="slds-card">
+                <div class="slds-card__body slds-m-horizontal_small" style="overflow-y: hidden;">
+                    <div ng-show="inProcess" class="demo-only" style="height:6rem">
+                      <div class="slds-spinner_container">
+                        <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_delayed">
+                          <span class="slds-assistive-text">Loading</span>
+                          <div class="slds-spinner__dot-a"></div>
+                          <div class="slds-spinner__dot-b"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <table ng-show="!inProcess" aria-multiselectable="true" style="width:100%" class="slds-table slds-table_fixed-layout slds-table_resizable-cols slds-table_cell-buffer slds-table_bordered"
+                        role="grid">
+                        <thead id="tableheader" name="tableheader">
+                            <tr class="slds-text-title--caps slds-line-height_reset">
+                                <th scope="col" style="width:3rem;">
+                                    <div class="">
+                                        <span class="slds-assistive-text">Errors</span>
+                                    </div>
+                                </th>
+                                <th scope="col" style="width:2rem;" data-resizable-column-id="nr">
+                                    <div class="slds-th__action--form margin_left23Per">
+                                        <label class="slds-checkbox">
+                                            <input type="checkbox" name="option" tabindex="-1" onclick="selectAll();" id="mainCheckBox" />
+                                            <span class="slds-checkbox--faux"></span>
+                                            <span class="slds-assistive-text">Select All</span>
+                                        </label>
+                                    </div>
+                                </th>
+                                <th aria-label="Name" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col" style="width:20%">
+
+                                    <a class="slds-th__action slds-text-link_reset" role="button" tabindex="0" style="color:black; text-decoration:none">
+                                        <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate" ng-click="sort('agreementName')" title="Name">Agreement Name
+                                            <span ng-show="getSortColumnName('agreementName')">
+                                                <span ng-show="upArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowup.svg')}" width="11"
+                                                    />
+                                                </span>
+                                                <span ng-show="downArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowdown.svg')}" width="11"
+                                                    />
+                                                </span>
+                                            </span>
+                                            <button style="float:right;margin-left: auto;" class="slds-button slds-button_icon-bare" aria-expanded="false" aria-haspopup="true">
+
+                                                <svg focusable="false" data-key="chevrondown" aria-hidden="true" class="slds-button__icon">
+                                                    <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.24.0#chevrondown"></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Column Menu</span>
+                                            </button>
+                                        </div>
+                                    </a>
+                                    <div class="slds-resizable">
+                                        <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-first"
+                                            max="1000" min="40" tabindex="0" />
+                                        <span class="slds-resizable__handle grab" draggable="true" ondragstart="dragStart(event,this)" ondragend="dragEnd(event,this)">
+                                            <span class="slds-resizable__divider"></span>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th scope="col" aria-label="Name" aria-sort="none" class="slds-is-resizable slds-is-sortable" style="width:10%">
+                                    <a style="color:black; text-decoration:none">
+                                        <div class="slds-truncate margin_left" ng-click="sort('agreementNumber')" title="Number">Number
+                                            <span ng-show="getSortColumnName('agreementNumber')">
+                                                <span ng-show="upArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowup.svg')}" width="11"
+                                                    />
+                                                </span>
+                                                <span ng-show="downArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowdown.svg')}" width="11"
+                                                    />
+                                                </span>
+                                            </span>
+                                            <button style="float:right;" class="slds-button slds-button_icon-bare" aria-expanded="false" aria-haspopup="true">
+
+                                                <svg focusable="false" data-key="chevrondown" aria-hidden="true" class="slds-button__icon">
+                                                    <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.24.0#chevrondown"></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Column Menu</span>
+                                            </button>
+                                        </div>
+                                    </a>
+                                    <div class="slds-resizable">
+                                        <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-first"
+                                            max="1000" min="40" tabindex="0" />
+                                        <span class="slds-resizable__handle" draggable="true" ondragstart="dragStart(event,this)" ondragend="dragEnd(event,this)">
+                                            <span class="slds-resizable__divider"></span>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th scope="col" aria-sort="none" class="slds-is-resizable slds-is-sortable" style="width:10%">
+                                    <a style="color:black; text-decoration:none">
+                                        <div class="slds-truncate margin_left" ng-click="sort('primaryContact')" title="Contact">Contact
+                                            <span ng-show="getSortColumnName('primaryContact')">
+                                                <span ng-show="upArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowup.svg')}" width="11"
+                                                    />
+                                                </span>
+                                                <span ng-show="downArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowdown.svg')}" width="11"
+                                                    />
+                                                </span>
+                                            </span>
+                                            <button style="float:right;" class="slds-button slds-button_icon-bare" aria-expanded="false" aria-haspopup="true">
+
+                                                <svg focusable="false" data-key="chevrondown" aria-hidden="true" class="slds-button__icon">
+                                                    <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.24.0#chevrondown"></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Column Menu</span>
+                                            </button>
+                                        </div>
+                                    </a>
+                                    <div class="slds-resizable">
+                                        <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-first"
+                                            max="1000" min="40" tabindex="0" />
+                                        <span class="slds-resizable__handle" draggable="true" ondragstart="dragStart(event,this)" ondragend="dragEnd(event,this)">
+                                            <span class="slds-resizable__divider"></span>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th scope="col" aria-sort="none" class="slds-is-resizable slds-is-sortable" style="width:10%">
+                                    <a style="color:black; text-decoration:none">
+                                        <div class="slds-truncate margin_left" ng-click="sort('status')" title="Status">Status
+                                            <span ng-show="getSortColumnName('status')">
+                                                <span ng-show="upArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowup.svg')}" width="11"
+                                                    />
+                                                </span>
+                                                <span ng-show="downArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowdown.svg')}" width="11"
+                                                    />
+                                                </span>
+                                            </span>
+                                            <button style="float:right;" class="slds-button slds-button_icon-bare" aria-expanded="false" aria-haspopup="true">
+
+                                                <svg focusable="false" data-key="chevrondown" aria-hidden="true" class="slds-button__icon">
+                                                    <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.24.0#chevrondown"></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Column Menu</span>
+                                            </button>
+                                        </div>
+                                    </a>
+                                    <div class="slds-resizable">
+                                        <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-first"
+                                            max="1000" min="40" tabindex="0" />
+                                        <span class="slds-resizable__handle" draggable="true" ondragstart="dragStart(event,this)" ondragend="dragEnd(event,this)">
+                                            <span class="slds-resizable__divider"></span>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th scope="col" aria-sort="none" class="slds-is-resizable slds-is-sortable" style="width:10%">
+                                    <a style="color:black; text-decoration:none">
+                                        <div class="slds-truncate margin_left" ng-click="sort('startDate')" title="Start Date">Start Date
+                                            <span ng-show="getSortColumnName('startDate')">
+                                                <span ng-show="upArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowup.svg')}" width="11"
+                                                    />
+                                                </span>
+                                                <span ng-show="downArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowdown.svg')}" width="11"
+                                                    />
+                                                </span>
+                                            </span>
+                                            <button style="float:right;" class="slds-button slds-button_icon-bare" aria-expanded="false" aria-haspopup="true">
+                                                <div style="display: inline-flex;">
+
+                                                    <svg focusable="false" data-key="chevrondown" aria-hidden="true" class="slds-button__icon">
+                                                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.24.0#chevrondown"></use>
+                                                    </svg>
+                                                    <span class="slds-assistive-text">Column Menu</span>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </a>
+                                    <div class="slds-resizable">
+                                        <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-first"
+                                            max="1000" min="40" tabindex="0" />
+                                        <span class="slds-resizable__handle" draggable="true" ondragstart="dragStart(event,this)" ondragend="dragEnd(event,this)">
+                                            <span class="slds-resizable__divider"></span>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th scope="col" aria-sort="none" class="slds-is-resizable slds-is-sortable" style="width:10%">
+                                    <a style="color:black; text-decoration:none">
+                                        <div class="slds-truncate margin_left" ng-click="sort('endDate')" title="End Date">End Date
+                                            <span ng-show="getSortColumnName('endDate')">
+                                                <span ng-show="upArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowup.svg')}" width="11"
+                                                    />
+                                                </span>
+                                                <span ng-show="downArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowdown.svg')}" width="11"
+                                                    />
+                                                </span>
+                                            </span>
+                                            <button style="float:right;" class="slds-button slds-button_icon-bare" aria-expanded="false" aria-haspopup="true">
+                                                <div style="display: inline-flex;">
+
+                                                    <svg focusable="false" data-key="chevrondown" aria-hidden="true" class="slds-button__icon">
+                                                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.24.0#chevrondown"></use>
+                                                    </svg>
+                                                    <span class="slds-assistive-text">Column Menu</span>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </a>
+                                    <div class="slds-resizable">
+                                        <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-first"
+                                            max="1000" min="40" tabindex="0" />
+                                        <span class="slds-resizable__handle" draggable="true" ondragstart="dragStart(event,this)" ondragend="dragEnd(event,this)">
+                                            <span class="slds-resizable__divider"></span>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th scope="col" aria-sort="none" class="slds-is-resizable slds-is-sortable" style="width:10%">
+                                    <a style="color:black; text-decoration:none">
+                                        <div class="slds-truncate margin_left" ng-click="sort('recordTypeName')" title="Type">Type
+
+                                            <span ng-show="getSortColumnName('recordTypeName')">
+                                                <span ng-show="upArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowup.svg')}" width="11"
+                                                    />
+                                                </span>
+                                                <span ng-show="downArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowdown.svg')}" width="11"
+                                                    />
+                                                </span>
+                                            </span>
+                                            <button style="float:right;" class="slds-button slds-button_icon-bare" aria-expanded="false" aria-haspopup="true">
+
+                                                <svg focusable="false" data-key="chevrondown" aria-hidden="true" class="slds-button__icon">
+                                                    <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.24.0#chevrondown"></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Column Menu</span>
+                                            </button>
+                                        </div>
+                                    </a>
+                                    <div class="slds-resizable">
+                                        <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-first"
+                                            max="1000" min="40" tabindex="0" />
+                                        <span class="slds-resizable__handle" draggable="true" ondragstart="dragStart(event,this)" ondragend="dragEnd(event,this)">
+                                            <span class="slds-resizable__divider"></span>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th scope="col" aria-sort="none" class="slds-is-resizable slds-is-sortable" style="width:10%">
+                                    <a style="color:black; text-decoration:none">
+                                        <div class="slds-truncate margin_left" ng-click="sort('contractValue')" title="Value">Value
+                                            <span ng-show="getSortColumnName('contractValue')">
+                                                <span ng-show="upArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowup.svg')}" width="11"
+                                                    />
+                                                </span>
+                                                <span ng-show="downArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowdown.svg')}" width="11"
+                                                    />
+                                                </span>
+                                            </span>
+                                            <button style="float:right;" class="slds-button slds-button_icon-bare" aria-expanded="false" aria-haspopup="true">
+
+                                                <svg focusable="false" data-key="chevrondown" aria-hidden="true" class="slds-button__icon">
+                                                    <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.24.0#chevrondown"></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Column Menu</span>
+                                            </button>
+                                        </div>
+                                    </a>
+                                    <div class="slds-resizable">
+                                        <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-first"
+                                            max="1000" min="40" tabindex="0" />
+                                        <span class="slds-resizable__handle" draggable="true" ondragstart="dragStart(event,this)" ondragend="dragEnd(event,this)">
+                                            <span class="slds-resizable__divider"></span>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th scope="col" aria-sort="none" class="slds-is-resizable slds-is-sortable" style="width:10%">
+
+                                    <a style="color:black; text-decoration:none">
+                                        <div class="slds-truncate margin_left" ng-click="sort('createdDate')" title="Create Date">Created Date
+                                            <span ng-show="getSortColumnName('createdDate')">
+                                                <span ng-show="upArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowup.svg')}" width="11"
+                                                    />
+                                                </span>
+                                                <span ng-show="downArrow()">
+                                                    <apex:image value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign,'/assets/icons/utility/arrowdown.svg')}" width="11"
+                                                    />
+                                                </span>
+                                            </span>
+                                            <button style="float:right;" class="slds-button slds-button_icon-bare" aria-expanded="false" aria-haspopup="true">
+
+                                                <svg focusable="false" data-key="chevrondown" aria-hidden="true" class="slds-button__icon">
+                                                    <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.24.0#chevrondown"></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Column Menu</span>
+                                            </button>
+                                        </div>
+                                    </a>
+                                    <div class="slds-resizable">
+                                        <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-first"
+                                            max="1000" min="40" tabindex="0" />
+                                        <span class="slds-resizable__handle" draggable="true" ondragstart="dragStart(event,this)" ondragend="dragEnd(event,this)">
+                                            <span class="slds-resizable__divider"></span>
+                                        </span>
+                                    </div>
+
+                                </th>
+                                <th ng-if="pageSize > 6"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="slds-scrollable" style="height:5rem;overflow-x: hidden;" id="eContractingBody" name="eContractingBody">
+                            <tr class="slds-hint-parent" ng-repeat="contract in filtered = (eContractingAgreement | filter:searchText | orderBy:sortKey:reverse ) | pagination: curPage * pageSize | limitTo: pageSize">
+                                <td role="gridcell" class="slds-cell-edit slds-cell-error">{{$index+(curPage*10)+1}}
+                                    <div class="slds-text-body--small slds-text-color--weak"></div>
+                                </td>
+                                <td role="gridcell" class="slds-cell-edit">
+                                    <label class="slds-checkbox">
+                                        <input type="checkbox" name="options" tabindex="-1" id="checkbox-01" onclick="checkChange(this);" />
+                                        <span class="slds-checkbox--faux"></span>
+                                        <span class="slds-assistive-text">Select item 1</span>
+                                    </label>
+                                </td>
+                                <td data-label="Name">
+                                    <div class="slds-truncate">
+                                        <a href="javascript:void(0);" tabindex="-1">{{ contract.agreementName }}</a>
+                                    </div>
+                                </td>
+                                <td data-label="Number">
+                                    <div class="slds-truncate">{{ contract.agreementNumber }}</div>
+                                </td>
+                                <td data-label="Contact">
+                                    <div class="slds-truncate">
+                                        <a href="javascript:void(0);" tabindex="-1">{{ contract.primaryContact }}</a>
+                                    </div>
+                                </td>
+                                <td data-label="Status">
+                                    <div class="slds-truncate">{{ contract.status }}</div>
+                                </td>
+                                <td data-label="Start Date">
+                                    <div class="slds-truncate">{{ contract.startDate | date:"MM/dd/yyyy" }}</div>
+                                </td>
+                                <td data-label="End Date">
+                                    <div class="slds-truncate">{{ contract.endDate | date:"MM/dd/yyyy" }}</div>
+                                </td>
+                                <td data-label="Type">
+                                    <div class="slds-truncate">{{ contract.recordTypeName }}</div>
+                                </td>
+                                <td data-label="Value">
+                                    <div class="slds-truncate">{{ contract.contractValue | currency }}</div>
+                                </td>
+                                <td data-label="Created Date">
+                                    <div class="slds-truncate">{{ contract.createdDate | date:"MM/dd/yyyy" }}</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="slds-col slds-size_3-of-12 slds-form-element">
+                    <div class="slds-button-group slds-p-top_x-small slds-p-bottom_x-small" role="group" style="float:inherit; padding-left:164%">
+                        <input type="button" style="cursor:pointer" class="slds-button slds-button_neutral" value="First" ng-click="firstPage()"
+                            ng-hide="hideFirst()" />
+                        <input type="button" style="cursor:pointer" class="slds-button slds-button_neutral" value="Previous" ng-click="previousPage()"
+                            ng-hide="hideFirst()" />
+                        <input type="button" style="cursor:pointer" class="slds-button slds-button_neutral" value="Next" ng-click="nextPage()" ng-hide="hideLast()"
+                        />
+                        <input type="button" style="cursor:pointer" class="slds-button slds-button_neutral" value="Last" ng-click="lastPage()" ng-hide="hideLast()"
+                        />
+                    </div>
+                </div>
+            </article>
+        </body>
+
+        </html>
+    </apex:slds>
+
+</apex:page>

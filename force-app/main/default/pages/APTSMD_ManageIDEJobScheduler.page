@@ -1,0 +1,244 @@
+<apex:page controller="APTSMD_ManageIDEJobSchedulerController" title="Abort Jobs"
+    showHeader="false" sidebar="false" standardStylesheets="false" lightningStyleSheets="true">
+
+    <head>
+        <title>Abort Jobs</title>
+        <link rel="stylesheet" href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}"
+            type="text/css" />
+
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.css"
+        />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/jquery.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular_js.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-animate.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-material.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-messages.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-resources.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-route.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/assets_cache.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/materialize.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/bootstrap_js.js')}"
+        />
+        <apex:includeScript value="{!$Resource.APTSMD_Nova_Js}" />
+        <apex:includeScript value="{!$Resource.APTSMD_NovaThemeProvider}" />
+        <!-- <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.css"
+            rel="stylesheet" /> -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.10/angular-material.min.css" integrity="sha512-lUExuDw/YQOmNO0LN2XplczGTyTxTEUvXBPKOnfBNloscpdzpfrYBiyWtPeyF0guAgihG/6RrOfDpoyywWMk/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/angular-material-data-table/0.10.10/md-data-table.css"
+            rel="stylesheet" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        />
+        <link rel="https://rawgit.com/alalonde/angular-scrollable-table/master/scrollable-table.css"
+        />
+
+        <!-- stylesheets for CPQ like formatting -->
+        <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQCommon.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQOptions.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources, 'CPQDelight.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap.min.css')}"
+        />
+
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap-theme.min.css')}"
+        />
+        <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+        <script>
+            var app = angular.module('scheduleJobsApp', ['ngMaterial']);
+            app.controller('scheduleJobsController', ['$scope', function($scope) {
+                $scope.numberOfMinutes = {!numberOfMinutes
+                };
+                $scope.isError = false;
+                $scope.allJobs = {!allJobs
+                };
+                $scope.schedule = function() {
+                    if ($scope.numberOfMinutes < 1 || $scope.numberOfMinutes >
+                        59) {
+                        $scope.isError = true;
+                        return;
+                    } else {
+                        $scope.isError = false;
+                    }
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.APTSMD_ManageIDEJobSchedulerController.scheduleJobs}',
+                        $scope.numberOfMinutes,
+                        function(result, event) {
+                            $scope.allJobs = result;
+                            $scope.$apply();
+                        }, {
+                            escape: false
+                        }
+                    );
+                }
+                $scope.abortAllJobs = function() {
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.APTSMD_ManageIDEJobSchedulerController.abortAllJobs}',
+                        function(result, event) {
+                            $scope.allJobs = result;
+                            $scope.$apply();
+                        }, {
+                            escape: false
+                        }
+                    );
+                }
+                $scope.backToHome = function() {
+                    window.top.location = '/home/home.jsp';
+                    return;
+                }
+            }]);
+
+        </script>
+        <style>
+            .moved {
+                margin-top: 120px;
+            }
+            
+            .headerContainer {
+                height: 57px!important;
+                position: fixed!important;
+                width: -webkit-fill-available;
+                z-index: 11 ! important;
+                padding-top: 0px!important;
+                top: 0! important;
+            }
+            
+            .apttusPanel,
+            .panel {
+                box-sizing: border-box !important;
+                width: 100% !important;
+                margin-bottom: 10px !important;
+                padding: .875rem 1.25rem !important;
+                */ display: inline-block!important;
+                border-radius: .25rem!important;
+                background: #f3f2f2!important;
+                background-clip: padding-box!important;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .1)!important;
+                border: 1px solid #dddbda ! important;
+                color: #080707 ! important;
+                -webkit-tap-highlight-color: transparent!important;
+                font-family: Salesforce Sans, Arial, sans-serif!important;
+                font-size: 100%!important;
+                line-height: 1.5!important;
+            }
+            
+            .apttusContainer {
+                background-color: #fff !important;
+                padding: 15px !important;
+                border: 0!important;
+            }
+
+        </style>
+    </head>
+    <c:APTSMD_CommonHeader pageName1="Abort Jobs" objectName="" iconName="account"
+        type="standard" />
+
+    <body ng-app="scheduleJobsApp" ng-controller="scheduleJobsController" ng-cloak="true">
+        <div class="slds marginTop30 width100P">
+            <div class="slds-card">
+
+                <div class="apttusContainer moved">
+                    <div class="slds">
+                        <div class="textAlignRight marginBottom15">
+                            <!--<button type="button" class="apttusBtn" ng-click="schedule();">
+                Schedule
+            </button>-->
+                            <button type="button" class="apttusBtn" ng-click="abortAllJobs();">
+                Abort
+            </button>
+
+                            <button type="button" class="apttusBtn" ng-click="backToHome();">
+                Home
+            </button>
+                        </div>
+                    </div>
+                    <!--<div class="apttusPanel" style="display:inline-block!important">
+                        <div class="col-md-4 col-sm-12 padding0">
+                            <span style="font-weight: bold !important;font-size: 16px !important;">Number Of Minutes</span>
+                            <span ng-show='isError' style="color:red !important;font-weight: bold !important;font-size: 12px !important;">Value must be between 1 to 59</span>
+                            <md-input-container class="md-block ands-input-container verticalMiddle" md-no-float="true">
+                                <input class="apttusInput  ands-input marginTop7" style="font-size: 20px !important;"
+                                    type="text" name="numberOfMinutes" id="focusThisIP"
+                                    ng-model="numberOfMinutes" />
+                            </md-input-container>
+                        </div>
+                    </div>-->
+
+                    <div class="apttusPanel" style="display:inline-block!important">
+                        <table class="table apttusTable">
+                            <tr>
+                                <td class="blackBold width15P">
+                                    Job Name
+                                </td>
+                                <td class="blackBold width15P">
+                                    Start Time
+                                </td>
+                                <!--<td class="blackBold width15P">
+                        End Time
+                    </td>-->
+                                <td class="blackBold width15P">
+                                    Next Fire Time
+                                </td>
+                                <td class="blackBold width15P">
+                                    Previous Fire Time
+                                </td>
+                                <td class="blackBold width15P">
+                                    Times Triggered
+                                </td>
+                                <td class="blackBold width15P">
+                                    State
+                                </td>
+                                <td class="blackBold width15P">
+                                    Time Zone Key
+                                </td>
+                            </tr>
+                            <tr ng-repeat="item in allJobs">
+                                <td class="width30P">
+                                    {{item.CronJobDetail.Name}}
+                                </td>
+                                <td class="width15P">
+                                    {{item.StartTime | date:'MM/dd/yyyy HH:mm:ss'}}
+                                </td>
+
+                                <td class="width15P">
+                                    {{item.NextFireTime | date:'MM/dd/yyyy HH:mm:ss'}}
+                                </td>
+                                <td class="width15P">
+                                    {{item.PreviousFireTime | date:'MM/dd/yyyy HH:mm:ss'}}
+                                </td>
+                                <td class="width15P">
+                                    {{item.TimesTriggered}}
+                                </td>
+                                <td class="width15P">
+                                    {{item.State}}
+                                </td>
+                                <td class="width15P">
+                                    {{item.TimeZoneSidKey}}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </body>
+
+</apex:page>

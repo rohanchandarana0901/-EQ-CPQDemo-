@@ -1,0 +1,13 @@
+<apex:page showHeader="false" sidebar="false" controller="APTSMD_UpdateStoreFrontBannerLinksCtrl" action="{!updateBannerLinks}">
+    <apex:form >
+        <div class="accordion-group">
+            <div id="collapseEight" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div style="font-size: medium; color: red; font-family: sans-serif; font-weight: bold;">
+                        The links are successfully updated. Please close the tab.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </apex:form>
+</apex:page>

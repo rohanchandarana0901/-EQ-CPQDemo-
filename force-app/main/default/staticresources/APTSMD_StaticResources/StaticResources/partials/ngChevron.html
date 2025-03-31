@@ -1,0 +1,124 @@
+<div>
+<style>
+           .block {
+                width: 130px ; 
+                height: 50px ; 
+                background-color:{{chevronconfig.inactiveColor}}; 
+                position:relative;
+                color: white;
+                font-weight:bold;
+                font-size:15px;
+                padding-top:15px;
+                text-align:center;
+                float: left;
+               /* text-shadow:2px 2px black;
+                -moz-box-shadow: 6px 6px 5px #CCC;
+                -webkit-box-shadow: 6px 6px 5px #CCC;
+                box-shadow: 6px 6px 5px #CCC;*/
+            }
+      
+      .blockActive {
+        width: 130px ; 
+        height: 50px ; 
+        background-color:{{chevronconfig.activeColor}}; 
+        position:relative;
+        color: white;
+        font-weight:bold;
+        font-size:15px;
+        padding-top:15px;
+        text-align:center;
+        float: left;
+       /* text-shadow:2px 2px black;
+        -moz-box-shadow: 6px 6px 5px #CCC;
+        -webkit-box-shadow: 6px 6px 5px #CCC;
+        box-shadow: 6px 6px 5px #CCC;*/ 
+      }
+           
+            
+            .arrow-right {
+                width: 0; 
+                height: 0; 
+                border-top: 25px solid transparent;
+                border-bottom: 25px solid transparent;
+                position:relative;
+                border-left: 25px solid {{chevronconfig.inactiveColor}};
+                float: left; 
+                
+                
+            }
+      
+      .arrow-right_Active {
+        width: 0; 
+        height: 0; 
+        border-top: 25px solid transparent;
+        border-bottom: 25px solid transparent;
+        position:relative;
+        border-left: 25px solid {{chevronconfig.activeColor}};
+        float: left; 
+      }
+
+
+            .blocktop {
+                width: 0; 
+                height: 0; 
+                border-top: 25px solid {{chevronconfig.inactiveColor}};
+                border-bottom: 25px solid {{chevronconfig.inactiveColor}};
+                position:relative;
+                border-left: 25px solid transparent;
+                float: left; 
+                /*-moz-box-shadow: 6px 6px 5px #CCC;
+                -webkit-box-shadow: 6px 6px 5px #CCC;
+                box-shadow: 6px 6px 5px #CCC;*/
+                
+            } 
+          
+      .blocktop_Active {
+               width: 0; 
+        height: 0; 
+        border-top: 25px solid {{chevronconfig.activeColor}};
+        border-bottom: 25px solid {{chevronconfig.activeColor}};
+        position:relative;
+        border-left: 25px solid transparent;
+        float: left; 
+       /* -moz-box-shadow: 6px 6px 5px #CCC;
+        -webkit-box-shadow: 6px 6px 5px #CCC;
+        box-shadow: 6px 6px 5px #CCC;*/
+            } 
+          
+          
+            .maindiv{
+                float:left;
+                margin-left:-20px;
+            }
+            
+            .labelcol1{
+                width: 18%;
+                padding-top: 3px;
+                padding-bottom: 3px;
+                color: #4a4a56; 
+                padding-right: 20px; 
+                padding-left: 2px;
+                text-align: right;
+                font-size: 91%;
+                font-weight: bold; 
+            }
+   </style>
+       <table>
+       <tr>
+           <td style="width:50px">
+           </td>
+           <td>
+               <!-- <h4 style="font-size:20px;font-weight:bold">{{chevronconfig.heading}}</h4><br/> -->
+            
+              <div class="maindiv" ng-repeat="item in chevronconfig.KeyValues">
+                     <div class="{{item == chevronconfig.itemValue ? ' blocktop_Active': 'blocktop'}}"  ></div>
+                     <div class="{{item == chevronconfig.itemValue ? ' blockActive': 'block'}}"  >{{item}}</div>
+                     <div class="{{item == chevronconfig.itemValue ? ' arrow-right_Active': 'arrow-right'}}"  ></div>
+               </div> 
+
+
+           </td>
+       </tr>
+        </table>
+         
+ </div>

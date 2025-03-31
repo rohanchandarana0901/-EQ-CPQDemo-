@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Agreement</title>
+
+	<link rel="stylesheet" href="./node_modules/angular-material/angular-material.css">
+	<script src="./node_modules/angular/angular.js"></script>
+  <script src="./node_modules/angular-aria/angular-aria.js"></script>
+  <script src="./node_modules/angular-animate/angular-animate.js"></script>
+  <script src="./node_modules/angular-material/angular-material.js"></script>
+  <script src="./node_modules/angular-messages/angular-messages.js"></script>
+
+      
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript" src="script.js"></script>
+
+	<script>
+		var myApp = angular.module('MyApp',['ngMaterial', 'ngMessages'])
+
+    myApp.controller('AppCtrl', function($scope) {
+
+      $scope.agreementObj = {agreementName :  "ABC", accountName: "ABC Account" , contact:"Diego Francis",startDate:"01/01/2015", endDate:"31/12/2015",recordType:"MSA",referenceNo:"123456789",isPerpectual:true,trackVersion:false, region:"North America", paymentTerms :"Net 30",support:"--None--",annualUplift:"--None--", autoRenew:true,sla:false};
+
+    });
+
+    myApp.config(function($mdThemingProvider) {
+      $mdThemingProvider.theme('default')
+        .primaryPalette('green')
+        .accentPalette('pink');
+    });
+
+	</script>
+</head>
+<body>
+
+
+
+<div ng-controller="AppCtrl" ng-cloak="" class="toolbardemoBasicUsage" ng-app="MyApp">
+
+  <md-content>
+    <div ng-include="'navbar.html'"></div>
+
+    <div layout="column" >
+       <div ng-include="'secondary.html'"></div>
+    </div>
+
+    <div layout="row" layout-wrap>
+      <div flex="60">
+         <div ng-include="'agreement.html'"></div>
+      </div>
+      <div flex="40">
+         <div ng-include="'relatedList.html'"></div>
+      </div>  
+    </div>
+
+
+  </md-content>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+<apex:page standardController="Account" showHeader="true" docType="html-4.01-strict">
+<div id="tabstrip" style="display:none;"> <ul> 
+<li class="k-state-active">Orders</li>
+<li>Billing Schedules</li>
+<li>Assets</li>
+<li>Invoices</li>
+</ul>
+
+<!-- Orders -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="Apttus_Config2__Order__c" FKName="Apttus_Config2__SoldToAccountId__c" FKValue="{!Account.Id}"  DelayLoad="false"  ViewID="a9fHs000000grfX" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+<!-- BS -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="Apttus_Billing__BillingSchedule__c" FKName="Apttus_Billing__BillToAccountId__c" FKValue="{!Account.Id}"  DelayLoad="false"  ViewID="a9fHs000000grfm" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+<!-- Assets -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="Apttus_Config2__AssetLineItem__c" FKName="Apttus_Config2__BillToAccountId__c" FKValue="{!Account.Id}"  DelayLoad="true"  ViewID="a9fHs000000grfl" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+<!-- Invoices -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="Apttus_Billing__Invoice__c" FKName="Apttus_Billing__BillToAccountId__c" FKValue="{!Account.Id}"  DelayLoad="true"  ViewID="a9fHs000000grfk" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+</div>
+<script>
+$(document).ready(function() {
+    $("#tabstrip").kendoTabStrip({
+      activate: function(e){
+        setTimeout(function(){          $(window).resize();        });
+      }
+    });
+    $("#tabstrip").css("display", "block");
+});
+ </script>
+</apex:page>

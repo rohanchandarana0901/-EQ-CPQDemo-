@@ -1,0 +1,176 @@
+<aura:component controller="APTSMD_AgreementStatusController" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId">
+	<aura:dependency resource="markup://lightning:empApi"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="recordId" type="Id" description="The Id of the record"/>
+    <aura:attribute name="showApprovals" type="Boolean"/>
+    <aura:attribute name="newAgreement" type="Boolean" default="true"/>
+    <aura:attribute name="grandTotal" type="Double"/>
+    <aura:attribute name="agreement" type="Apttus__APTS_Agreement__c"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false" />
+    <aura:attribute name="loadingMessage" type="String" />
+    <aura:attribute name="preSalesConfigSettingRecord" type="APTSMD_Apttus_PreSales_Config_Settings2__c" description="Presales Config Setting record"/>
+    
+    <ltng:require styles="/resource/slds080/assets/styles/salesforce-lightning-design-system-vf.css" />
+    
+    
+    <div style="border: 1px solid lightgray; padding: 5px; margin-bottom: 10px; border-radius: 5px;background-color:white">
+         <div style="margin-left: 7px; margin-bottom: 7px; color: black; font-weight: 700; font-size: 16px;">
+            <span>
+                <!--<img src="/resource/APTSMD_ApttusLogo" id="apttuslogo" alt="Miscellaneous Actions" border="0"/>-->Advanced Actions
+            </span>
+        </div>
+        
+        <!-- All Actions -->
+        <aura:if isTrue="{! NOT(v.isLoading)}">
+        <div class="full forcePageBlockSectionRow">
+              <p class="full forcePageBlockItem forcePageBlockItemView" style="width:100%;text-align:center">
+                  <div class="slds">
+                      <div class="slds-grid slds-wrap">
+                        <aura:if isTrue="{!v.agreement.Apttus_CMConfig__PriceListId__c != null}">
+                            <div class="slds-col  slds-size_1-of-4">
+                                <a aura:id="ConfigureProducts" onclick="{!c.configureProducts}" class="hideLine">
+                                    <lightning:icon iconName="custom:custom93" size="medium" alternativeText="Configure"/><br/>
+                                	<span class="osOutputLabel">Configure <br/>Products</span>
+                                </a>
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="slds-col  slds-size_1-of-4 disabledButtons">
+                                    <a aura:id="ConfigureProducts" class="disabledButtons hideLine">
+                                        <lightning:icon iconName="custom:custom93" size="medium" alternativeText="Configure"/><br/>
+                                    	<span class="osOutputLabel">Configure <br/>Products</span>
+                                    </a>
+                                </div>
+                            </aura:set>
+                        </aura:if>
+                          
+                          <!--<div class="slds-col  slds-size_1-of-4 ">
+                              <a aura:id="Amend" onclick="{!c.inEffectView}" class="HideLine">
+                                  <lightning:icon iconName="standard:entitlement" size="medium" alternativeText="Amend"/>
+                                  <br/>
+                                  <span class="osOutputLabel">In Effect <br/>View</span>
+                              </a>                                
+                          </div>
+                          
+                          <div class="slds-col  slds-size_1-of-4 ">
+                              <a aura:id="Amend" onclick="{!c.launchAgreementHierarchy}" class="HideLine">
+                                  <lightning:icon iconName="standard:hierarchy" size="medium" alternativeText="Amend"/>
+                                  <br/>
+                                  <span class="osOutputLabel">View<br/> Hierarchy</span>  
+                              </a>
+                          </div>
+                          
+                      	<div class="slds-col  slds-size_1-of-4 ">
+                            <a aura:id="Merge Documents" onclick="{!c.mergeDoc}" class="HideLine">
+                                <lightning:icon iconName="standard:partners" size="medium" alternativeText="Merge Documents"/>
+                            	<br/>
+                            	<span class="osOutputLabel">Merge <br/>Documents</span>
+                            </a>                            
+                          </div>-->
+                          
+                          <aura:if isTrue="{!or(or(v.agreement.Apttus_Approval__Approval_Status__c=='None',v.agreement.Apttus_Approval__Approval_Status__c=='Approval Required'),v.agreement.Apttus_Approval__Approval_Status__c=='Not Submitted')}">
+                                <div class="slds-col  slds-size_1-of-4 ">                         
+                                    <a aura:id="approvals" onclick="{!c.sendForApprovals}" class="HideLine">
+                                    <lightning:icon iconName="standard:approval" size="medium" alternativeText="Approvals"/>
+                                    <br/> 
+                                    <span class="osOutputLabel">Approvals</span>
+                                </a>
+                                </div>	                       
+                              <aura:set attribute="else">
+
+                        	    <div class="slds-col  slds-size_1-of-4 disabledButtons">                  
+                                    <a aura:id="approvals"  class="disabledButtons HideLine" >
+                                    <lightning:icon iconName="standard:approval" size="medium" alternativeText="Approvals"/>
+                                    <br/> 
+                                    <span class="osOutputLabel">Approvals</span>
+                                </a>
+                            	</div>	             
+                             </aura:set>
+                          </aura:if>
+                          
+                          <aura:if isTrue="{!or(or(v.agreement.Apttus_Approval__Approval_Status__c=='Pending Approval',v.agreement.Apttus_Approval__Approval_Status__c=='Approved'),or(v.agreement.Apttus_Approval__Approval_Status__c=='Rejected',v.agreement.Apttus_Approval__Approval_Status__c=='Cancelled'))}">
+                             <div class="slds-col  slds-size_1-of-4 ">                            
+                                <a aura:id="myapproval" onclick="{!c.myApprovals}" class="HideLine">
+                                <lightning:icon iconName="standard:approval" size="medium" alternativeText="Approvals"/>
+                                <br/> 
+                                    <span class="osOutputLabel">My <br/>Approvals</span>
+                            	</a>
+                        	</div>
+                         <aura:set attribute="else">
+                              <div class="slds-col  slds-size_1-of-4 disabledButtons">
+                                 <a aura:id="myapproval" class="disabledButtons HideLine">
+                                <lightning:icon iconName="standard:approval" size="medium" alternativeText="Approvals"/>
+                                <br/> 
+                                    <span class="osOutputLabel">My <br/>Approvals</span>
+                            	</a>
+                        	</div>
+                              </aura:set>
+                         </aura:if>
+                          
+                          <aura:if isTrue="{!v.agreement.Apttus__IsLocked__c}">
+                            	<div class="slds-col  slds-size_1-of-4 ">
+                                <!--a aura:id="Amend" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementAmend?id=' + v.recordId}"-->
+                                <a aura:id="Amend" onclick="{!c.agreementClausesAmend}" class="HideLine">
+                                    <lightning:icon iconName="standard:custom" size="medium" alternativeText="Amend"/>
+                                    <br/>
+                                    <span class="osOutputLabel">Amend<br/> Clauses</span>
+                                </a>                                
+                            </div>
+						</aura:if>
+                        
+                         <aura:if isTrue="{!!v.agreement.Apttus__IsLocked__c}">
+                             <div class="slds-col  slds-size_1-of-4 disabledButtons">    
+                                 <!--a aura:id="Amend" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementAmend?id=' + v.recordId}"-->
+                                 <a aura:id="Amend"  class="disabledButtons HideLine" >
+                                     <lightning:icon iconName="standard:custom" size="medium" alternativeText="Amend"/>
+                                 	<br/>
+                                 	<span class="osOutputLabel">Amend<br/> Clauses</span>
+                                 </a>                                 
+                             </div>
+                        </aura:if>
+                          
+                          <div class="slds-col  slds-size_1-of-4 ">
+                                <a aura:id="Amend" onclick="{!c.loadObligation}" class="HideLine">
+                                    <lightning:icon iconName="standard:article" size="medium" alternativeText="Amend"/>
+                                  <br/>
+                                    <span class="osOutputLabel">Load<br/> Obligations</span>  
+                              </a>                                
+                            </div>
+                        <div class="slds-col  slds-size_1-of-4 ">
+                            <a aura:id="sendForReview" onclick="{!c.sendForReview}" class="HideLine">
+                                <lightning:icon iconName="standard:contract_line_outcome" size="medium" alternativeText="Send for Quick Review"/>
+                                <br/>
+                                <span class="osOutputLabel">Send For<br/>Quick Review</span>
+                            </a>
+                        </div>
+                        <!--  Legal Reviewer Flow -->
+                        <aura:if isTrue="{! v.preSalesConfigSettingRecord.APTSMD_Enable_Legal_Reviewer_Flow__c}">
+                            <div class="slds-col  slds-size_1-of-4 ">
+                                <a aura:id="sendForReview" onclick="{!c.sendForLegalReview}" class="HideLine">
+                                    <lightning:icon iconName="standard:contract_line_outcome" size="medium"
+                                        alternativeText="Send for Quick Review" />
+                                    <br />
+                                    <span class="osOutputLabel">Assign to<br />Legal Reviewer</span>
+                                </a>
+                            </div>
+                        </aura:if>
+                      </div>
+                  </div>
+              </p>
+        </div>
+        </aura:if>
+        
+        <!-- Loading Bar -->
+        <aura:if isTrue="{! v.isLoading}">
+            <div class="slds-is-relative" style="text-align: center;padding: 30px;">
+                <div class="slds-spinner_container">
+                    <lightning:spinner alternativeText="Loading" size="medium" variant="brand" /><br />                        
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <p>{!v.loadingMessage}</p>
+            </div>                
+        </aura:if>
+        
+    </div>
+    
+</aura:component>

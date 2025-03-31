@@ -1,0 +1,180 @@
+<apex:page controller="APTSMD_DemoUserHelperCtrl" showheader="true" sidebar="true" lightningStylesheets="true" action="{!createUpdateDemoUserDetail}">
+    <apex:slds ></apex:slds>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular_js.js')}" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script>
+        var app = angular.module('myApp', []);
+        app.controller('myCtrl', function ($scope) {
+            $scope.additionalCount = 2;
+            $scope.createUserLabel = 'Create User';
+            $scope.inProcess = false;
+            $scope.result = JSON.parse('{!respJSON}');
+            console.log($scope.result);
+
+            $scope.createAdditionalUsers = function () {
+                $scope.inProcess = true;
+                $scope.createUserLabel = 'Creating User... Please wait.';
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.APTSMD_DemoUserHelperCtrl.createAdditionalDemoUser}',
+                    $scope.additionalCount,
+                    function (result, event) {
+                        $scope.createUserLabel = 'Create User';
+                        $scope.inProcess = false;
+                        if (event.status) {
+                            alert(result);
+                            window.location.reload();
+                        } else if (event.type === 'exception') {
+                            alert(result);
+                        } else {
+
+                        }
+                    },
+                    { escape: true }
+                );
+            }
+        });
+    </script>
+    <div class="slds-grid slds-gutters" style="padding:20px 20px" ng-app="myApp" ng-controller="myCtrl">
+        <div>
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col">
+                    <h1 style="font-size: 1.5em;">
+                        <span class="success" style="font-weight: 600;">
+                            Multi-Factor Authentication Assistant
+                        </span>
+                        <br/>
+                    </h1>
+                    <br/>
+                    <h1 style="font-size: 1.3em;color: red;">Org Owner must use main user credentials and share below credentials with demo build team.</h1>
+                    <br/>
+                    <h1 style="font-size: 1em;color: red;">Please refrain from changing below user details (i.e., first name, last name and username)</h1>
+                    <br/>
+                </div>
+            </div>
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Example default base table of Opportunities">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col" style="text-align: center;">
+                            <div class="slds-truncate" title="Opportunity Name">User</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Account Name">Username Updated?</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Close Date">Password Updated?</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Stage">Permission Set Assigned?</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Confidence">License Assigned?</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="slds-hint-parent">
+                        <td>
+                            <table>
+                                <tr>
+                                    <td colspan="2">&nbsp;</td>
+                                </tr>
+                                <tr ng-repeat="u in result.users">
+                                    <td>
+                                        <a target="_blank" href="/lightning/setup/ManageUsers/page?address=/{{u.Id}}?noredirect=1&isUserEntityOverride=1">{{u.Name}}</a>
+                                    </td>
+                                    <td>{{u.Username}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style="text-align: center;">
+                            <span title="Uesrname updated to demouserN.00dxxxxxxxxxxxx@congademo.com format" ng-if="result.isUsernameUpdated" class="slds-icon_container  slds-icon-text-default">
+                                <svg aria-hidden="true" class="slds-icon slds-icon_small slds-icon-text-success">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#success">
+                                    </use>
+                                </svg>
+                                <span class="slds-assistive-text">approval</span>
+                            </span>
+                            <span title="Uesrname is not updated to demouserN.00dxxxxxxxxxxxx@congademo.com format" ng-if="!result.isUsernameUpdated"
+                                class="slds-icon_container  slds-icon-text-default">
+                                <svg aria-hidden="true" class="slds-icon slds-icon_small slds-icon-text-error">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#error">
+                                    </use>
+                                </svg>
+                                <span class="slds-assistive-text">reject</span>
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span title="Predefine password updated" ng-if="result.isPwdUpdated" class="slds-icon_container  slds-icon-text-default">
+                                <svg aria-hidden="true" class="slds-icon slds-icon_small slds-icon-text-success">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#success">
+                                    </use>
+                                </svg>
+                                <span class="slds-assistive-text">approval</span>
+                            </span>
+                            <span title="Predefine password not updated" ng-if="!result.isPwdUpdated" class="slds-icon_container  slds-icon-text-default">
+                                <svg aria-hidden="true" class="slds-icon slds-icon_small slds-icon-text-error">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#error">
+                                    </use>
+                                </svg>
+                                <span class="slds-assistive-text">reject</span>
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span title="Necessary permission sets are assigned" ng-if="result.isPSAssigned" class="slds-icon_container  slds-icon-text-default">
+                                <svg aria-hidden="true" class="slds-icon slds-icon_small slds-icon-text-success">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#success">
+                                    </use>
+                                </svg>
+                                <span class="slds-assistive-text">approval</span>
+                            </span>
+                            <span title="Necessary permission sets are not assigned" ng-if="!result.isPSAssigned" class="slds-icon_container  slds-icon-text-default">
+                                <svg aria-hidden="true" class="slds-icon slds-icon_small slds-icon-text-error">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#error">
+                                    </use>
+                                </svg>
+                                <span class="slds-assistive-text">reject</span>
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span title="Necessary licenses are assigned" ng-if="result.isLSAssigned" class="slds-icon_container  slds-icon-text-default">
+                                <svg aria-hidden="true" class="slds-icon slds-icon_small slds-icon-text-success">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#success">
+                                    </use>
+                                </svg>
+                                <span class="slds-assistive-text">approval</span>
+                            </span>
+                            <span title="Necessary licenses are not assigned, please check if you have adequate license count in the org" ng-if="!result.isLSAssigned"
+                                class="slds-icon_container  slds-icon-text-default">
+                                <svg aria-hidden="true" class="slds-icon slds-icon_small slds-icon-text-error">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#error">
+                                    </use>
+                                </svg>
+                                <span class="slds-assistive-text">reject</span>
+                                <br/>Adequate Licenses are not available in this org.
+                                <br/>Reach out to Conga Provisioning team for additional license count.
+                            </span>
+                            <br/>
+                            <a href="/0A3" target="_blank">Installed Packages </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/> Need additional Users? Use below button to create more personas:
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="text-input-id-46">
+                    <abbr class="slds-required" title="required">* </abbr>
+                    Additional User Count
+                </label>
+                <div class="slds-form-element__control">
+                    <input style="width:10%" type="number" min="1" max="8" placeholder="Minimum 1, Maximum 8" required="true" ng-model="additionalCount"
+                        class="slds-input" />
+                </div>
+                <br/>
+                <button class="slds-button slds-button_brand" ng-disabled="inProcess" ng-click="createAdditionalUsers()">{{createUserLabel}}</button>
+                <br/>
+            </div>
+            <br/> For any help, please reach out to
+            <a href="mailto:sfdcmdo@conga.com">Conga Lab Team</a>.
+        </div>
+    </div>
+</apex:page>

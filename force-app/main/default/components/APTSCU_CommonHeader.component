@@ -1,0 +1,27 @@
+<!--@UI/UX: japan Bhavsar(Apttus Developer) on 12/7/2018 
+    Used Bootstrap classes for this component. If developer is planning to use this component 
+    in any custom pages, kindly include bootstrap classes in that page.
+-->
+<apex:component >
+    <!-- Include Google Tags Script -->
+    <!--<apex:outputText rendered="{!IF(isEnableGA == true,true,false)}">-->
+    <!--    <script async="true" src="https://www.googletagmanager.com/gtag/js?id=UA-131485697-1"></script>-->
+    <!--    <apex:includeScript value="{!$Resource.APTSMD_GA}"/>-->
+    <!--</apex:outputText>-->
+    
+    <apex:attribute name="pageName1" description="This is the value for parent page name."
+        type="String" required="true"/>
+    <apex:attribute name="objectName" description="This is the value for particular object's name."
+        type="String" required="true"/>
+    <nav class="navbar navbar-inverse navbar-fixed-top"> 
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <!--<a class="navbar-brand" href="#"><apex:image style="display:{!IF(isShowLogoOnHeaderBar == true,'inline-block','none')}" url="{!myimageurl}" styleClass="headerIMG"/></a>-->
+        </div>
+        <ul class="nav navbar-nav">
+          <li>{!pageName1}</li>
+          <li style="display:{!IF(objectName != '' ,'inline','none')};">&nbsp;-&nbsp;&nbsp;{!objectName}</li>
+        </ul>
+      </div>
+    </nav>
+</apex:component>

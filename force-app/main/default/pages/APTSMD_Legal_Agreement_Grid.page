@@ -1,0 +1,70 @@
+<apex:page sidebar="false" showHeader="true" docType="html-4.01-strict">
+  <div id="tabstrip" style="display:none;">
+    <ul>
+      <li class="k-state-active">Tasks (My Open)</li>
+      <li>Under Negotiation</li>
+      <li>Pending Approval</li>
+      <li>Expiring Agreements</li>
+      <li>Upcoming Renewals</li>
+      <li>Active Agreements</li>
+    </ul>
+
+    <!-- Task(My) -->
+    <div style="overflow:hidden;">
+      <CRMC_PP:Grid ObjectName="Task" DelayLoad="true" ViewID="a9fHs000000grff" EnableNewButton="true" EnableNewInline="true" EnableEdit="true"
+        EnableActions="true" EnableFieldChooser="true" EnableStickyViews="true" EnableToolbar="true" EnableViews="true" EnableFormatting="true"
+        EnableReadingPane="true" />
+      <CRMC_PP:DrillUp />
+    </div>
+    <!-- Under Negotiation -->
+    <div style="overflow:hidden;">
+      <CRMC_PP:Grid ObjectName="Apttus__APTS_Agreement__c" DelayLoad="false" ViewID="a9fHs000000grgh" EnableNewButton="true"
+        EnableNewInline="true" EnableEdit="true" EnableActions="true" EnableFieldChooser="true" EnableStickyViews="true" EnableToolbar="true"
+        EnableViews="true" EnableFormatting="true" EnableReadingPane="true" />
+      <CRMC_PP:DrillUp />
+    </div>
+
+    <!-- Pending Approval-->
+    <div style="overflow:hidden;">
+      <CRMC_PP:Grid ObjectName="Apttus__APTS_Agreement__c" DelayLoad="true" ViewID="a9fHs000000grgg" EnableNewButton="true"
+        EnableNewInline="true" EnableEdit="true" EnableActions="true" EnableFieldChooser="true" EnableStickyViews="true" EnableToolbar="true"
+        EnableViews="true" EnableFormatting="true" EnableReadingPane="true" />
+      <CRMC_PP:DrillUp />
+    </div>
+
+
+    <!-- Expiring Agreements-->
+    <div style="overflow:hidden;">
+      <CRMC_PP:Grid ObjectName="Apttus__APTS_Agreement__c" DelayLoad="true" ViewID="a9fHs000000grgf" EnableNewButton="true"
+        EnableNewInline="true" EnableEdit="true" EnableActions="true" EnableFieldChooser="true" EnableStickyViews="true" EnableToolbar="true"
+        EnableViews="true" EnableFormatting="true" EnableReadingPane="true" />
+      <CRMC_PP:DrillUp />
+    </div>
+
+    <!-- Upcoming Renewals-->
+    <div style="overflow:hidden;">
+      <CRMC_PP:Grid ObjectName="Apttus__APTS_Agreement__c" DelayLoad="true" ViewID="a9fHs000000grfw" EnableNewButton="true"
+        EnableNewInline="true" EnableEdit="true" EnableActions="true" EnableFieldChooser="true" EnableStickyViews="true" EnableToolbar="true"
+        EnableViews="true" EnableFormatting="true" EnableReadingPane="true" />
+      <CRMC_PP:DrillUp />
+    </div>
+
+    <!-- Active Agreements-->
+    <div style="overflow:hidden;">
+      <CRMC_PP:Grid ObjectName="Apttus__APTS_Agreement__c" DelayLoad="true" ViewID="a9fHs000000grfv" EnableNewButton="true"
+        EnableNewInline="true" EnableEdit="true" EnableActions="true" EnableFieldChooser="true" EnableStickyViews="true" EnableToolbar="true"
+        EnableViews="true" EnableFormatting="true" EnableReadingPane="true" />
+      <CRMC_PP:DrillUp />
+    </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+      $("#tabstrip").kendoTabStrip({
+        activate: function (e) {
+          setTimeout(function () { $(window).resize(); });
+        }
+      });
+      $("#tabstrip").css("display", "block");
+    });
+  </script>
+</apex:page>

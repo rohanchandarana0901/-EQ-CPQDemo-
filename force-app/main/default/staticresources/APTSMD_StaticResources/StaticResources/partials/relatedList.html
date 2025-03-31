@@ -1,0 +1,41 @@
+<div ng-cloak>
+  <md-content>
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab label="Activity">
+        <md-content class="md-padding md-ng-tab">
+          <div ng-include="envPath+'/partials/activityRelatedList.html'"></div>
+        </md-content>
+      </md-tab>
+      <md-tab label="Approvals">
+        <md-content class="md-padding md-ng-tab">
+          <div ng-include="envPath+'/partials/approvalRelatedList.html'"></div>
+        </md-content>
+      </md-tab>
+      <md-tab label="Line Items">
+        <md-content class="md-padding md-ng-tab">
+         	 <div ng-include="envPath+'/partials/lineItems.html'"></div>
+        </md-content>
+      </md-tab>
+       <md-tab label="Clauses">
+        <md-content class="md-padding md-ng-tab">
+          <div ng-include="envPath+'/partials/clausesRelatedList.html'"></div>
+        </md-content>
+      </md-tab>
+       <md-tab label="Term Exceptions">
+        <md-content class="md-padding md-ng-tab">
+          <div ng-include="envPath+'/partials/termExceptionRelatedList.html'"></div>
+        </md-content>
+      </md-tab>
+       <md-tab label="Notes & Attachment">
+        <md-content class="md-padding md-ng-tab">
+          <div ng-include="envPath+'/partials/attachmentRelatedList.html'"></div>
+        </md-content>
+      </md-tab>
+       <md-tab label="Child Agreements">
+        <md-content class="md-padding md-ng-tab">
+          <div ng-include="envPath+'/partials/childAgreeRelatedList.html'"></div>
+        </md-content>
+      </md-tab>
+    </md-tabs>
+  </md-content>
+</div>

@@ -1,0 +1,402 @@
+<apex:page controller="APTSMD_SDO_Tools" docType="html-5.0" applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" showHeader="false">
+    <!--
+    <apex:composition template="APTSMD_MDO_ToolsLayout">
+        <apex:define name="_toolspage">
+        -->
+            <div class="page-content" data-tab="home">
+                <!--
+                 <div class="tiles">
+                    <div>
+                        <h3>Demo Resources</h3>
+                    </div>
+                     
+                    
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                            <a target="_blank" href="https://www.cur8r.io/showcase/the-official-sdo-sales-cloud-demos">
+                                <apex:image styleClass="scriptCloud" value="{!$Resource.APTSMD_salesCloudLogo}"/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                            <a target="_blank"  href="https://www.cur8r.io/showcase/the-official-sdo-service-cloud-demos">
+                                <apex:image styleClass="scriptCloud" value="{!$Resource.APTSMD_serviceCloudLogo}"/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                        <a target="_blank" href="https://www.cur8r.io/showcase/platform-101">
+                            <apex:image styleClass="scriptCloud" value="{!$Resource.APTSMD_platformLogo}"/>
+                        </a>
+                        </div>
+                    </div>
+                    
+                </div>
+				-->
+
+
+                <!--
+                <div class="tiles">
+                    <div>
+                        <h3>Videos</h3>
+                    </div>
+
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                            <a target="_blank" href="https://www.youtube.com/watch?v=2SaY4Vve6es">
+                                <apex:image styleClass="scriptCloud" value="{!$Resource.salesPath}"/>
+                            </a>
+                        </div>
+                         <div class="tile-object">
+                                <div class="video-name name">
+                                    <span style="cursor:pointer;color:#333 !important;">
+                                        Sales Path
+                                    </span>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                
+                 <div class="tiles">
+                    <div>
+                        <h3 style="font-size:100%"><b>Badger</b></h3>
+                    </div>
+                     <div class="tile cloud">
+                        <div class="tile-body">
+                        <a target="_blank" href="https://vimeo.com/126564800">
+                            <apex:image styleClass="scriptCloud" value="{!$Resource.salesCloudLogo}"/>
+                        </a>
+                        </div>
+                         <div class="tile-object">
+                                <div class="video-name name">
+                                    <span style="cursor:pointer;color:#333 !important;">
+                                        Video 
+                                        <br/>password:salesforce2015
+                                    </span>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                            <a target="_blank" href="https://org62.my.salesforce.com/069Hs00000fm1t1">
+                                <apex:image styleClass="scriptCloud" value="{!$Resource.MSWordLogo}"/>
+                            </a>
+                        </div>
+                        <div class="tile-object">
+                                <div class="video-name name">
+                                    <span style="cursor:pointer;color:#333 !important;">
+                                        Demo Scripts
+                                    </span>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                        <a target="_blank" href="https://org62.my.salesforce.com/069Hs00000fm1t2">
+                            <apex:image styleClass="scriptCloud" value="{!$Resource.MSPowerPointLogo}"/>
+                        </a>
+                        </div>
+                         <div class="tile-object">
+                                <div class="video-name name">
+                                    <span style="cursor:pointer;color:#333 !important;">
+                                        Cheat Sheet
+                                    </span>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                            <a target="_blank"  href="https://org62.my.salesforce.com/069Hs00000fm1t3">
+                                <apex:image styleClass="scriptCloud" value="{!$Resource.MSPowerPointLogo}"/>
+                            </a>                    
+                        </div>
+                         <div class="tile-object">
+                                <div class="video-name name">
+                                    <span style="cursor:pointer;color:#333 !important;">
+                                        PPT
+                                    </span>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                -->
+                
+                
+                <!--
+                <div class="tiles">
+                    
+                    <div>
+                        <h3 style="font-size:100%"><b>Release Notes</b></h3>
+                    </div>
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                            <a target="_blank" href="apex/APTSMD_ReleaseNotes">
+                                <apex:image styleClass="scriptCloud" value="{!$Resource.PDFLogo}"/>
+                            </a>
+                        </div>
+                        <div class="tile-object">
+                            <div class="video-name name">
+                                <span style="cursor:pointer;color:#333 !important;">
+                                    Readme 
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                
+                <div class="tiles">
+                    <div>
+                        <h3 style="font-size:100%"><b>BPS</b></h3>
+                    </div>
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                            <a target="_blank" href="https://apttustest-my.sharepoint.com/personal/dclark_apttus_com/_layouts/15/WopiFrame.aspx?sourcedoc={8EF656E1-AC4E-41DB-99B7-40BB8F10C6D2}&file=SE%20Demo%20Resources&action=default&RootFolder=%2fpersonal%2fdclark_apttus_com%2fDocuments%2fNotebooks%2fSE%20Demo%20Resources">
+                                <apex:image styleClass="scriptCloud" value="{!$Resource.platformLogo}"/>
+                            </a>
+                        </div>
+                        <div class="tile-object">
+                            <div class="video-name name">
+                                <span style="cursor:pointer;color:#333 !important;">
+                                    Script 
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                -->
+                <apex:pageBlock >
+                    <div class="tiles">
+                        
+                        <div>
+                            <h3 style="font-size:100%"><b>Release Notes</b></h3>
+                        </div>
+                        <apex:repeat value="{!listReleaseNotes}" var="res">
+                            <div class="tile cloud">
+                                <div class="tile-body">
+                                    <a target="_blank" href="{!res.APTSMD_ResourceURL__c}">
+                                        <apex:image styleClass="scriptCloud" value="{!$Resource[res.APTSMD_ResourceLogoName__c]}"/>
+                                    </a>
+                                </div>
+                                <div class="tile-object">
+                                    <div class="video-name name">
+                                        <span style="cursor:pointer;color:#333 !important;">
+                                            v12.0
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </apex:repeat>
+                    </div> 
+                    <div class="tiles">
+                        
+                        <apex:pageBlockSection rendered="{!CPQSection}">
+                            <h3 style="font-size:100%"><b>Demo Scripts</b></h3>
+                        </apex:pageBlockSection>
+                        <apex:repeat value="{!listCPQ}" var="res">
+                            <div class="tile cloud">
+                                <div class="tile-body">                                                                                                                                                                                                                                                                                                                                                  
+                                    <a target="_blank" href="{!res.APTSMD_ResourceURL__c}">
+                                        <apex:image styleClass="scriptCloud" value="{!$Resource[res.APTSMD_ResourceLogoName__c]}"/>
+                                    </a>
+                                </div>
+                                <div class="tile-object">
+                                    <div class="video-name name">
+                                        <span style="cursor:pointer;color:#333 !important;">
+                                            {!res.Name} 
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>     
+                        </apex:repeat> 
+                    </div>
+                    <div class="tiles">
+                        <apex:pageBlockSection rendered="{!CLMSection}">
+                            <h3 style="font-size:100%"><b>CLM</b></h3>
+                        </apex:pageBlockSection>
+                        <apex:repeat value="{!listCLM}" var="res">
+                            <div class="tile cloud">
+                                <div class="tile-body">                                                                                                                                                                                                                                                                                                                                                  
+                                    <a target="_blank" href="{!res.APTSMD_ResourceURL__c}">
+                                        <apex:image styleClass="scriptCloud" value="{!$Resource[res.APTSMD_ResourceLogoName__c]}"/>
+                                    </a>
+                                </div>
+                                <div class="tile-object">
+                                    <div class="video-name name">
+                                        <span style="cursor:pointer;color:#333 !important;">
+                                            {!res.Name} 
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>     
+                        </apex:repeat> 
+                    </div>
+                    <div class="tiles">
+                        <apex:pageBlockSection rendered="{!billingSection}">
+                            <h3 style="font-size:100%"><b>Billing and RevRec</b></h3>
+                        </apex:pageBlockSection>
+                        <apex:repeat value="{!listBillingRevRec}" var="res">
+                            <div class="tile cloud">
+                                <div class="tile-body">                                                                                                                                                                                                                                                                                                                                                  
+                                    <a target="_blank" href="{!res.APTSMD_ResourceURL__c}">
+                                        <apex:image styleClass="scriptCloud" value="{!$Resource[res.APTSMD_ResourceLogoName__c]}"/>
+                                    </a>
+                                </div>
+                                <div class="tile-object">
+                                    <div class="video-name name">
+                                        <span style="cursor:pointer;color:#333 !important;">
+                                            {!res.Name} 
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>     
+                        </apex:repeat> 
+                    </div>
+                    <div class="tiles">
+                        <apex:pageBlockSection rendered="{!eCommerceSection}">
+                            <h3 style="font-size:100%"><b>ECommerce and Portal</b></h3>
+                        </apex:pageBlockSection>
+                        <apex:repeat value="{!listECommercePortal}" var="res">
+                            <div class="tile cloud">
+                                <div class="tile-body">                                                                                                                                                                                                                                                                                                                                                  
+                                    <a target="_blank" href="{!res.APTSMD_ResourceURL__c}">
+                                        <apex:image styleClass="scriptCloud" value="{!$Resource[res.APTSMD_ResourceLogoName__c]}"/>
+                                    </a>
+                                </div>
+                                <div class="tile-object">
+                                    <div class="video-name name">
+                                        <span style="cursor:pointer;color:#333 !important;">
+                                            {!res.Name} 
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>     
+                        </apex:repeat> 
+                    </div>
+                    <div class="tiles">
+                        <apex:pageBlockSection rendered="{!iCPQSection}">
+                            <h3 style="font-size:100%"><b>iCPQ</b></h3>
+                        </apex:pageBlockSection>
+                        
+                        <apex:repeat value="{!listICPQ}" var="res">
+                            <div class="tile cloud">
+                                <div class="tile-body">                                                                                                                                                                                                                                                                                                                                                  
+                                    <a target="_blank" href="{!res.APTSMD_ResourceURL__c}">
+                                        <apex:image styleClass="scriptCloud" value="{!$Resource[res.APTSMD_ResourceLogoName__c]}"/>
+                                    </a>
+                                </div>
+                                <div class="tile-object">
+                                    <div class="video-name name">
+                                        <span style="cursor:pointer;color:#333 !important;">
+                                            {!res.Name} 
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>     
+                        </apex:repeat> 
+                    </div>
+                </apex:pageBlock>
+                <!--
+                
+                
+                <div class="tiles">
+                    <div>
+                        <h3 style="font-size:100%"><b>iCPQ</b></h3>
+                    </div>
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                            <a target="_blank" href="https://apttustest-my.sharepoint.com/personal/dclark_apttus_com/_layouts/15/WopiFrame.aspx?sourcedoc={8ef656e1-ac4e-41db-99b7-40bb8f10c6d2}&action=view&wd=target%28%2F%2FiCPQ.one%7C8c951b1a-cc40-45e0-a7cc-13796b9512dd%2FICPQ%20Demo%20Script%7C979f2d0c-75a6-4b6c-a8dc-44495d893095%2F%29">
+                                <apex:image styleClass="scriptCloud" value="{!$Resource.APTSMD_MSWordLogo}"/>
+                            </a>
+                        </div>
+                        <div class="tile-object">
+                            <div class="video-name name">
+                                <span style="cursor:pointer;color:#333 !important;">
+                                    Script 
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tiles">
+                    <div>
+                        <h3 style="font-size:100%"><b>CPQ Quick Flow</b></h3>
+                    </div>
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                            <a target="_blank" href="https://apttustest-my.sharepoint.com/personal/apttusdemo_apttus_com/_layouts/15/WopiFrame.aspx?sourcedoc={9939ffab-f5fb-4ef6-b821-432dd75f83bd}&action=edit&wd=target%28%2F%2FCPQ%20Scripts.one%7Cca229056-f699-4e19-9cf8-ea6ee68a85c4%2FCPQ%20Quick%20Flow%7Cb2ace1e9-c471-42f0-9ca2-ddb8dda6bc78%2F%29">
+                                <apex:image styleClass="scriptCloud" value="{!$Resource.APTSMD_MSWordLogo}"/>
+                            </a>
+                        </div>
+                        <div class="tile-object">
+                            <div class="video-name name">
+                                <span style="cursor:pointer;color:#333 !important;">
+                                    Quick Flow 
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                            <a target="_blank" href="https://apttustest-my.sharepoint.com/personal/apttusdemo_apttus_com/_layouts/15/WopiFrame.aspx?sourcedoc={9939ffab-f5fb-4ef6-b821-432dd75f83bd}&action=edit&wd=target%28%2F%2FCPQ%20Scripts.one%7Cca229056-f699-4e19-9cf8-ea6ee68a85c4%2FCPQ%20Admin%20Quick%20flow%7Cfc915a96-9665-4a5d-89cd-1e8a635bb1e8%2F%29">
+                                <apex:image styleClass="scriptCloud" value="{!$Resource.APTSMD_MSWordLogo}"/>
+                            </a>
+                        </div>
+                        <div class="tile-object">
+                            <div class="video-name name">
+                                <span style="cursor:pointer;color:#333 !important;">
+                                    Admin Quick Flow 
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                -->
+                    <!--<div class="tile cloud">
+                        <div class="tile-body">
+                        <a target="_blank" href="https://www.youtube.com/watch?v=HaqV2IKq9uc">
+                            <apex:image styleClass="scriptCloud" value="{!$Resource.APTSMD_serviceCloudLogo}"/>
+                        </a>
+                        </div>
+                         <div class="tile-object">
+                                <div class="video-name name">
+                                    <span style="cursor:pointer;color:#333 !important;">
+                                        Video 
+                                    </span>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="tile cloud">
+                        <div class="tile-body">
+                            <a target="_blank" href="https://apttustest-my.sharepoint.com/personal/dclark_apttus_com/_layouts/15/WopiFrame.aspx?sourcedoc={8EF656E1-AC4E-41DB-99B7-40BB8F10C6D2}&file=SE%20Demo%20Resources&action=default&RootFolder=%2fpersonal%2fdclark_apttus_com%2fDocuments%2fNotebooks%2fSE%20Demo%20Resources">
+                                <apex:image styleClass="scriptCloud" value="{!$Resource.APTSMD_MSWordLogo}"/>
+                            </a>
+                        </div>
+                        <div class="tile-object">
+                                <div class="video-name name">
+                                    <span style="cursor:pointer;color:#333 !important;">
+                                        Demo Scripts
+                                    </span>
+                                </div>
+                            </div>
+                    </div>-->
+                    <!--<div class="tile cloud">
+                        <div class="tile-body">
+                            <a target="_blank"  href="https://org62.my.salesforce.com/069Hs00000fm1t4">
+                                <apex:image styleClass="scriptCloud" value="{!$Resource.APTSMD_MSWordLogo}"/>
+                            </a>                    
+                        </div>
+                         <div class="tile-object">
+                                <div class="video-name name">
+                                    <span style="cursor:pointer;color:#333 !important;">
+                                        PPT
+                                    </span>
+                                </div>
+                            </div>
+                    </div>-->
+                     
+                </div>
+
+</apex:page>

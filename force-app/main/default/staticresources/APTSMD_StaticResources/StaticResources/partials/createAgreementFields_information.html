@@ -1,0 +1,237 @@
+<div layout="row" class="default-space">
+  <div style="margin-right: 10px !important;"></div>
+  <div flex ="25">
+	<!-- <div class="form-group">
+        <label for="usr">Agreement Name</label>
+        <input type="text" class="form-control default-input" id="agreementName" ng-model="agreementObj.Name">
+    </div> --> 
+    <div class="form-group {{agreementNameErrorClass}}" id="agreementNameFormGroup">
+      <label class="control-label" for="agreementNameField">Agreement Name</label>
+      <div layout="row">
+        <div style="width: 5px;background: red;" class=""></div>
+        <div class="flex-100">
+          <input type="text" class="form-control default-input" id="agreementNameField" ng-model="agreementObj.Name">
+        </div>
+      </div>
+    </div>
+
+     <!--  <div class="form-group default-autocomplete">
+        <label for="usr">Account Name</label>
+       <md-autocomplete
+          md-search-text-change="AppCtrl.searchTextChangeAccount(AppCtrl.searchTextAccount)"
+          md-search-text="AppCtrl.searchTextAccount"
+          md-selected-item-change="AppCtrl.selectedItemChangeAccount(item)"
+          md-items="item in AppCtrl.querySearchAccount(AppCtrl.searchTextAccount)"
+          md-item-text="item.displayText"
+          md-min-length="0"
+          placeholder="Account"
+          md-menu-class="autocomplete-custom-template"
+          md-selected-item="agreementObj.accountName"
+          >
+
+        <md-item-template>
+          <span class="item-title">
+            <md-icon md-svg-icon="{{envPath}}/img/icons/ic_account_balance_black_24px.svg"></md-icon>
+             <strong><span> {{item.displayText}} </span></strong>
+          </span>
+          <span class="item-metadata">
+            <span class="item-metastat">
+              - {{item.description}} 
+            </span>
+          </span>
+        </md-item-template>
+      </md-autocomplete>
+      </div> -->
+      <div class="form-group default-autocomplete {{accountNameErrorClass}}" id="accountNameFormGroup">
+        <label class="control-label" for="accountField">Account Name</label>
+        <div layout="row">
+          <div style="width: 5px;background: red;" class=""></div>
+          <div class="flex-100">
+              <md-autocomplete
+                  md-search-text-change="AppCtrl.searchTextChangeAccount(AppCtrl.searchTextAccount)"
+                  md-search-text="AppCtrl.searchTextAccount"
+                  md-selected-item-change="AppCtrl.selectedItemChangeAccount(item)"
+                  md-items="item in AppCtrl.querySearchAccount(AppCtrl.searchTextAccount)"
+                  md-item-text="item.displayText"
+                  md-min-length="0"
+                  placeholder="Account"
+                  md-menu-class="autocomplete-custom-template"
+                  md-selected-item="agreementObj.accountName"
+                  id = "accountField"
+                  >
+
+                <md-item-template>
+                  <span class="item-title">
+                    <md-icon md-svg-icon="{{envPath}}/img/icons/ic_account_balance_black_24px.svg"></md-icon>
+                     <strong><span> {{item.displayText}} </span></strong>
+                  </span>
+                  <span class="item-metadata">
+                    <span class="item-metastat">
+                      - {{item.description}} 
+                    </span>
+                  </span>
+                </md-item-template>
+              </md-autocomplete>
+          </div>
+        </div>
+      </div>
+
+
+       <div class="form-group default-autocomplete">
+        <label for="usr">Primary Contact</label>
+       <md-autocomplete
+          md-search-text-change="AppCtrl.searchTextChangeAccount(AppCtrl.searchTextPrimaryContact)"
+          md-search-text="AppCtrl.searchTextPrimaryContact"
+          md-selected-item-change="AppCtrl.selectedItemChangePrimaryContact(item)"
+          md-items="item in AppCtrl.querySearchPrimaryContact(AppCtrl.searchTextPrimaryContact)"
+          md-item-text="item.displayText"
+          md-min-length="0"
+          placeholder="Primary Contact"
+          md-menu-class="autocomplete-custom-template"
+          md-selected-item="agreementObj.primaryContactName"
+          >
+
+        <md-item-template>
+          <span class="item-title">
+            <md-icon md-svg-icon="{{envPath}}/img/icons/ic_person_black_24px.svg"></md-icon>
+             <strong><span> {{item.displayText}} </span></strong>
+          </span>
+          <span class="item-metadata">
+            <span class="item-metastat">
+              - {{item.description}} 
+            </span>
+          </span>
+        </md-item-template>
+      </md-autocomplete>
+      </div>
+  
+
+</div>
+  <div style="margin-right: 10px !important;"></div>
+  <div flex ="30">
+   <div class="form-group default-datepicker {{startDateErrorClass}}">
+        <label  class="control-label" for="startDateField">
+            Start Date &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;      End Date
+          </label><br/>
+      <md-datepicker ng-init="" ng-model="agreementObj.startDate"  md-placeholder="Enter date" id="startDateField"></md-datepicker> 
+        <md-datepicker ng-model="agreementObj.endDate" md-placeholder="Enter date" ng-change="endDateChangeFn('change')"></md-datepicker> 
+
+     <!--  <div layout="row" class="form-group default-datepicker"> 
+        <div style="width: 5px;background: red;" class=""></div>
+        <md-datepicker ng-init="" ng-model="agreementObj.startDate"  md-placeholder="Enter date" id="startDateField"></md-datepicker>
+
+          <div style="width: 5px;background: red;" class=""></div>
+           <md-datepicker ng-model="agreementObj.endDate" md-placeholder="Enter date" ng-change="endDateChangeFn('change')"></md-datepicker> 
+
+   </div>  -->
+    </div> 
+   
+
+    <div class="form-group default-autocomplete">
+        <label for="usr">Record Type</label>
+       <md-autocomplete
+          md-search-text-change="AppCtrl.searchTextChangeAccount(AppCtrl.searchTextRecordType)"
+          md-search-text="AppCtrl.searchTextRecordType"
+          md-selected-item-change="AppCtrl.selectedItemChangeRecordType(item)"
+          md-items="item in AppCtrl.querySearchRecordType(AppCtrl.searchTextRecordType)"
+          md-item-text="item.displayText"
+          md-min-length="0"
+          placeholder="Record Type"
+          md-menu-class="autocomplete-custom-template"
+          md-selected-item="agreementObj.recordTypeName"
+          >
+
+        <md-item-template>
+          <span class="item-title">
+            <md-icon md-svg-icon="{{envPath}}/img/icons/ic_content_paste_black_24px.svg"></md-icon>
+             <strong><span> {{item.displayText}} </span></strong>
+          </span>
+          <span class="item-metadata">
+            <span class="item-metastat">
+              - {{item.description}} 
+            </span>
+          </span>
+        </md-item-template>
+      </md-autocomplete>
+      </div>
+
+
+
+
+
+    <div class="form-group">
+        <label for="usr">Reference #</label>
+        <input type="text" class="form-control default-input" id="accountName" ng-model="agreementObj.referenceNo">
+    </div> 
+
+  </div>
+
+
+  <div style="margin-right: 10px !important;"></div>
+
+
+  <div flex ="25">
+    <div class="form-group">
+        <label for="usr">Agreement Value</label>
+        <input type="text" class="form-control default-input" id="agreementName" ng-model="agreementObj.agreementAmount">
+    </div>
+     <div class="form-group">
+        <label for="usr">Contract Approver</label>
+        <input type="text" class="form-control default-input" id="agreementName">
+    </div>
+    <!--  <div class="form-group default-autocomplete">
+        <label for="usr">Parent Contact</label>
+        <input type="text" class="form-control" id="accountName" ng-model="agreementObj.parentContactNo">
+    </div>  -->
+     <div class="form-group default-autocomplete">
+        <label for="usr">Parent Contract</label>
+       <md-autocomplete
+          md-search-text-change="AppCtrl.searchTextChangeAccount(AppCtrl.searchTextParentAgreement)"
+          md-search-text="AppCtrl.searchTextParentAgreement"
+          md-selected-item-change="AppCtrl.selectedItemChangeParentAgreement(item)"
+          md-items="item in AppCtrl.querySearchParentAgreement(AppCtrl.searchTextParentAgreement)"
+          md-item-text="item.displayText"
+          md-min-length="0"
+          placeholder="Parent Contact"
+          md-menu-class="autocomplete-custom-template"
+          md-selected-item="agreementObj.parentAgreementName"
+          >
+
+        <md-item-template>
+          <span class="item-title">
+            <md-icon md-svg-icon="{{envPath}}/img/icons/ic_insert_drive_file_black_24px.svg"></md-icon>
+             <strong><span> {{item.displayText}} </span></strong>
+          </span>
+          <span class="item-metadata">
+            <span class="item-metastat">
+              - {{item.description}} 
+            </span>
+          </span>
+        </md-item-template>
+      </md-autocomplete>
+      </div>
+
+
+
+
+
+
+  </div>
+
+
+  <div style="margin-right: 10px !important;margin-left: 10px !important;"></div>
+
+
+  <div flex ="30" style="margin-right: 5px !important;    padding-right: 10px;">
+  &nbsp;<br/>
+	<div class="form-group default-checkbox">
+        <md-checkbox ng-model="agreementObj.isPerpectual" ng-change="perpectualChangeFn('change')">Is Perpetual</md-checkbox>
+        <md-checkbox ng-model="agreementObj.trackVersion" >Track Version</md-checkbox>
+        <md-checkbox ng-model="agreementObj.confidential" >Confidential</md-checkbox>
+    </div>
+    <div class="form-group">
+      <label for="comment">Notes</label>
+      <textarea class="form-control default-textarea" rows="5" id="comment" ng-model="agreementObj.notes"></textarea>
+    </div> </div>
+    
+ </div>

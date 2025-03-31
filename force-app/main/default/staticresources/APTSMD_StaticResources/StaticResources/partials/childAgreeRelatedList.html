@@ -1,0 +1,31 @@
+<div layout="column">
+  <div flex layout-align="end">
+  </div>
+  <div flex>
+      <table class="table">
+    <thead>
+      <tr>
+        <th>Agreement Name</th>
+        <th>Agreement Number</th>
+        <th>Status Category</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="acti in childAgreementJSON">
+        <td>{{acti.Name}}</td>
+        <td>{{acti.Apttus__Agreement_Number__c}} . {{acti.Apttus__Version_Number__c}}</td>
+        <td>{{acti.Apttus__Status_Category__c}}</td>
+        <td>{{acti.Apttus__Status__c}}</td>
+        
+      </tr>
+       
+    </tbody>
+  </table>
+  </div>
+
+
+
+</div>
+
+     

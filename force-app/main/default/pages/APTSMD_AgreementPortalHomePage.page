@@ -1,0 +1,674 @@
+<!-- UI/UX Changes by Sarjan Dave -->
+<apex:page standardStylesheets="false" sidebar="false" showHeader="false"  controller="APTSMD_AgreementPortalController">
+<html ng-app="myApp" ng-clock="">
+<head>
+    <title>Contract Portal</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-animate.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-route.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-aria.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-messages.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/t-114/svg-assets-cache.js"></script>
+    <!-- <script src="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.1/angular-material.js" integrity="sha512-ubrioXp1YyKCrLVzg68ZvLejBz5giN2J1XDmOV+JxN9bkkWbtooESyAtPW1j//3f97oBzCHEIy19eWgHPGXZRg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-resource.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- PDF --->
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/149125/pdf.combined.js"></script>
+    
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/149125/angular-pdf-viewer.min.js"></script>
+    
+    <!-- <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.css" rel="stylesheet"/> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.10/angular-material.min.css" integrity="sha512-lUExuDw/YQOmNO0LN2XplczGTyTxTEUvXBPKOnfBNloscpdzpfrYBiyWtPeyF0guAgihG/6RrOfDpoyywWMk/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+     
+    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/angular-material-data-table/0.10.10/md-data-table.css" rel="stylesheet"/>-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>  
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <!--<link rel="stylesheet" href="https://material.angularjs.org/1.1.3/docs.css" />
+    <link rel="stylesheet" href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.3/angular-material.css" />-->
+    
+    <apex:stylesheet value="{!$Resource.APTSMD_AgreementPortalCustomCss}" />
+    
+    <script>
+        var myApp = angular.module('myApp', ['ngMaterial', 'ngMessages', 'ngAnimate', 'ngRoute','pdf','material.svgAssetsCache']);
+        myApp.config(function ($mdThemingProvider) {
+            $mdThemingProvider.theme('default')
+              .primaryPalette('grey', {
+                  'default': '700', 
+                  'hue-1': '100', 
+                  'hue-2': '200', 
+                  'hue-3': '300' 
+              })
+              .accentPalette('blue', {
+                  'default': '400', 
+                  'hue-1': '100', 
+                  'hue-2': '600', 
+                  'hue-3': 'A100' 
+              });
+        });
+        myApp.filter('pagination', function(){
+             return function(input, start){
+                if (!input || !input.length) { return; }
+                start = +start;
+                return input.slice(start);
+             }
+        });
+        myApp.config(function ($routeProvider) {
+            $routeProvider
+            .when("/", {
+                templateUrl: "{!URLFOR($Resource.APTSMD_agreementPortal, '/agreementPortal/pages/HomePage.html')}"
+            })
+            .when("/home", {
+                templateUrl: "{!URLFOR($Resource.APTSMD_agreementPortal, '/agreementPortal/pages/HomePage.html')}"
+            })
+            .when("/eContracting", {
+                templateUrl: "{!URLFOR($Resource.APTSMD_agreementPortal, '/agreementPortal/pages/eContracting.html')}"
+            })
+            .when("/create", {
+                templateUrl: "{!URLFOR($Resource.APTSMD_agreementPortal, '/agreementPortal/pages/createAgreement.html')}"
+            })
+            .when("/createNDA", {
+                templateUrl: "{!URLFOR($Resource.APTSMD_agreementPortal, '/agreementPortal/pages/createNDA.html')}"
+            })
+            .when("/error", {
+                templateUrl: "{!URLFOR($Resource.APTSMD_agreementPortal, '/agreementPortal/pages/error.html')}"
+            })
+            .when("/operation/:operationId", {
+                templateUrl: "{!URLFOR($Resource.APTSMD_agreementPortal, '/agreementPortal/pages/operation.html')}"
+            })
+            .when("/verify", {
+                templateUrl: "{!URLFOR($Resource.APTSMD_agreementPortal, '/agreementPortal/pages/verify.html')}",
+                 resolve: {
+                    init: function($route) {
+                        Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.createNDA}",JSON.stringify($route.current.params.id),
+                            function(result, event){
+                                if(result!=null && result=='Success'){
+                                }
+                            }, 
+                            {escape: false}
+                        );
+                     }
+                  }
+            })
+            .otherwise({ templateUrl: "{!URLFOR($Resource.APTSMD_agreementPortal, '/agreementPortal/pages/HomePage.html')}" });
+        });        
+         myApp.controller('AppCtrl',['$scope','$location','$routeParams','pdfDelegate',function($scope,$location,$routeParams,pdfDelegate) {
+              $scope.firstImage = "{!URLFOR($Resource.APTSMD_one)}";
+              $scope.secondImage = "{!URLFOR($Resource.APTSMD_second)}";
+              $scope.thirdImage = "{!URLFOR($Resource.APTSMD_three)}";
+              $scope.fourthImage = "{!URLFOR($Resource.APTSMD_four)}";
+              $scope.world = "{!URLFOR($Resource.APTSMD_World)}";
+              $scope.forrester = "{!URLFOR($Resource.APTSMD_Forrester)}";
+              $scope.max ="{!URLFOR($Resource.APTSMD_max)}";
+              $scope.award1="{!URLFOR($Resource.APTSMD_award1)}";
+              $scope.award2="{!URLFOR($Resource.APTSMD_award2)}";
+              $scope.eContractingAgreement='{}';
+              $scope.accountData = {!accountJSON};
+              $scope.paymentTerms = {!paymentTermsJSON};
+              $scope.supportExhibits = {!supportExhibitsJSON};
+              $scope.regionData = {!regionJSON};
+              $scope.curPage = 0;
+              $scope.pageSize = 7;
+              $scope.filtered = 0;    
+              $scope.numberPages = 0;
+              $scope.firstName;
+              $scope.lastName;
+              $scope.email;
+              $scope.phone;
+              $scope.passwordData='apttus123';
+              $scope.isSuccess= false;
+              $scope.usernameValue;
+              $scope.passwordValue;
+              $scope.isValidUser;
+              $scope.loginUserName;
+              $scope.agreementNameValue;
+              $scope.region;
+              $scope.agreementBeingDisclosed;
+              $scope.term;
+              $scope.support;
+              $scope.agreementTotalValue;
+              $scope.mainAgreement;
+              $scope.account;
+              $scope.contact;
+              $scope.agreementConfidentiality;
+              $scope.opId = $routeParams.operationId;
+              $scope.operationData;
+              $scope.agreementTypeData = ['Yes','No'];
+              $scope.startDate;
+              $scope.endDate;
+              $scope.isLoading = false;
+              $scope.isLoginFailed = false;
+              $scope.userType = '{!TEXT($User.UserType)}';
+              $scope.pdfUrl;
+              $scope.accountName;
+              $scope.street;
+              $scope.city;
+              $scope.state;
+              $scope.zip;
+              $scope.primaryContactName;
+              $scope.primaryContactEmail;
+              $scope.requesterName;
+              $scope.beingDisclosed;
+              $scope.ndaStartDate;
+              $scope.requesterEmail;
+              $scope.requesterPhone;
+              $scope.isNDALoading = false;
+              $scope.agreementName;
+              $scope.sizes = [5,10,25,50,100,200,300,400, 500];
+              $scope.selectedTab = 0;
+              $scope.isMSAValid = true;
+              $scope.isNDAValid = true;
+              $scope.templateFieldTerm;
+              $scope.templateFieldSupport;
+              $scope.templateFieldRegion;
+              $scope.templateFieldStartDate;
+              $scope.templateFieldEndDate;
+              $scope.templateFieldSLA;
+              $scope.templateFieldStartDateConvertedValue;
+              $scope.templateFieldEndDateConvertedValue;
+              $scope.isOperationLoading = false;
+              //$scope.clauses;
+              $scope.data = {group : 'format'};
+              $scope.contactObj;
+              $scope.accountObj;
+              if($scope.opId != undefined){
+                $scope.getClauses($scope.opId);
+              }
+              if($scope.userType.indexOf('Partner')>0){
+                  $scope.isValidUser=true;   
+                  $scope.loginUserName  = '{!$user.FirstName}';
+                  $scope.accountObj = {!accountObj};
+                  $scope.contactObj = {!contactObj};
+              };
+              $scope.sort = function (keyname) {
+                $scope.sortKey = keyname;   
+                $scope.reverse = !$scope.reverse; 
+             };
+             $scope.nextPage = function (){
+                $scope.curNo = $scope.curNo + 1;
+                $scope.curPage = $scope.curPage + 1;
+             }
+             $scope.previousPage = function (){
+                $scope.curNo = $scope.curNo - 1;
+                $scope.curPage = $scope.curPage - 1;
+             }
+             $scope.firstPage = function (){
+                $scope.curNo = 1;
+                $scope.curPage = 0;
+             }
+             $scope.lastPage = function (){
+                $scope.curNo = $scope.numberPages + 1;
+                $scope.curPage = $scope.numberPages;
+             }
+             $scope.search = function(){
+                $scope.curNo = 1;
+                $scope.curPage = 0;
+             }
+             $scope.updatePageSize = function(size) {
+                $scope.curNo = 1;
+                $scope.curPage = 0;
+                $scope.pageSize = parseInt(size);
+            };
+            $scope.disableTab = function(agreementConfidentialityValue,mainAgreementValue){
+               if(agreementConfidentialityValue!=''){
+                   if($scope.agreementConfidentiality=='Yes' || $scope.agreementConfidentiality=='No' && $scope.mainAgreement=='No'){
+                        $scope.isNDAValid = false;
+                        $scope.isMSAValid = true;
+                   }else{
+                        $scope.isNDAValid = true;
+                        $scope.isMSAValid = true;
+                   }
+               } 
+               if(mainAgreementValue!=''){
+                  if($scope.agreementConfidentiality=='No' && $scope.mainAgreement=='Yes'){
+                        $scope.isMSAValid = false;
+                        $scope.isNDAValid = true;
+                   }else if($scope.agreementConfidentiality=='No' && $scope.mainAgreement=='No'){
+                        $scope.isMSAValid = true;
+                        $scope.isNDAValid = false;
+                   }else{
+                       $scope.isMSAValid = true;
+                       $scope.isNDAValid = true;
+                   } 
+               }
+            }
+             $scope.eContractingData = function () {
+                 Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.getAgreement}",
+                    function(result, event){
+                        if(result!=null){
+                            $scope.isLoading = false;
+                            $scope.eContractingAgreement = angular.fromJson(result);
+                            $scope.$apply(); 
+                        }
+                    }, 
+                    {escape: false}
+                );
+             };
+             $scope.eContractingData();
+             $scope.eContracting = function () {
+                 $location.path('/eContracting');
+             };
+             $scope.home = function () {
+                $location.path('/');
+             };
+             $scope.create = function () {
+                $location.path('/create');
+             };
+             $scope.createNDA = function () {
+                $location.path('/createNDA');
+             };
+             $scope.error = function () {
+                $location.path('/error');
+             };
+             $scope.performOperation = function (agreementID) {
+                $location.path('/operation/'+agreementID);
+             };
+             $scope.myModel = function(){
+                $("#myModel").modal("show");
+             };
+             $scope.myModelSignUp = function(){
+                $("#myModel").modal("hide");
+                $("#myModelSignUp").modal("show");
+             };
+             $scope.gotToLogin = function(){
+                $("#myModelSignUp").modal("hide");
+                $("#myModel").modal("show");
+             };
+             $scope.showDialog = function(){
+                 $("#confirmModel").modal("show");
+             }
+            $scope.sendForSignature = function(agreementId,docId){
+               $scope.isOperationLoading = true;    
+               Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.sendForESignaure}",JSON.stringify(agreementId),JSON.stringify(docId),
+                    function(result, event){
+                        if(result=='Success'){
+                            $("#documentSignatureModel").modal("show");
+                        }
+                        $scope.isOperationLoading = false; 
+                    }, 
+                    {escape: false}
+                ); 
+            };
+            $scope.sendForReview = function(agreementId,docId){
+                 $scope.isOperationLoading = true;
+                 Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.sendForReview}",JSON.stringify(agreementId),JSON.stringify(docId),
+                    function(result, event){
+                        $scope.isOperationLoading = false;
+                        $scope.$apply();
+                        if(result=='Success'){
+                            $("#documentReviewModel").modal("show");
+                        }
+                    }, 
+                    {escape: false}
+                ); 
+            };
+            $scope.getClauses = function(agreementId){
+                Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.getClauses}",JSON.stringify(agreementId),
+                    function(result, event){
+                       $scope.operationData = angular.fromJson(result);
+                       $scope.templateFieldStartDateConvertedValue = new Date($scope.operationData.templateFieldStartYear,$scope.operationData.templateFieldStartMonth-1,$scope.operationData.templateFieldStartDay);
+                       $scope.templateFieldEndDateConvertedValue = new Date($scope.operationData.templateFieldEndYear,$scope.operationData.templateFieldEndMonth-1,$scope.operationData.templateFieldEndDay);
+                       console.log($scope.operationData);
+                       console.log($scope.templateFieldStartDateConvertedValue);
+                       console.log($scope.templateFieldEndDateConvertedValue);
+                      
+                       $scope.$apply();
+                    }, 
+                    {escape: false}
+                );
+            };
+            $scope.parserDate = function(dateValue){
+                
+            }
+            $scope.nextTab = function() {
+               $scope.selectedTab++;
+               console.log($scope.selectedTab);
+            };
+            $scope.previousTab = function() {
+                $scope.selectedTab = 0;
+                console.log($scope.selectedTab);
+            };
+             $scope.showPDF = function(agreementId){
+                 Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.getDocumentURL}",JSON.stringify(agreementId),
+                    function(result, event){
+                        if(result!=null){
+                            $scope.pdfUrl = result;
+                            $scope.$apply(); 
+                            $("#myPDFModel").modal("show");
+                        }
+                    }, 
+                    {escape: false}
+                );
+             };
+             $scope.createAccountAndContact = function(){
+                 $scope.data = {
+                        firstName : $scope.firstName,
+                        lastName : $scope.lastName,
+                        email : $scope.email,
+                        phone : $scope.phone,
+                        passwordData : $scope.passwordData
+                 };
+                 Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.create}",JSON.stringify($scope.data),
+                    function(result, event){
+                        if(result!=null && result!='Fail'){
+                            Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.assignPermissionSet}",JSON.stringify(result),
+                                function(result, event){
+                                    if(result=='Success'){
+                                        $scope.isSuccess = true;
+                                        $scope.$apply();
+                                    }
+                                }, 
+                                {escape: false}
+                            );
+                        }
+                    }, 
+                    {escape: false}
+                ); 
+             };
+             $scope.loginToSite = function(){
+                 Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.loginToSite}",JSON.stringify($scope.usernameValue),JSON.stringify($scope.passwordValue),
+                    function(result, event){
+                        if(result!=null){
+                            $("#myModel").modal("hide");
+                            location.href = result;
+                        }else{
+                            $scope.isLoginFailed = true;
+                            $scope.$apply();
+                        }
+                    }, 
+                    {escape: false}
+                ); 
+             };
+             $scope.getContactOfAccount = function(accId){
+                 Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.getContactByAccountName}",JSON.stringify(accId),
+                    function(result, event){
+                        if(result!=null){
+                            $scope.contactData=angular.fromJson(result);
+                            console.log($scope.contactData);
+                            $scope.$apply();   
+                        }
+                    }, 
+                    {escape: false}
+                ); 
+             };
+             $scope.createAgreement = function(){
+                 $scope.isLoading = true;
+                 $scope.agreementData = {
+                        name : $scope.agreementNameValue,
+                        accountData : $scope.account,
+                        contactData : $scope.contact,
+                        agreementConfidentiality : $scope.agreementConfidentiality,
+                        startDate :$scope.startDate.toISOString(),
+                        endDate : $scope.endDate.toISOString(),
+                        region : $scope.region,
+                        agreementBeingDisclosed : $scope.agreementBeingDisclosed,
+                        term : $scope.term,
+                        support : $scope.support,
+                        agreementTotalValue : $scope.agreementTotalValue,
+                        mainAgreement : $scope.mainAgreement
+                 };
+                 console.log('==================Date==================');
+                 console.log($scope.agreementData);
+                 Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.createAgreement}",JSON.stringify($scope.agreementData),
+                    function(result, event){
+                        if(result!=null){
+                           $scope.generateDocument(result);
+                        }
+                    }, 
+                    {escape: false,timeout: 60000}
+                ); 
+             };
+             
+             $scope.saveOrPreviewDocument = function(agrId,operation){
+                  $("#confirmModel").modal("hide");
+                 $scope.isOperationLoading = true;
+                 $scope.saveOrPreviewAgreementData = {
+                        agreementId : agrId,
+                        templateFieldTerm : $scope.templateFieldTerm==undefined?$scope.operationData.templateFieldTerm:$scope.templateFieldTerm,
+                        templateFieldSupport : $scope.templateFieldSupport==undefined?$scope.operationData.templateFieldSupport:$scope.templateFieldSupport,
+                        templateFieldRegion : $scope.templateFieldRegion==undefined?$scope.operationData.templateFieldRegion:$scope.templateFieldRegion,
+                        templateFieldStartDate : $scope.templateFieldStartDateConvertedValue==undefined?$scope.operationData.templateFieldStartDate:$scope.templateFieldStartDateConvertedValue,
+                        templateFieldEndDate : $scope.templateFieldEndDateConvertedValue==undefined?$scope.operationData.templateFieldEndDate:$scope.templateFieldEndDateConvertedValue,
+                        templateFieldSLA : $scope.templateFieldSLA==undefined?$scope.operationData.templateFieldSLA:$scope.templateFieldSLA,
+                        agreementName : $scope.operationData.agreementName,
+                        templateURL : $scope.operationData.templateURL,
+                        attachmentId : $scope.operationData.attachmentId,
+                        agreementNumber : $scope.operationData.agreementNumber,
+                        clauseCategories : $scope.operationData.clauseCategories,
+                        recordTypeName : $scope.operationData.recordTypeName,
+                        addendums : $scope.operationData.addendums
+                        
+                 };
+                 console.log( $scope.saveOrPreviewAgreementData)
+                 Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.saveOrPreviewDocument}",JSON.stringify($scope.saveOrPreviewAgreementData),
+                    function(result, event){
+                        if(result!=null){
+                           if(operation=='Preview'){
+                               $scope.generateDocumentAndUpdateStatus(result,'Preview');    
+                           }else{
+                               $scope.generateDocumentAndUpdateStatus(result,'Generate');    
+                           }
+                          
+                        }
+                    }, 
+                    {escape: false,timeout: 60000}
+                ); 
+             };
+             $scope.uncheckOtherFromGroup = function(clauses,clause){
+                 for (var i = 0; i < clauses.length; i++) {
+                        if(clauses[i].name!=clause.name){
+                            clauses[i].isSelected=false;
+                            clauses[i].isClauseExpand=true;
+                        }
+                 }
+             }
+             $scope.generateDocumentAndUpdateStatus = function(agreementId,operation){
+                Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.generateDocumentAndUpdateStatus}",JSON.stringify(agreementId),JSON.stringify(operation),
+                    function(result, event){
+                        if(result=='Success'){
+                            $scope.isOperationLoading = false;
+                            $scope.getClauses($scope.opId);
+                            $scope.$apply(); 
+                        }else{
+                            $scope.isOperationLoading = false;
+                            $scope.$apply(); 
+                        }
+                    }, 
+                    {escape: false,timeout: 80000}
+                ); 
+             };
+             
+             $scope.generateDocument = function(agreementId){
+                Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.generateDocument}",JSON.stringify(agreementId),
+                    function(result, event){
+                        if(result=='Success'){
+                            $scope.isLoading = false;
+                            $scope.performOperation(agreementId);
+                            $scope.$apply(); 
+                        }
+                    }, 
+                    {escape: false,timeout: 60000}
+                ); 
+             };
+             $scope.numberOfPages = function() {
+                  $scope.numberPages = Math.ceil($scope.filtered.length / $scope.pageSize) - 1;
+                  return Math.ceil($scope.filtered.length / $scope.pageSize);
+             };
+             
+             $scope.verifyAndCreate = function(){
+                 $scope.isNDALoading = true;
+                 Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.verify}",JSON.stringify($scope.requesterEmail),
+                    function(result, event){
+                        if(result!=null && result=='Success'){
+                           $scope.isNDALoading = false;
+                           $scope.createPortalAgreementRequest();
+                        }else {
+                            $scope.isNDALoading = false;
+                            $scope.$apply();
+                            $("#ndaErrorModel").modal("show"); 
+                        }
+                    }, 
+                    {escape: false}
+                ); 
+             };
+             
+             $scope.createPortalAgreementRequest = function(){
+                 $scope.isNDALoading = true;
+                 $scope.data = {
+                      accountName : $scope.accountName,
+                      street : $scope.street,
+                      city : $scope.city,
+                      state : $scope.state,
+                      zip : $scope.zip,
+                      primaryContactName : $scope.primaryContactName,
+                      primaryContactEmail : $scope.primaryContactEmail,
+                      requesterName : $scope.requesterName,
+                      beingDisclosed : $scope.beingDisclosed,
+                      ndaStartDate : $scope.ndaStartDate,
+                      requesterEmail : $scope.requesterEmail,
+                      requesterPhone : $scope.requesterPhone,
+                      agreementName : $scope.agreementName
+                 };
+                 Visualforce.remoting.Manager.invokeAction("{!$RemoteAction.APTSMD_AgreementPortalController.createPortalAgreementRequest}",JSON.stringify($scope.data),
+                    function(result, event){
+                        console.log(result);
+                        if(result!=null && result=='Success'){
+                            $scope.isNDALoading = false;
+                            $scope.$apply();
+                             $("#ndaSuccessModel").modal("show"); 
+                        }else {
+                             $scope.isNDALoading = false;
+                             $("#ndaSuccessModel").modal("hide"); 
+                        }
+                    }, 
+                    {escape: false}
+                ); 
+             };
+        
+         }]);
+    </script>
+</head>
+    <body ng-controller="AppCtrl" layout="column">
+            <md-toolbar class="md-hue-2">
+               <div>
+                   <i class="headerMenu">&nbsp;&nbsp;&nbsp;&nbsp;</i>
+                   <i class="headerMenu">Contact Us </i>
+                   <i class="headerMenu">&nbsp;&nbsp;&nbsp;&nbsp;</i>
+                   <i class="headerMenu">Region</i>
+                   <i class="headerMenu">&nbsp;&nbsp;&nbsp;&nbsp;</i>
+                   <i class="headerMenu">Community</i>
+                   <i class="headerMenu">&nbsp;&nbsp;&nbsp;&nbsp;</i>
+                   <i class="headerMenu">Blog </i>
+                   <i class="headerMenu">&nbsp;&nbsp;&nbsp;&nbsp;</i>
+                   <i class="headerMenu" ng-show="!isValidUser">
+                      <a class="loginlink" data-toggle="modal" ng-click="myModel();"> <span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp; Login</a>
+                   </i>
+                   <i class="headerMenu" ng-show="isValidUser">
+                        <a href="../AgreementPortal/secur/logout.jsp?retUrl=/AgreementPortal/APTSMD_AgreementPortalHomePage"><i class="fa fa-sign-out fa-2x" aria-hidden="true"></i></a>
+                   </i>
+                   <i class="headerMenu">&nbsp;&nbsp;</i>
+                   <i class="headerMenu" ng-show="isValidUser">
+                      {{loginUserName}}
+                   </i>
+                </div>
+            </md-toolbar>
+            <md-toolbar class="md-primary" md-whiteframe="6">
+                <div class="md-toolbar-tools">
+                    <image class="logoCSS" src="{!URLFOR($Resource.APTSMD_ApttusLogoGreen)}" />
+                    <h2>
+                        <font class="portalName"><b>&nbsp;&nbsp;&nbsp;Contract&nbsp;Portal</b></font>
+                    </h2>
+                    <span flex="auto"></span>
+                    <div>
+                       <i class="headerMenuItem">FAQ </i>
+                       <i class="headerMenuItem">&nbsp;&nbsp;&nbsp;&nbsp;</i>
+                       <i class="headerMenuItem">News</i>
+                       <i class="headerMenuItem">&nbsp;&nbsp;&nbsp;&nbsp;</i>    
+                       <i class="headerMenuItem" ng-show="!isValidUser"><a ng-click="createNDA();">Request</a></i>
+                       <i class="headerMenuItem">&nbsp;&nbsp;&nbsp;&nbsp;</i>
+                       <i class="headerMenuItem" ng-show="isValidUser"><a ng-click="eContracting();">View</a></i>
+                       <i class="headerMenuItem" ng-show="isValidUser">&nbsp;&nbsp;&nbsp;&nbsp;</i>
+                       <i class="headerMenuItem" ng-show="isValidUser"><a ng-click="create();">Request</a></i>
+                       <i class="headerMenuItem" ng-show="isValidUser">&nbsp;&nbsp;&nbsp;&nbsp;</i>
+                       <i class="headerMenuItem">About</i>
+                       <i class="headerMenuItem">&nbsp;&nbsp;&nbsp;&nbsp;</i>
+                       <i class="headerMenuItem"><a ng-click="home();"><i class="fa fa-home" aria-hidden="true">&nbsp;&nbsp;</i>Home</a></i>
+                    </div>
+                </div>
+            </md-toolbar>
+            <md-toolbar class="md-hue-3">
+            </md-toolbar>
+            <md-content>
+        
+                <ng-view />
+            </md-content>   
+         <div class="footer">
+            <div layout="row" layout-align="center center">
+                <p id="footer-info">Copyright © 2017 Apttus Corporation, All Rights Reserved | 
+                <span class="footer-copy-link"><a class="footer-copy-link" href="https://apttusportal.force.com/community" target="_blank">Support</a> | <a class="footer-copy-link" href="https://login.salesforce.com/" target="_blank">Customer Login</a> | <a class="footer-copy-link" href="/privacy-policy/">Privacy Policy</a></span></p>
+            </div>
+        </div>
+         <div id="myModel" class="modal fade" role="dialog" >
+              <div class="modal-dialog" >
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header modal-headerOverride">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><center><apex:image value="{!URLFOR($Resource.APTSMD_loginIcon)}"/></center></h4>
+                  </div>
+                  <div class="alert alert-warning" ng-show="isLoginFailed">
+                    <strong>Warning!</strong> Invalid Username and Password.
+                  </div>
+                  <section >
+                        <form method="post" action="#" role="login">
+                           <input type="text" name="usernameValue" placeholder="Email" required="" class="form-control input-lg" value="" ng-model="usernameValue"/>
+                          <input type="password" class="form-control input-lg" id="password" placeholder="Password" ng-model="passwordValue" />
+                          <div class="pwstrength_viewport_progress"></div>
+                          <center><md-button class="md-raised md-accent loginlink" ng-click="loginToSite();"><b>Sign In</b></md-button></center>
+                         <div>
+                            <a ng-click="myModelSignUp();" data-toggle="myModelSignUp">Create Account</a> or <a href="#">Reset Password</a>
+                          </div>
+                          
+                        </form>
+                </section>  
+                </div>
+              </div>
+        </div>
+         <div id="myModelSignUp" class="modal fade" role="dialog" >
+              
+              <div class="modal-dialog" >
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header modal-headerOverride">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><center><apex:image value="{!URLFOR($Resource.APTSMD_loginIcon)}"/></center></h4>
+                  </div>
+                  <div class="alert alert-success alert-dismissable fade in" ng-show="isSuccess">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>Success!</strong> User has been created.<a ng-Click="gotToLogin()"><b>Procced To Login</b></a>
+                  </div>
+                  <section>
+                        <form method="post" action="#" role="login">
+                          <input type="text" name="firstName" placeholder="First Name" required="" class="form-control input-lg" ng-model="firstName" />       
+                          <input type="text" name="lastName" placeholder="Last Name" required="" class="form-control input-lg" ng-model="lastName"/> 
+                          <input type="number" name="phone" placeholder="Phone Number" required="" class="form-control input-lg" ng-model="phone"/> 
+                          <input type="email" name="email" placeholder="Email" required="" class="form-control input-lg" value="" ng-model="email"/>
+                          <div class="pwstrength_viewport_progress"></div>
+                          <center><md-button class="md-raised md-accent loginlink" ng-Click="createAccountAndContact()" ng-show="!isSuccess"><b>Sign Up</b></md-button></center>
+                        </form>
+                </section>  
+                </div>
+              </div>
+        </div>
+    </body>
+</html>
+ </apex:page>

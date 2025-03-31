@@ -1,0 +1,35 @@
+<apex:page controller="APTS_TaxCallBack" action="{!computeTaxForCart}">
+    <h1>Tax Breakup</h1>
+    <html>
+        <head>
+            <style>
+                
+            </style>
+        </head>
+        <body>                       
+            <apex:repeat var="a" value="{!taxBreakupList}">
+                <table border = "1" >
+                    <tr>
+                        <td>{! a.Id }</td>
+                        <td>{! a.Name }</td> 
+                        <td>{! a.Apttus_Config2__BreakupType__c }</td> 
+                        <td>{! a.Apttus_Config2__LineItemId__c }</td> 
+                        <td>{! a.Apttus_Config2__Sequence__c }</td> 
+                        <td>{! a.Apttus_Config2__TaxAmount__c }</td> 
+                        <td>{! a.Apttus_Config2__TaxAppliesTo__c }</td> 
+                        <td>{! a.Apttus_Config2__TaxRate__c }</td> 
+                        <td>{! a.Apttus_Config2__TaxType__c }</td> 
+                    </tr>
+                </table>
+                <br/>
+            </apex:repeat>
+        </body>
+    </html>
+    <!--<apex:outputPanel id ="section">-->
+    <!--            <apex:repeat var="a" value="{!taxBreakupList}">-->
+    <!--                <apex:outputText value="{!a.Id}"/>-->
+    <!--                <apex:outputText value="{!a.Name}"/>-->
+                    <!--<apex:outputText value="{!a.TaxAppliedTo}"/>-->
+    <!--            </apex:repeat>-->
+    <!--</apex:outputPanel>-->
+</apex:page>

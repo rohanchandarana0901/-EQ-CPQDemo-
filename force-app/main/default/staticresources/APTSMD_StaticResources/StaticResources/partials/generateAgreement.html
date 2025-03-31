@@ -1,0 +1,166 @@
+<md-dialog aria-label="Mango (Fruit)">
+  
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Generate Document</h2>
+        <span flex></span>
+            
+          <a href="" ng-click="closeDialog();"> X </a>
+         <!--  <md-button class="md-icon-button" >
+          
+        </md-button> -->
+        <md-divider></md-divider>
+      </div>
+    </md-toolbar>
+    <md-dialog-content  style="max-height:810px; min-width:1000px;">
+
+     <md-content class="md-padding">
+          
+		<div class="form-group">
+		<h4 class="section-tittle" style="font-size: 15px !important;    font-weight: bold;">  Select Output Format</h4>
+		 <div layout-wrap>
+		  <div flex>
+			<md-radio-group layout="row" ng-model="selectedOutputFormat" class="md-primary">
+                <md-radio-button  value="DOC"  >DOC</md-radio-button> 
+				<md-radio-button  value="DOCX"  >DOCX</md-radio-button> 
+				<md-radio-button  value="RTF"  >RTF</md-radio-button> 
+				<md-radio-button  value="PDF"  >PDF</md-radio-button>                      
+            </md-radio-group>
+			</div>
+		</div>
+         </div>
+		 
+		 
+		 <div class="form-group" >
+		 <h4 class="section-tittle" style="font-size: 15px !important;    font-weight: bold;"> Select Document Protection</h4>
+		 <div layout-wrap>
+		 <div flex>
+		 	<md-radio-group layout="row" ng-model="selectedProtectionLevel" class="md-primary">
+                <md-radio-button  value="Full access"  >Full access</md-radio-button> 
+				<md-radio-button  value="Insert comments and tracked changes only"  >Insert comments and tracked changes only</md-radio-button> 
+				<md-radio-button  value="Insert comments only"   >Insert comments only</md-radio-button> 
+				<md-radio-button  value="Fill in form fields only"  >Fill in form fields only</md-radio-button>
+				<md-radio-button  value="Read only"   >Read only</md-radio-button>				
+            </md-radio-group>
+			</div>
+		</div>
+         </div>
+         <div class="form-group">
+           <md-checkbox ng-checked="true" aria-label="watermark">
+              Include Watermark
+            </md-checkbox>
+          </div>
+        <div class="form-group">
+          <h4 class="section-tittle" style="font-size: 15px !important;    font-weight: bold;"> Select a template from the list below:</h4>
+        </div>  
+        <div flex>
+        <div layout="row" layout-wrap style="border-bottom: 1px solid;">
+          <div flex="5" >
+
+          </div>
+          <div flex="25"> <b> Name </b>
+          </div>
+          <div flex="40"> <b> Guidance </b>
+          </div>
+          <div flex="15"> <b> Category </b>
+          </div>
+          <div flex="15"> <b> Subcategory </b>
+          </div>
+        </div>
+        <div layout="row" layout-wrap>
+          <div flex="5" >
+             <div layout="column" layout-padding >
+                <md-radio-group ng-model="selectedTemplate" class="md-primary">
+                   <md-radio-button ng-repeat="template in templateList"
+                         ng-value="template.Id"  aria-label=""
+                          flex>
+                    </md-radio-button> 
+                     <!-- <md-radio-button value="Apple" class="md-primary">Apple</md-radio-button>
+                    <md-radio-button value="Banana"> Banana </md-radio-button>
+                    <md-radio-button value="Mango">Mango</md-radio-button> -->
+                </md-radio-group>  
+             </div>
+             
+          </div>
+          <div flex="25">
+              <div layout="column" layout-padding>
+                <div ng-repeat="template in templateList">
+                    {{template.Name}}
+                </div>
+              </div>
+          </div>
+          <div flex="40">
+              <div layout="column" layout-padding >
+                <div ng-repeat="template in templateList">
+                    {{template.Apttus__Guidance__c}}
+                </div>
+              </div>
+          </div>
+          <div flex="15">
+              <div layout="column" layout-padding >
+                <div ng-repeat="template in templateList">
+                    {{template.Apttus__Category__c}}
+                </div>
+              </div>
+          </div>
+          <div flex="15">
+              <div layout="column" layout-padding >
+                <div ng-repeat="template in templateList">
+                    {{template.Apttus__Subcategory__c}}
+                </div>
+              </div>
+          </div>
+        </div>
+
+          <!-- <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Guidance</th>
+                <th>Category</th>
+                <th>Subcategory</th>
+              </tr>
+            </thead>
+            <tbody>
+            
+              <tr ng-repeat="template in templateList">
+                <td>
+                  
+                </td>
+                <td>{{template.Name}}</td>
+                <td>{{template.Apttus__Guidance__c}}</td>
+                <td>{{template.Apttus__Category__c}}</td>
+                <td>{{template.Apttus__Subcategory__c}}</td>
+              </tr>
+            </tbody>
+            
+          </table> -->
+      </div>
+
+    <div flex="100">
+      <div layout="row">
+        <div flex="60">         
+        </div>
+        <div flex="40">         
+          </div>
+
+      </div>
+    </div>   
+     <md-progress-linear id="genProgress" md-mode="determinate" value="{{progress}}" style="display: none;"></md-progress-linear>
+    <br/>		
+      </md-content>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+    <!--  <md-button ng-click="closeDialog();" >
+        Cancel
+      </md-button>
+      <md-button class="md-raised md-primary md-hue-2 md-button-blue"  ng-click="generate();" >
+        Done
+      </md-button> -->
+      <md-button class="md-raised md-button-border-blue default-btn" ng-click="closeDialog();">Cancel</md-button>
+      <md-button class="md-raised md-button-border-blue default-btn" ng-click="generate();">Generate</md-button>
+    </md-dialog-actions>
+ 
+</md-dialog> 

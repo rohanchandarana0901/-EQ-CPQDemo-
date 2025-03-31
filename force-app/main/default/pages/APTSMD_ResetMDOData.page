@@ -1,0 +1,40 @@
+<apex:page controller="APTSMD_ResetMDODataController" lightningStylesheets="true" >
+      <style>
+        body .bPageBlock .pbBody .dataCol {
+            font-weight: bold !important;
+            color: #3197BF !important;
+        }
+        .instruction{
+            Color:red !important;
+        }
+     </style>
+      <apex:form >
+          <apex:pageBlock title="Clear Data">
+              <apex:pageMessages ></apex:pageMessages>
+                    <apex:outputText >
+                        <b class="instruction" >
+                        Clicking submit button will clear all data that are created after MDO creation date.
+                        If you want to clear data from any specific date then change custom date as per your need and data created after entered date will be cleared.
+                        Clears CLM, CPQ, Billing, Invoice, Assets and Revenue data.
+                        Relaod page to reset to MDO Created Date.
+                        </b>
+                        <br/>
+                        
+                    </apex:outputText>
+                    <br/>
+                    <apex:pageBlockSection columns="1">
+                        <apex:inputField label="MDO Created Date" value="{!org.createddate}" style="border-left-color: red;border-left-style: solid;"/>
+                        <apex:inputField label="Custom Date" value="{!DummyProp.Apttus_QPConfig__PricingDate__c}" style="border-left-color: red;border-left-style: solid;"/>
+                        <style type="text/css">
+                            .dateFormat{
+                               visibility:hidden;
+                            }
+                            </style>
+                    </apex:pageBlockSection>
+                    <apex:pageBlockButtons location="bottom">
+                        <apex:commandButton value="Submit" action="{!Submit}"/>
+                        <apex:commandButton value="Cancel" action="{!cancel}"/>    
+                    </apex:pageBlockButtons>  
+          </apex:pageBlock>
+      </apex:form>
+</apex:page>

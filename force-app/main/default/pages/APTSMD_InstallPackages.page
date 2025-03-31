@@ -1,0 +1,233 @@
+<apex:page docType="html-5.0"  controller="APTSMD_InstallPackagesController" showHeader="false" sidebar="false" lightningStylesheets="true" title="One-Click Installer" action="{!updatePackageWrapperList}">    
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <style>
+        input[type="radio"], input[type="checkbox"]{
+            width:1.25rem !important;
+            height:1.25rem !important;
+            margin-top:-.5rem !important; 
+        }
+        td{
+            padding: 7px !important;
+        }
+        input[type="radio"]:after{
+            width:.75rem!important;
+            height:.75rem!important;
+            border-width: 4px!important;
+        }
+        input[type="checkbox"]:after{
+            height:.5rem!important;
+            width:1rem!important;
+        }
+        h3,label{
+            font-size: 1.25rem !important;
+            font-weight: 300 !important;
+        }
+        th{
+            font-size: 1rem !important;
+            padding: 7px !important;
+        }
+        .fz-125{
+            font-size: 1.25rem !important;
+            font-weight: 600 !important;
+        }
+        .releaseLabel{
+            display: block !important;
+            margin-bottom: 2% !important;
+        }
+
+        .mt-3{
+            margin-top: 3.5%!important;    
+        }    
+       .w-2{
+           width:2%!important;
+       }
+        .w-15 {
+            width: 15% !important;
+        }
+        .w-95{
+            width:95% !important;
+        }
+        .w-40{
+            width:40% !important;
+        }
+        .p-lr-2{
+            padding-left: 2% !important;
+            padding-right: 2% !important;
+        }
+        .m-l-20{
+            margin-left: 20% !important;
+        }
+       
+        .loading-img-pkgList{
+            top:45%;
+            left:45%;                
+            position: absolute;
+            z-index: 999999999;
+            background-color: rgba(255,255,255,0.75);            
+        }
+        .aptListButton{
+            width: 11% !important;
+            padding: 5px 10px !important;
+            font-weight: 600 !important;
+            font-size: 1.25rem !important;   
+        }
+        .m-r-5{
+            margin-right: 5%!important;
+        }
+        .p-2{
+            padding: 2% !important;
+        }
+        .headerClass{
+            height: 20px!important;
+            margin-top: 10px!important;
+        }
+        .stopProcessBtnClass{
+            margin-left: 44.5% !important;
+            margin-top: 2% !important;
+        }
+        .ml-45{
+            margin-left: 45%!important;
+        }
+        .noteClass{
+            margin-left: 22%!important;
+            margin-top: 1%!important;
+        }
+        .highlight{
+            font-weight: bold;
+            background-color: #ed1c24;
+            color: white;
+        }
+    </style>
+ 
+    <script>
+       function submitRequest() {
+            installAllPackages_JS();
+       }       
+       function cvCheckAllOrNone(allOrNoneCheckbox) {
+
+            // Find parent table
+            var container = allOrNoneCheckbox;
+            while (container.tagName != "TABLE") {
+                container = container.parentNode;
+            }
+
+            // Switch all checkboxes
+            var inputs = container.getElementsByTagName("input");
+            var checked = allOrNoneCheckbox.checked;
+            for (var i = 0; i < inputs.length; i++) {
+                var input = inputs.item(i);
+                if (input.type == "checkbox") {
+                    if (input != allOrNoneCheckbox) {
+                        input.checked = checked;
+                    }
+                }
+            }
+        }   
+$(document).ready(function(){
+    $('.pbSubheader').addClass('headerClass');
+});
+    </script>        
+    <apex:sectionHeader title="One-Click Installer" />   
+
+    <apex:form id="mainForm" style="overflow-x:hidden;">   
+        <apex:actionStatus id="releaseChange">
+                    <apex:facet name="start">
+                            <div class="loading-img-pkgList">
+                                    <img src="{!$Resource.APTSMD_Loading}" height="75px"/><br />
+                            </div>
+                    </apex:facet>
+                    <apex:facet name="stop"></apex:facet>
+        </apex:actionStatus>                          
+        <apex:pageMessages ></apex:pageMessages>                                 
+        <apex:actionFunction action="{!installOrUpgradePackages}" name="installAllPackages_JS" oncomplete="checkResult_JS();" rerender="mainForm"/>
+        
+        <apex:pageBlock id="subPanel1" rendered="{!NOT(loggedIn)}">
+            <apex:pageBlockSection title="Installation Details" collapsible="true">
+                <!--<apex:outputPanel styleClass="p-2 " layout="block">
+                    <apex:outputLabel styleClass="m-r-5 fz-125" value="Installation Type" for="InstallationType"></apex:outputLabel>
+                    <apex:selectRadio id="InstallationType" value="{!selectedInstallationType}" >
+                            <apex:selectOptions value="{!installationType}"/>
+                            <apex:actionsupport event="onchange" rerender="subPanel1" status="releaseChange"/>
+                    </apex:selectRadio>
+                </apex:outputPanel>-->
+                <apex:outputPanel styleClass="p-2" layout="block">
+                        <apex:outputLabel styleClass="m-r-5 fz-125 releaseLabel" value="MDO Release Version" for="ReleaseList"></apex:outputLabel>
+                        <apex:selectList id="ReleaseList"  value="{!selectedRelease}" multiselect="false" size="1" style="width: 20%;margin-left: 2%;font-size: 1.25rem;">
+                            <apex:selectOptions value="{!releaseList}"/>
+                            <apex:actionsupport event="onchange" action="{!updatePackageWrapperList}" rerender="subPanel1" status="releaseChange"/>
+                        </apex:selectList>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Package Details"  columns="1" collapsible="true">
+                <apex:outputPanel layout="block" styleClass="p-lr-2">                
+                    <apex:pageBlockTable value="{!packageWrapperList}" var="packageWrap" onrowmouseover="this.classList.remove('highlight')">
+                        <apex:column rendered="{!(selectedInstallationType == 'Update')}" styleClass="w-2">
+                                <apex:facet name="header">
+                                    <apex:inputCheckbox value="{!selectAll}" onclick="cvCheckAllOrNone(this)" immediate="true"
+                                    /></apex:facet>
+                                <apex:inputCheckbox value="{!packageWrap.installationRequired}" immediate="true" />
+                        </apex:column>
+                        <apex:column styleClass="w-40 {!IF(selectedInstallationType == 'Update' && packageWrap.installationRequired, 'highlight', '')}">
+                                <apex:facet name="header">Package Name</apex:facet>
+                                <apex:outputText value="{!packageWrap.packageName}"></apex:outputText>   
+                        </apex:column>
+                        <apex:column rendered="{!(selectedInstallationType == 'Update')}" styleClass="w-15 {!IF(packageWrap.installationRequired, 'highlight', '')}">
+                                <apex:facet name="header">Current Version</apex:facet>
+                                <apex:outputText rendered="{!packageWrap.isCurrentVersionAvailable}" value="{!packageWrap.currentVersion}"></apex:outputText>
+                                <apex:outputText style="backgroundcolor:orange;" rendered="{!NOT(packageWrap.isCurrentVersionAvailable)}" value="Not Installed"></apex:outputText>      
+                        </apex:column>
+                        <apex:column styleClass="w-15">
+                                <apex:facet name="header">Select Version</apex:facet>
+                                <apex:selectList styleClass="w-95" value="{!packageWrap.selectedVersion}" multiselect="false" size="1">
+                                    <apex:selectOptions value="{!packageWrap.availableVersions}"/>
+                                </apex:selectList>      
+                        </apex:column>
+                    </apex:pageBlockTable>   
+                </apex:outputPanel>             
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">                    
+                    <apex:commandButton value="Submit" styleClass="aptListButton" onclick="submitRequest();return false;"/>
+                    <apex:commandButton value="Cancel" styleClass="aptListButton" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        <!-- rendered="{!AND(loggedIn, NOT(processComplete))}" -->
+        <apex:pageBlock id="subPanel2" rendered="{!AND(loggedIn, NOT(processComplete))}">
+            <apex:outputPanel styleClass="progress" layout="block">
+                <apex:outputPanel layout="block" styleClass="progress-bar progress-bar-success" html-role="progressbar" html-aria-valuenow="40" html-aria-valuemin="0" html-aria-valuemax="100" style="width:{!progressBar}%">
+                        <apex:outputText rendered="{!loggedIn}">{!progressBar}%</apex:outputText>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="ml-45">
+                <apex:outputLabel value="...Installing Packages..."></apex:outputLabel>                
+                <script>
+                        function checkResult_JS() {
+                            var progessCounter = parseInt('{!progessCounter}');
+                            var totalItemsForInstallation = parseInt('{!totalItemsForInstallation}');
+                            if(progessCounter <= totalItemsForInstallation){
+                                setTimeout(function() {
+                                    installAllPackages_JS();
+                                }, 30000);
+                            }
+                        }
+                        function stopProcessing_JS() {
+                            window.location.reload();
+                        }
+                </script>
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="ml-45">
+                <img src="{!URLFOR($Resource.APTSMD_ProgressBar)}" />
+            </apex:outputPanel>
+            <apex:outputPanel layout="block">
+                <apex:commandButton onclick="stopProcessing_JS();return false;" styleClass="aptListButton stopProcessBtnClass" value="Stop Processing" ></apex:commandButton>
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="noteClass">
+                <span>Note: Please check your email for installation success/error. Click "Stop Processing" button when you receive a failure.</span>
+            </apex:outputPanel>
+        </apex:pageBlock>
+
+        <apex:pageBlock id="subPanel3" rendered="{!(processComplete)}">
+            <apex:outputLabel value="{!completeMessage}"></apex:outputLabel>
+        </apex:pageBlock>
+    </apex:form>        
+</apex:page>

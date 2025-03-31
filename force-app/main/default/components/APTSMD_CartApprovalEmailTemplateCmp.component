@@ -1,0 +1,128 @@
+<apex:component access="global" controller="APTSMD_CustomProdConfigApprovalCls">
+    <apex:attribute name="ProdConfig" description="This field is used to display list of Proposal products" 
+                     type="string" assignTo="{!ProposalId}" />
+     <apex:attribute name="recipientNm" description="This field is used to get approver name" 
+                     type="string" assignTo="{!recipientName}" />
+     <apex:attribute name="reqId" description="This field is used to get approval request Id" 
+                     type="string" assignTo="{!appReqId}"/>
+    <apex:attribute name="receipientId" description="This field is used to get approver Id" 
+                     type="string" assignTo="{!recipientIdString}" />
+    <style>
+        th{
+            background-color:#2C4E64;
+            color:white;
+            
+        }
+        a{
+            color: -webkit-link;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        thead{
+            background-color:#2C4E64;
+        }
+    </style>
+    <html>
+           
+           <body bgcolor="#E8E8E8" style="font-family:Calibri;font-size:16px;background-color:#E8E8E8"> 
+                <font face="Calibri">
+                    <table bgcolor="white" cellpadding="32" align="center" width="80%"> 
+                    <tbody bgcolor="white">
+                        <tr bgcolor="white">
+                            <td>
+                                
+                                        <img align="right" src="{!approvalSysPropertiesInstanceUrl}/servlet/servlet.ImageServer?id={!lstDocument.Id}&oid={!$Organization.Id}" alt="Tier 1" width="auto" height="50" style="margin-right: 4px;"/>
+                                    
+                                    <p>Dear {!recipientName},</p> 
+                                    
+                                    <p>Approval Request for Quote/Proposal <b>'{!proposal.Name}'</b> has been submitted for your approval. <br/><b>The cart summary is as follows:</b><br/></p>
+                                    <table cellpadding="6" border="1" bordercolor="black" marginInline="50" style="max-width: 100%;border-collapse:collapse;border-color:black;table-layout: fixed;word-wrap: break-word;" bgcolor="white">
+                                        <tr><td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">Quote No.</font></td><td><apex:outputField value="{!Proposal.Name}"/></td></tr>
+                                        <tr><td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">Proposal Name</font></td><td><apex:outputField value="{!proposal.Apttus_Proposal__Proposal_Name__c}"/></td></tr>
+                                        <tr><td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">Account</font></td><td><apex:outputField value="{!proposal.Apttus_Proposal__Account__r.Name}"/></td></tr>
+                                        <tr><td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">Start Date</font></td><td><apex:outputField value="{!proposal.Apttus_Proposal__ExpectedStartDate__c}"/></td></tr>
+                                        <tr><td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">End Date</font></td><td><apex:outputField value="{!proposal.Apttus_Proposal__ExpectedEndDate__c}"/></td></tr>
+                                        <tr><td bgcolor="#2C4E64" style="width: 120px;font-weight:bold"><font color="white">Status</font></td><td><apex:outputField value="{!proposal.Apttus_QPApprov__Approval_Status__c}"/></td></tr>
+                                    </table>
+                                    <p>Click on the link below to access the Quote: <a href="{!approvalSysPropertiesInstanceUrl}/{!proposal.Id}"><font style="color: -webkit-link;color:blue;cursor: pointer;text-decoration: underline;display:inline-block">{!Proposal.Name}</font></a></p>
+                                    <p><b align="left"><u>Line Item Summary</u></b></p>
+                                    <table cellpadding="6" border="1" width="100%" bordercolor="black" style="border-collapse:collapse;table-layout: fixed;word-wrap: break-word;" bgcolor="white">
+                                    <thead bgcolor="#2C4E64">
+                                        <th bgcolor="#2C4E64" color="white" align="center" width="200" style="width: 200px;"><font color="white" style="">Product Name</font></th>
+                                        <th bgcolor="#2C4E64" color="white" align="center" width="106" style="width:106px"><font color="white" style="">Charge Type</font></th>
+                                        <th bgcolor="#2C4E64" color="white" align="center" width="59" style=";width: 59px;"><font color="white">Quantity</font></th>
+                                        <th bgcolor="#2C4E64" color="white" align="center" width="90" style=";width: 90px;"><font color="white">List Price</font></th>
+                                        <th bgcolor="#2C4E64" align="center" width="40" style=";width: 40px;"><font color="white">Disc.</font></th>
+                                        <th bgcolor="#2C4E64" align="center" width="90" style=";width: 90px;"><font color="white" style="text-align:right">Net Price</font></th>
+                                        <th bgcolor="#2C4E64" align="center" width="63" style="width: 63px;"><font color="white" style="text-align:right">Guidance</font></th>
+                                    </thead>
+                                    <tbody>
+                                    <apex:repeat value="{!ListOfLineItems}" var="Item">
+                                    <tr>
+                                        <td align="left"><apex:outputField value="{!Item.APTSMD_Product_or_Option_Name__c}"/></td>
+                                        <td align="left"><apex:outputField value="{!Item.Apttus_Config2__ChargeType__c}"/></td>
+                                        <td align="right" style="width: 59px;">
+                                            <apex:outputText value="{0, number, 0}">
+                                               <apex:param value="{!Item.Apttus_Config2__Quantity__c}" />
+                                            </apex:outputText>
+                                        </td>
+                                        <td align="right" style="width: 90px;"><apex:outputField value="{!Item.Apttus_Config2__ListPrice__c}"/></td>
+                                        <td align="right" style="width: 40px;">
+                                            <apex:outputText value="{0, number, 0.00}">
+                                               <apex:param value="{!Item.Apttus_Config2__AdjustmentAmount__c}" />
+                                            </apex:outputText>%
+                                        </td>
+                                        <td align="right" style="width: 90px;"><apex:outputField value="{!Item.Apttus_Config2__NetPrice__c}"/></td>
+                                        <td align="center">
+                                            <table cellpadding="15" style="background-color:{!Item.Apttus_Config2__Guidance__c};color:#FFE512;border-radius:20px"><td></td></table> 
+                                        </td>
+                                    </tr>
+                                    </apex:repeat>
+                                    </tbody>
+                                    </table>
+                                    
+                                    <p width="100%" style="width: 100%;"><b>Note:</b> If replying via email,<b> APPROVE</b>, <b>APPROVED</b>, <b>YES</b>, <b>REJECT</b>, <b>REJECTED</b>, or <b>NO</b> must be in the very first line of the reply email. Also, any comment must be in the second line followed by a <b>BLANK</b> line. The comments will be stored with the approval request. Otherwise, click the link below to <b> Reassign</b>,<b> Approve</b>, <b>Reject</b> or <b>Add Comment</b> through salesforce.</p>
+                                    <p><a href="{!approvalSysPropertiesInstanceUrl}/apex/Apttus_Approval__ApprovalSummaryLaunch?id={!appReqId}&pageMode=reassign"><font style="color: -webkit-link;cursor: pointer;text-decoration: underline;display:inline-block;color:blue;">Reassign</font></a>&nbsp;&nbsp;||&nbsp;
+                                    <a href="{!approvalSysPropertiesInstanceUrl}/apex/Apttus_Approval__ApprovalSummaryLaunch?id={!appReqId}&pageMode=approveReject"><font style="color: -webkit-link;cursor: pointer;text-decoration: underline;display:inline-block;color:blue;">Approve/Reject</font></a>&nbsp;&nbsp;||&nbsp;
+                                    <a href="{!approvalSysPropertiesInstanceUrl}/apex/Apttus_Approval__ApprovalSummaryLaunch?id={!appReqId}&pageMode=addComment"><font style="color: -webkit-link;cursor: pointer;text-decoration: underline;display:inline-block;color:blue;">Add Comment</font></a></p>
+                                    
+                                    <b>Requestor: </b><apex:outputText value="{!AppReqDetail.Apttus_Approval__Initial_Submitter__r.Name}"/> <br/>
+                                    <b>Status: </b><apex:outputText value="{!AppReqDetail.Apttus_Approval__Approval_Status__c}"/> <br/>
+                                    <b>Date: </b><apex:outputText value="{!AppReqDetail.Apttus_Approval__Date__c}"/> <br/>
+                                    <b>Requestor Comments: </b><apex:outputText value="{!AppReqDetail.Apttus_Approval__SubmissionComment1__c}"/> <br/>
+                                    
+                                    <p align="left"><b><u>Approval Details</u></b></p>
+                                    <table bgcolor="white" cellpadding="6" border="1" width="100%" bordercolor="black" style="border-collapse:collapse;table-layout: fixed;word-wrap: break-word;">
+                                        
+                                        <thead>
+                                            <th align="center" style="width: 129px;" width="129">Step Label</th>
+                                            <th align="center" style="width: 96px;" width="96">Status</th>
+                                            <th align="center" style="width: 78px;" width="78">Date</th>
+                                            <th align="center" style="width: 100px;" width="100">Approver</th>
+                                            <th align="center">Comments</th>
+                                        </thead>
+                                        <apex:repeat value="{!ApprovalHistory}" var="Item">
+                                        <tr>
+                                            <td align="left" style="width: 129px;"><span id="x_j_id0:emailTemplate:j_id3:j_id4:j_id18:j_id19:j_id97:0:j_id99"><apex:outputField value="{!Item.Apttus_Approval__StepLabel__c}"/></span></td>
+                                            <td align="left" style="color:{!IF(Item.Apttus_Approval__Approval_Status__c!='Not Submitted',IF(Item.Apttus_Approval__Approval_Status__c!='Reassigned' && Item.Apttus_Approval__Approval_Status__c!='Assigned','#387C35','#E36F1E'),'#D3D3D3')}"><span id="x_j_id0:emailTemplate:j_id3:j_id4:j_id18:j_id19:j_id97:0:j_id101"><apex:outputField value="{!Item.Apttus_Approval__Approval_Status__c}"/></span></td>
+                                            <td align="right"><span id="x_j_id0:emailTemplate:j_id3:j_id4:j_id18:j_id19:j_id97:0:j_id103"><apex:outputField value="{!Item.Apttus_Approval__Date__c}"/></span></td>
+                                            <td align="left"><span id="x_j_id0:emailTemplate:j_id3:j_id4:j_id18:j_id19:j_id97:0:j_id105"><apex:outputField value="{!Item.APTSMD_Assigned_To_Actual_Approver__c}"/></span></td>
+                                            <td align="left"><span id="x_j_id0:emailTemplate:j_id3:j_id4:j_id18:j_id19:j_id97:0:j_id111"><apex:outputField value="{!Item.Apttus_Approval__Approver_Comments__c}"/></span></td>
+                                        </tr>
+                                        </apex:repeat>
+                                        
+                                    </table>
+                                    <p>
+                                        Thanks,<br/>{!AppReqDetail.Apttus_Approval__Initial_Submitter__r.Name}
+                                    </p> 
+                                    <font color="white"><apex:outputText value="Approval Request ID: " /><apex:outputText value="{!appReqId}" />
+                                    <br/>
+                                    <apex:outputText value="Approval User ID: "/><apex:outputText value="{!recipientIdString}" /></font>
+                        </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </font>
+            </body>
+        </html>
+</apex:component>

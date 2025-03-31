@@ -1,0 +1,229 @@
+<apex:page controller="APTSMD_CustomSettingController" sidebar="false" showHeader="false" title="Custom Setting Search">
+   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"/>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+      
+   <script>
+       var mainApp = angular.module("myApp", []);
+       mainApp.controller('customSettingListController',function($scope){
+           $scope.csList = {!customSettingData};
+           $scope.csNameVsValueTitleJSON = {!csNameVsValueTitleJSON};
+           $scope.csNameVsURLJSON = {!csNameVsURLJSON};
+           $scope.searchParam;
+           console.log($scope.csList);
+           $scope.expandAll = function(){
+               var i=0;
+               for(const [key, value] of Object.entries($scope.csList)){
+                   var ele = document.querySelector("#ct" + i + " .collapseIcon i");
+                   var div = document.querySelector("#collapse" + i);
+                   angular.element(div).addClass("in");
+                   angular.element(ele).removeClass("glyphicon-plus").addClass("glyphicon-minus");
+                   i++;
+                }
+            };
+           $scope.collapseAll = function(){
+               var i=0;
+               for(const [key, value] of Object.entries($scope.csList)){
+                   var ele = document.querySelector("#ct" + i + " .collapseIcon i");
+                   var div = document.querySelector("#collapse" + i);
+                   angular.element(div).removeClass("in");
+                   angular.element(ele).removeClass("glyphicon-minus").addClass("glyphicon-plus");
+                   i++;
+                }
+            };
+           $scope.changeIcon = function(id){
+                    var ele = document.querySelector("#ct" + id + " .collapseIcon i");
+                    console.log(ele);
+                    
+                    if(angular.element(ele).hasClass("glyphicon-plus")){
+                        
+                        angular.element(ele).removeClass("glyphicon-plus").addClass("glyphicon-minus");
+                    }else{
+                        
+                         angular.element(ele).removeClass("glyphicon-minus").addClass("glyphicon-plus");
+                    }
+                };
+      $scope.updateRecords = function(key,value) {
+                            Visualforce.remoting.Manager.invokeAction('APTSMD_CustomSettingController.updateCustomSettingRecords',key,angular.fromJson(angular.toJson(value)),
+                            function(result, event){
+                                window.alert('Record(s) updated successfully');
+                                },{escape: false}
+                            );
+                        
+                    }
+       });
+   </script>
+   <style>
+       .SearchFixHeader {
+                position: fixed;
+                width: 100%;
+                background-color: #FFF;
+                top: 0px;
+                z-index: 99;
+                
+                box-shadow: #A5A5A5 0px 1px 8px 1px;
+            }
+       .borderClass{
+            border-style: solid;
+            border-width: thin;
+            border-color: #eee;
+            border-top-width: inherit;
+            border-left-width: inherit;
+            border-right-width: inherit;
+       }
+       .backtoHome {
+            float: right;
+            color: #fff;
+            background-color: #337ab7;
+            border-color: #2e6da4;
+            -webkit-appearance: button;
+            display: inline-block;
+            padding: 4px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            cursor:pointer;
+       }
+       .updatebutton {
+            float: right;
+            -webkit-appearance: button;
+            padding: 4px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            cursor:pointer;
+            margin-top: -6px;
+            color: #2e6da4;
+            background-color: white;
+            border-color: #2e6da4;
+       }
+       .expandbutton {
+            float: right;
+            color: #2e6da4;
+            background-color: white;
+            border-color: #337ab7;
+            -webkit-appearance: button;
+            display: inline-block;
+            padding: 4px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid ;
+            border-radius: 4px;
+            cursor:pointer;
+       }
+   </style>
+   
+   <div ng-app="myApp" ng-controller="customSettingListController">
+       
+       <div class="form-group has-feedback SearchFixHeader ">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="container-fluid">
+                        <input type="text" class="form-control" placeholder="Search Here" ng-model="searchParam" style="width: 80% !important;float: left;"/>    
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="expandbutton" ng-click="collapseAll()">Collapse All</button>
+                    <button type="button" class="expandbutton" ng-click="expandAll()">Expand All</button>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="backtoHome" onclick="window.location='/'">Home</button>
+                </div>
+            </div>
+             
+             
+             <!--<i class="glyphicon glyphicon-search form-control-feedback" style="right: 17%;"></i>-->
+        </div>
+       <br /> <br /> <br />
+       <div class="container-fluid">
+            <div>
+                <div ng-repeat="(key,value) in csList" ng-show="(value | filter:searchParam).length>0">
+            
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                    <h2 class="panel-title">
+                        <span style='display:block;float:left'>
+                            <a role="button" data-toggle="collapse" id="ct{{$index}}" data-target="#collapse{{$index}}" ng-click="changeIcon($index)" >
+                                <font color="white">
+                                    <span style="float:left;display:block" class="collapseIcon">
+                                        <i class="glyphicon glyphicon-minus"></i>
+                                    </span>
+                                </font>
+                            </a>
+                        </span>
+                        <span>&nbsp;&nbsp;<a href="{{csNameVsURLJSON[key]}}" target="_blank" style="color:white; ">{{key}} </a> </span> 
+                        <button type="button"  class="updatebutton" ng-click="updateRecords(key,value)">Update</button>
+                    </h2>
+                  </div>  
+                  <div  class="panel-body panel-collapse collapse in" id="collapse{{$index}}">  
+                       <div class="row borderClass">
+                           <div class="col-md-4">    
+                               <label> Field Label</label>
+                           </div>
+                           <div class="col-md-4">
+                               <label> Field Name </label>
+                           </div>
+                           <div class="col-md-4">
+                               <label>{{csNameVsValueTitleJSON[key]}}</label> 
+                               
+                           </div>                                              
+                       </div>
+                       <div class="row borderClass" ng-repeat="item in value | filter:searchParam">
+                           <div class="col-md-4">    
+                               <span> {{item.label}} </span>
+                           </div>
+                           <div class="col-md-4">
+                               <span> {{item.name}} </span>
+                           </div>
+                           <div class="col-md-4" style="word-wrap: break-word;">
+                               <!--{{$index+1}}-->
+                               <span> <input type="textbox" ng-model="item.value" ng-change="item.isChanged=true"/> </span> 
+                               </div>                                              
+                       </div> 
+                          
+                  </div> 
+                  </div>
+                </div>
+            </div>
+       </div>
+       
+   </div>   
+</apex:page>

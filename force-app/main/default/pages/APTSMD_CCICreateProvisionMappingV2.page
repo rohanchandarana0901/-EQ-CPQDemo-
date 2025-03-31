@@ -1,0 +1,1418 @@
+<!--
+  @description       : 
+  @author            : Japan Bhavsar
+  @group             : 
+  @last modified on  : 10-03-2023
+  @last modified by  : Japan Bhavsar
+-->
+<apex:page standardStylesheets="false" sidebar="false" showHeader="false" controller="APTSMD_CCICreateProvisionMappingV2">
+
+    <html ng-app="myApp" ng-clock="">
+    <apex:slds ></apex:slds>
+
+    <head>
+        <title>CCI Provision Setup</title>
+        <script type="text/javascript" src="/js/functions.js"></script>
+        <script src="/soap/ajax/26.0/connection.js"></script>
+        <script type="text/javascript" src="/xdomain/xdomain.js"></script>
+        <script type="text/javascript" src="/support/console/28.0/integration.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.js"></script>
+        <script>
+            var myApp = angular.module('myApp', []);
+            myApp.controller('AppCtrl', function ($scope, $http) {
+                console.log('angular js');
+                $scope.result = {
+                    'Register Provider': '',
+                    'Test Provider': '',
+                    'Sync Provision': '',
+                    'Map Provision': '',
+                    'Set Risk Scale': '',
+                    'Set Insight Map': ''
+                };
+                
+                $scope.stage = 'config';
+                $scope.gotoConfig = function(){
+                    $scope.stage = 'config';
+                }
+                $scope.gotoMapping = function(){
+                    $scope.stage = 'mapping';
+                }
+                $scope.gotoSetup = function(){
+                    $scope.stage = 'setup';
+                    $scope.prepareProvisionJSON();
+                }
+                $scope.progress = false;
+                $scope.isDevOrProd = 'Prod' // Defaulting to Prod
+                $scope.iddBaseURL = 'https://max-azsedev.apttuscloud.com';
+                $scope.apiUrl = $scope.iddBaseURL + '/idd/api/v2';
+                $scope.tenant = 'congase';
+                $scope.apiKey = '';// API key for Sedev $scope.tenant. Get it from CCI Setup screen 
+                $scope.token = '';
+                $scope.congaAIName = "congaai";
+                $scope.instanceURL = '{!instanceURL}';
+                console.log($scope.instanceURL);
+
+                $scope.userId = '{!$User.Id}';
+                $scope.module = '{!moduleType}';
+                $scope.recordtype = ($scope.module == 'clm' ? 'MSA' : 'Services');
+                $scope.selectedccirecordtype  = ($scope.module == 'clm' ? 'MSA' : 'Services');
+                // var importtype = 'quick';
+
+                $scope.userName = '{!$User.Username}';
+                $scope.ideServiceURL = 'https://cci-stage.congacloud.io/congaclm/api';
+                console.log($scope.userName);
+                console.log($scope.userId);
+                $scope.clauses = {!clauseJSON};
+                console.log($scope.clauses);
+
+                $scope.recordTypeSF = {!recordTypeJSON};
+                console.log($scope.recordTypeSF);
+                $scope.recordTypeCCI;
+                $scope.csvtoobj = function(bufferString){
+                    var arr = bufferString.split('\n');     
+                    var jsonObj = [];
+                    var headers = arr[0].split(',');
+                    for(var i = 1; i < arr.length; i++) {
+                        if(arr[i] != ''){
+                            var data = arr[i].split(',');
+                            var obj = {};
+                            for(var j = 0; j < data.length; j++) {
+                                obj[headers[j].trim()] = data[j].trim();
+                            }
+                            jsonObj.push(obj);
+                        }
+                    }
+                    return jsonObj;
+                }
+                $scope.masterCCIDataUrl ='https://clmdocustorage.blob.core.windows.net/cci';
+                $scope.getCCIRecordTypeMaster = function(){
+                    $scope.progress = true;
+
+                    var getCCIRecordTypeMasterAPIUrl = $scope.masterCCIDataUrl+'/CCIRecordTypes.csv';
+
+                    $http({
+                        method: "GET",
+                        url: getCCIRecordTypeMasterAPIUrl,
+                    }).then(function mySuccess(response) {
+                        console.log('getCCIRecordTypeMaster:');
+                        $scope.recordTypeCCI = $scope.csvtoobj(response.data);
+                        console.log($scope.recordTypeCCI);
+
+                        $scope.progress = false;
+                    }, function myError(response) {
+                        console.log('getCCIRecordTypeMaster:');
+                        console.log(response);
+                    });
+                }
+                $scope.isRecordTypeExist = function(){
+                    $scope.recordTypeExist = false;
+                    $scope.recordTypeSF.forEach(element => {
+                        if(element.Name == $scope.selectedccirecordtype){
+                            $scope.recordTypeExist = true;
+                            $scope.recordtype = element.Name;
+                        }
+                    });
+                    return $scope.recordTypeExist;
+                }
+                $scope.selectedrecordtypeclauses;
+                $scope.missingrecordtypeclauses = [];
+                function uuidv4() {
+                    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                                                                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                                                               );
+                }
+                $scope.defaultWorksheet = {
+                                            "name": "Default worksheet",
+                                            "id":uuidv4(),
+                                            "description": "default",
+                                            "isDefault": true,
+                                            "isSelected": false
+                                        };
+                $scope.getCCISettingFromMaster = function(){
+                    $scope.progress = true;
+
+                    var getCCIClausesFromMasterAPIUrl = $scope.masterCCIDataUrl+ '/'+ ($scope.isDevOrProd == 'Prod' ? 'CCISettingsProd.csv' : 'CCISettings.csv');
+
+                    $http({
+                        method: "GET",
+                        url: getCCIClausesFromMasterAPIUrl,
+                    }).then(function mySuccess(response) {
+                        console.log('getCCISettingFromMaster:');
+                        $scope.masterCCISetting = $scope.csvtoobj(response.data);
+                        console.log($scope.masterCCISetting);
+                        if($scope.masterCCISetting.length>0){
+                            $scope.iddBaseURL = $scope.masterCCISetting[0].IDDBaseURL;
+                            $scope.isDevOrProd = $scope.iddBaseURL.indexOf('dev') > -1 ? 'Dev' : 'Prod';
+                            $scope.provisionJSON = {
+                                "name": $scope.selectedccirecordtype,
+                                "description": $scope.selectedccirecordtype,
+                                "recordType": $scope.selectedccirecordtype,
+                                //"fieldMap": {},
+                                //"clauseMap":{}
+                            };
+                            /*if($scope.isDevOrProd == 'Prod'){
+                                $scope.provisionJSON.worksheets= [
+                                                {
+                                                    "name": $scope.defaultWorksheet.name,
+                                                    "id":$scope.defaultWorksheet.id,
+                                                    "description": $scope.defaultWorksheet.description,
+                                                    "isDefault": $scope.defaultWorksheet.isDefault,
+                                                    "isSelected": $scope.defaultWorksheet.isSelected,
+                                                    "fieldMap": {},
+                                                    "clauseMap":{}
+                                                }
+                                            ];
+                            }
+                            else{//Dev
+                                $scope.provisionJSON.fieldMap = {};
+                                $scope.provisionJSON.clauseMap = {};
+                            }*/
+                            $scope.provisionJSON.worksheets= [
+                                {
+                                    "name": $scope.defaultWorksheet.name,
+                                    "id":$scope.defaultWorksheet.id,
+                                    "description": $scope.defaultWorksheet.description,
+                                    "isDefault": $scope.defaultWorksheet.isDefault,
+                                    "isSelected": $scope.defaultWorksheet.isSelected,
+                                    "fieldMap": {},
+                                    "clauseMap":{}
+                                }
+                            ];
+                            //added by vp on 28 feb to dynamically pick idesurl from azure csv
+                            $scope.ideServiceURL = $scope.masterCCISetting[0].IDEServiceURL;
+                            $scope.apiUrl = $scope.iddBaseURL + '/idd/api/v2';
+                            $scope.tenant = $scope.masterCCISetting[0].Tenant;
+                            $scope.apiKey = $scope.masterCCISetting[0].APIKey;
+                            $scope.token = $scope.masterCCISetting[0].Token;
+                            $scope.congaAIName = $scope.masterCCISetting[0].CongaAIName;
+                        }
+                        $scope.progress = false;
+                    }, function myError(response) {
+                        console.log('getCCISettingFromMaster:');
+                        console.log(response);
+                    });
+                }
+                $scope.selectedrecordtypefields=[];
+                $scope.getCCIFieldsFromMaster = function(){
+                    if(!$scope.selectedccirecordtype){
+                        return;
+                    }
+                    $scope.progress = true;
+
+                    var getCCIFieldsFromMasterAPIUrl = $scope.masterCCIDataUrl+ '/'+$scope.selectedccirecordtype+'/FieldMapping.csv';
+
+                    $http({
+                        method: "GET",
+                        url: getCCIFieldsFromMasterAPIUrl,
+                    }).then(function mySuccess(response) {
+                        console.log('getCCIFieldsFromMaster:');
+                        $scope.selectedrecordtypefields = $scope.csvtoobj(response.data);
+                        console.log($scope.selectedrecordtypefields);
+                        
+                        $scope.progress = false;
+                    }, function myError(response) {
+                        console.log('getCCIFieldsFromMaster:');
+                        console.log(response);
+                    });
+                }
+                $scope.getCCIClausesFromMaster = function(){
+                    if(!$scope.selectedccirecordtype){
+                        return;
+                    }
+                    $scope.progress = true;
+
+                    var getCCIClausesFromMasterAPIUrl = $scope.masterCCIDataUrl+ '/'+$scope.selectedccirecordtype+'/ClauseMapping.csv';
+
+                    $http({
+                        method: "GET",
+                        url: getCCIClausesFromMasterAPIUrl,
+                    }).then(function mySuccess(response) {
+                        console.log('getCCIClausesFromMaster:');
+                        $scope.selectedrecordtypeclauses = $scope.csvtoobj(response.data);
+                        console.log($scope.selectedrecordtypeclauses);
+                        
+                        for(var i = 0; i < $scope.selectedrecordtypeclauses.length; i++){
+                            var found = false;
+
+                            for(var j = 0; j < $scope.clauses.length; j++){ // j < is missed;
+                                if($scope.selectedrecordtypeclauses[i].clauseLabel.includes($scope.clauses[j].Name)){
+                                    found = true;
+                                    break; 
+                                }
+                            }
+                            if(found == false){
+                                $scope.missingrecordtypeclauses.push($scope.selectedrecordtypeclauses[i].clauseLabel);
+                            }
+                        }
+                        console.log($scope.missingrecordtypeclauses);
+                        $scope.progress = false;
+                        $scope.isRecordTypeExist();
+                    }, function myError(response) {
+                        console.log('getCCIClausesFromMaster:');
+                        console.log(response);
+                    });
+                }
+                //Start on Load Function Calls
+                $scope.getCCISettingFromMaster();
+                $scope.getCCIRecordTypeMaster();
+                $scope.getCCIClausesFromMaster();
+                $scope.getCCIFieldsFromMaster();
+                //End on Load Function Calls
+
+                $scope.recordTypeChanged =function(){
+                    $scope.missingrecordtypeclauses  = [];
+                    $scope.getCCIClausesFromMaster();
+                    $scope.getCCIFieldsFromMaster();
+                }
+                $scope.createRecordTypeInSF = function(){
+                    window.open($scope.instanceURL+'/setup/ui/recordTypeWizard.jsp?type='+'{!dId}');
+                }
+                $scope.createClausesInSF = function(){
+                    $scope.progress = true;
+                    $scope.truncatedClauses=[];
+                    for(var i=0;i<$scope.missingrecordtypeclauses.length;i++){
+                        $scope.truncatedClauses.push($scope.missingrecordtypeclauses[i].substr(0,75));
+                    }
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.APTSMD_CCICreateProvisionMappingV2.createClauses}',
+                        $scope.truncatedClauses,
+                        '{!moduleType}',
+                        function(result, event){
+                            $scope.progress = false;
+                            if (event.status) {
+                                // Get DOM IDs for HTML and Visualforce elements like this
+                                alert(result);
+                                window.location.reload();
+                            } else if (event.type === 'exception') {
+                                
+                            } else {
+
+                            }
+                        }, 
+                        {escape: true}
+                    );
+                }
+                $scope.showResultTable = false;
+                $scope.registerProvider = function () {
+                    $scope.progress = true;
+                    $scope.showResultTable = true;
+
+                    var registerProviderAPIUrl = $scope.apiUrl + '/' + $scope.tenant + '/config/provider?instanceurl=' +
+                        $scope.instanceURL + '&username=' + $scope.userName + '&userid=' + $scope.userId + '&module=' + $scope.module;
+                    var JSON = {
+                        "provider": $scope.congaAIName,
+                        "providerUrl": $scope.ideServiceURL,
+                        "providerSpecific": "{\n  \"version\": \"v1\"\n}"
+                    };
+                    $http({
+                        method: "POST",
+                        url: registerProviderAPIUrl,
+                        headers: {
+                            "Authorization": "Bearer " + $scope.token,
+                            "X-API-Key": $scope.apiKey
+                        },
+                        data: JSON
+                    }).then(function mySuccess(response) {
+                        console.log(response);
+                        $scope.progress = false;
+                        console.log('registerProvider:' + response);
+                        $scope.result['Register Provider'] = 'Registered';
+                        $scope.testProvider();
+                    }, function myError(response) {
+                        console.log(response);
+                        console.log('registerProvider:' + response);
+                    });
+                };
+                $scope.testProvider = function () {
+                    $scope.progress = true;
+
+                    var testProviderAPIUrl = $scope.apiUrl + '/' + $scope.tenant + '/config/provider/test?instanceurl=' +
+                        $scope.instanceURL + '&username=' + $scope.userName + '&userid=' + $scope.userId;
+                    var JSON = {
+                        "provider": $scope.congaAIName,
+                        "providerUrl": $scope.ideServiceURL,
+                        "providerSpecific": "{\n  \"version\": \"v1\"\n}"
+                    };
+                    $http({
+                        method: "POST",
+                        url: testProviderAPIUrl,
+                        headers: {
+                            "Authorization": "Bearer " + $scope.token,
+                            "X-API-Key": $scope.apiKey
+                        },
+                        data: JSON
+                    }).then(function mySuccess(response) {
+                        console.log('testProvider:');
+                        console.log(response);
+                        $scope.progress = false;
+
+                        $scope.result['Test Provider'] = 'Tested';
+                        $scope.syncProvision();
+                    }, function myError(response) {
+                        console.log('testProvider:' + response);
+                        console.log(response);
+
+                    });
+                }
+                $scope.syncProvision = function () {
+                    $scope.progress = true;
+
+                    //var syncProvisionAPIUrl = $scope.apiUrl + '/' + $scope.tenant + '/config/provider/sync?instanceurl=' + $scope.instanceURL + '&username=' + $scope.userName + '&userid=' + $scope.userId;
+                    var syncProvisionAPIUrl = $scope.iddBaseURL+'/idd/api/v3' + '/' + $scope.tenant + '/provision/sync?instanceurl=' +
+                        $scope.instanceURL + '&username=' + $scope.userName + '&userid=' + $scope.userId + '&module=' + $scope.module + '&provider=' + $scope.congaAIName;
+
+                    $http({
+                        method: "GET",
+                        url: syncProvisionAPIUrl,
+                        headers: {
+                            "Authorization": "Bearer " + $scope.token,
+                            "X-API-Key": $scope.apiKey
+                        }
+                    }).then(function mySuccess(response) {
+                        console.log('syncProvision:');
+                        console.log(response);
+                        $scope.progress = false;
+
+                        $scope.result['Sync Provision'] = 'Synced';
+                        $scope.setProvisionMap();
+                    }, function myError(response) {
+                        console.log('syncProvision:');
+                        console.log(response);
+
+                    });
+                }
+                
+                $scope.prepareProvisionJSON = function(){
+                    
+                    //field addition
+                    var fieldObj = {};
+                    
+                    
+                    for(var i=0;i<$scope.selectedrecordtypefields.length;i++){
+                        var mapping = [];
+                        var fieldInfo = {
+                                "objectName": $scope.selectedrecordtypefields[i].objectName,
+                                "objectFieldLabel": $scope.selectedrecordtypefields[i].objectFieldLabel,
+                                "objectFieldName": $scope.selectedrecordtypefields[i].objectFieldName,
+                                "objectFieldType": $scope.selectedrecordtypefields[i].objectFieldType,
+                                "referenceObject": $scope.selectedrecordtypefields[i].referenceObject,
+                                "required": JSON.parse($scope.selectedrecordtypefields[i].required.toLowerCase()),
+                                "sync": JSON.parse($scope.selectedrecordtypefields[i].sync.toLowerCase()),
+                        };
+                        mapping.push(fieldInfo);
+                        var provisionInfo = {
+                                "name": $scope.selectedrecordtypefields[i].name,
+                                "fieldId": $scope.selectedrecordtypefields[i].fieldId,
+                                "provisionName": $scope.selectedrecordtypefields[i].provisionName,
+                                "provider": $scope.selectedrecordtypefields[i].provider,
+                                "type": $scope.selectedrecordtypefields[i].type
+                        };
+                        fieldObj[$scope.selectedrecordtypefields[i].fieldId] = { 'sync':true, 'mappings':mapping,'provision': provisionInfo};
+                    }
+                    /*if($scope.isDevOrProd == 'Prod'){
+                        $scope.provisionJSON.worksheets[0].fieldMap = fieldObj;
+                    }
+                    else{
+                        // Commented this line by Japan as we have recently upgraded SEDEV
+                        //$scope.provisionJSON.fieldMap = fieldObj;
+                        $scope.provisionJSON.worksheets[0].fieldMap = fieldObj;
+                    }*/
+                    $scope.provisionJSON.worksheets[0].fieldMap = fieldObj;
+                    
+                    //clause addition
+                    var clauseObj = {};
+                    
+                    for(var i=0;i<$scope.selectedrecordtypeclauses.length;i++){
+                        var clausemapping = [];
+                        var clauseInfo = {
+                                "clauseLabel": $scope.selectedrecordtypeclauses[i].clauseLabel,
+                                "clauseId": $scope.getClauseIdByName($scope.selectedrecordtypeclauses[i].clauseLabel),
+                                "clauseType": $scope.selectedrecordtypeclauses[i].clauseType,
+                                "clauseReferenceId": $scope.getClauseReffIdfromName($scope.selectedrecordtypeclauses[i].clauseLabel),
+                                "required": JSON.parse($scope.selectedrecordtypeclauses[i].required.toLowerCase()),
+                                "sync": JSON.parse($scope.selectedrecordtypeclauses[i].sync.toLowerCase())
+                        };
+                        clausemapping.push(clauseInfo);
+                        var provisionInfoClause = {
+                                "name": $scope.selectedrecordtypeclauses[i].name,
+                                "fieldId": $scope.selectedrecordtypeclauses[i].fieldId,
+                                "provisionName": $scope.selectedrecordtypeclauses[i].provisionName,
+                                "provider": $scope.selectedrecordtypeclauses[i].provider,
+                                "type": $scope.selectedrecordtypeclauses[i].type
+                        };
+                        clauseObj[$scope.selectedrecordtypeclauses[i].fieldId] = { 'sync':true, 'mappings':clausemapping,'provision': provisionInfoClause};
+                    }
+                    /*if($scope.isDevOrProd == 'Prod'){
+                        $scope.provisionJSON.worksheets[0].clauseMap = clauseObj;
+                    }
+                    else{
+                        $scope.provisionJSON.clauseMap = clauseObj;
+                    }*/
+                    $scope.provisionJSON.worksheets[0].clauseMap = clauseObj;
+                    
+                    $scope.provisionJSON.name = $scope.selectedccirecordtype;
+                    $scope.provisionJSON.description = $scope.selectedccirecordtype;
+                    $scope.provisionJSON.recordType = $scope.selectedccirecordtype;
+                    $scope.provisionJSON.provider = $scope.congaAIName; // Added by Japan Bhavsar.
+                    console.log('@@');
+                    console.log($scope.provisionJSON);
+                }
+                $scope.getClauseIdByName = function(name){
+                    for(let x=0;x<$scope.clauses.length;x++){
+                        if(name.toLowerCase().includes ($scope.clauses[x].Name.toLowerCase())) { 
+                            return $scope.clauses[x].Id;
+                            break;
+                            //console.log($scope.clauses[x].Id);
+                        }
+                    }
+                }
+                $scope.setProvisionMap = function () {
+                    $scope.progress = true;
+
+                    var setProvisionMapAPIUrl = $scope.apiUrl + '/' + $scope.tenant + '/config/provisionmap?instanceurl=' +
+                        $scope.instanceURL + '&recordtype=' + $scope.recordtype + '&username=' + $scope.userName + '&userid=' + $scope.userId + '&$scope.module=' + $scope.module;
+                    
+                    $http({
+                        method: "POST",
+                        url: setProvisionMapAPIUrl,
+                        headers: {
+                            "Authorization": "Bearer " + $scope.token,
+                            "X-API-Key": $scope.apiKey
+                        },
+                        data: $scope.provisionJSON 
+                    }).then(function mySuccess(response) {
+                        console.log('setProvisionMap:');
+                        console.log(response);
+                        $scope.updateCCISettings();
+                        $scope.result['Map Provision'] = 'Provision Mapped';
+                        if($scope.recordtype == 'MSA'){
+                            $scope.setRiskScale();
+                        }
+                        else{
+                            $scope.progress = false;
+                            window.open($scope.iddBaseURL+'/cci/admin/data-extraction-setup/extract/'+$scope.recordtype);
+                        }                        
+                    }, function myError(response) {
+                        console.log('setProvisionMap:' + response);
+                        console.log(response);
+
+                    });
+                }
+                $scope.getClauseIdfromName = function (name) {
+                    return $scope.clauses.filter(function (c) {
+                        if (c.Name == name) {
+                            return c.Id;
+                        }
+                    });
+                }
+                $scope.getClauseReffIdfromName = function (name) {
+                    var refId='';
+                    var record = $scope.clauses.filter(function (c) {
+                        if($scope.module == 'clm'){
+                            if (c.Name == name && c.Apttus__ReferenceId__c != undefined) {
+                                refId= c.Apttus__ReferenceId__c;                                
+                            }
+                        }else{
+                            if (c.Name == name && c.APXT_Redlining__External_Id__c != undefined) {
+                                refId= c.APXT_Redlining__External_Id__c;                                
+                            }
+                        }
+                        
+                    });
+                    /*if(refId == undefined){
+                            var record = $scope.clauses.filter(function (c) {
+                                if (c.Name == 'Placeholder') {
+                                    refId= c.Apttus__ReferenceId__c;
+                                }
+                            });
+                    }*/
+                    return refId;
+                }
+
+                $scope.setRiskScale = function () {
+                    $scope.progress = true;
+
+                    var setRiskScaleAPIUrl = $scope.apiUrl + '/' + $scope.tenant + '/insights/scale?instanceurl=' +
+                        $scope.instanceURL + '&username=' + $scope.userName + '&userid=' + $scope.userId + '&$scope.module=' + $scope.module;
+                    var JSON = {
+                        "riskLevels": [
+                            {
+                                "type": "IndividualRisk",
+                                "levels": [
+                                    { "lowerBound": 1, "upperBound": 4, "level": "Low Risk", "icon": "Circle" },
+                                    { "lowerBound": 5, "upperBound": 7, "level": "Moderate Risk", "icon": "Triangle" },
+                                    { "lowerBound": 8, "upperBound": 10, "level": "High Risk", "icon": "Square" }
+                                ]
+                            },
+                            {
+                                "type": "TotalRisk",
+                                "levels": [
+                                    { "lowerBound": 1, "upperBound": 5, "level": "Low Risk", "icon": "Circle" },
+                                    { "lowerBound": 6, "upperBound": 10, "level": "Moderate Risk", "icon": "Triangle" },
+                                    { "lowerBound": 11, "upperBound": 20, "level": "High Risk", "icon": "Square" }
+                                ]
+                            }
+                        ]
+                    };
+                    
+                    $http({
+                        method: "POST",
+                        url: setRiskScaleAPIUrl,
+                        headers: {
+                            "Authorization": "Bearer " + $scope.token,
+                            "X-API-Key": $scope.apiKey
+                        },
+                        data: JSON
+                    }).then(function mySuccess(response) {
+                        console.log('setRiskScale:');
+                        console.log(response);
+                        $scope.progress = false;
+
+                        $scope.result['Set Risk Scale'] = 'Range Created';
+                        $scope.setInsightMap();
+                    }, function myError(response) {
+                        console.log('testProvider:' + response);
+                        console.log(response);
+
+                    });
+                }
+                $scope.setInsightMap = function () {
+                    $scope.progress = true;
+
+                    var setInsightMapAPIUrl = $scope.apiUrl + '/' + $scope.tenant + '/insights/insightmaps?instanceurl=' +
+                        $scope.instanceURL + '&recordtype=' + $scope.recordtype + '&username=' + $scope.userName + '&userid=' + $scope.userId;
+                    var devJSON = {
+                        "insights": [
+                            {
+                                "insightName": "Governing law does not protect trade secrets",
+                                "type": "Risk",
+                                "insightRating": 6,
+                                "insightRatingIcon": "https://usw2maxsedemosa503.blob.core.windows.net/max-static-contents-sedemo/IDD/database/iddContent/icons/triangle.png",
+                                "insightRatingLevel": "Moderate Risk",
+                                "insightRatingLabel": "6 (Moderate Risk)",
+                                "guidance": "Acceptable Governing Law in USA: Texas, New York or Delaware",
+                                "relatedProvisions": [
+                                    {
+                                        "fieldName": "Governing Law (Full Paragraph) (premium)",
+                                        "fieldNumber": "zai:e98ac3eb-4dce-446e-91b4-36b8a3f1f22f",
+                                        "provider": "zuva",
+                                        "fieldType": "extractedClause"
+                                    }
+                                ],
+                                "summary": "( Extracted Data.Governing Law (Full Paragraph) (premium) Contains California )",
+                                "shortInsightName": "Governing law does n...",
+                                "shortRelatedProvisionsName": "Governing Law (Full ...",
+                                "shortGuidance": "Acceptable Governing...",
+                                "criteriaPlan": {
+                                    "expressionType": "allCondition",
+                                    "expression": "(1)",
+                                    "criteriaDetails": [
+                                        {
+                                            "objectType": "ExtractedData",
+                                            "objectValue": "ExtractedData",
+                                            "objectLabel": "Extracted Data",
+                                            "value": "California",
+                                            "operator": "Contains",
+                                            "field": "Governing Law (Full Paragraph)",
+                                            "fieldLabel": "Governing Law (Full Paragraph) (premium)",
+                                            "fieldDataType": "EXTRACTEDDATA",
+                                            "fieldId": "zai:e98ac3eb-4dce-446e-91b4-36b8a3f1f22f",
+                                            "provider": "zuva",
+                                            "fieldType": "extractedClause",
+                                            "fieldReferenceLabel": "",
+                                            "display": "Extracted Data.Governing Law (Full Paragraph) (premium) Contains California"
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "insightName": "High value North American contract ($100k or above)",
+                                "type": "Risk",
+                                "insightRating": 2,
+                                "insightRatingIcon": "https://usw2maxsedemosa503.blob.core.windows.net/max-static-contents-sedemo/IDD/database/iddContent/icons/circle.png",
+                                "insightRatingLevel": "Low Risk",
+                                "insightRatingLabel": "2 (Low Risk)",
+                                "guidance": "North American contracts with total contract value of $100000 or above are considered high value contracts. These will require deal board review.",
+                                "relatedProvisions": [
+                                    {
+                                        "fieldName": "Total Contract Value  (fundamental)",
+                                        "fieldNumber": "cai:4e4a2189-1c70-402b-bc92-d0df018508d5",
+                                        "provider": "congaai",
+                                        "fieldType": "extractedField"
+                                    }
+                                ],
+                                "summary": "( Agreement.Region Equals North America  OR  Extracted Data.Total Contract Value  (fundamental) Greater or Equal 100000 )",
+                                "shortInsightName": "High value North Ame...",
+                                "shortRelatedProvisionsName": "Total Contract Value...",
+                                "shortGuidance": "North American contr...",
+                                "criteriaPlan": {
+                                    "expressionType": "anyCondition",
+                                    "expression": "(1 OR 2)",
+                                    "criteriaDetails": [
+                                        {
+                                            "objectType": "metaData",
+                                            "objectValue": "Apttus__APTS_Agreement__c",
+                                            "objectLabel": "Agreement",
+                                            "value": "North America",
+                                            "operator": "Equals",
+                                            "fieldReferenceLabel": "",
+                                            "display": "Agreement.Region Equals North America",
+                                            "field": "APTSMD_Region__c",
+                                            "fieldLabel": "Region",
+                                            "fieldDataType": "picklist",
+                                            "fieldId": null,
+                                            "provider": "",
+                                            "fieldType": "metaData"
+                                        },
+                                        {
+                                            "objectType": "ExtractedData",
+                                            "objectValue": "ExtractedData",
+                                            "objectLabel": "Extracted Data",
+                                            "field": "Total Contract Value ",
+                                            "fieldLabel": "Total Contract Value  (fundamental)",
+                                            "fieldDataType": "EXTRACTEDDATA",
+                                            "fieldId": "cai:4e4a2189-1c70-402b-bc92-d0df018508d5",
+                                            "provider": "congaai",
+                                            "value": "100000",
+                                            "fieldType": "extractedField",
+                                            "operator": "Greater or Equal",
+                                            "fieldReferenceLabel": "",
+                                            "display": "Extracted Data.Total Contract Value  (fundamental) Greater or Equal 100000"
+                                        }
+                                    ]
+                                },
+                                "highlightInsight": false,
+                                "highlightInfos": [
+
+                                ]
+                            },
+                            {
+                                "insightName": "MSA term is less than 2 years",
+                                "type": "Risk",
+                                "insightRating": 7,
+                                "insightRatingIcon": "https://usw2maxsedemosa503.blob.core.windows.net/max-static-contents-sedemo/IDD/database/iddContent/icons/triangle.png",
+                                "insightRatingLevel": "Moderate Risk",
+                                "insightRatingLabel": "7 (Moderate Risk)",
+                                "guidance": "High value North American contracts' term should not be less than 2 years.",
+                                "relatedProvisions": [
+                                    {
+                                        "fieldName": "Original Expiration Date (fundamental)",
+                                        "fieldNumber": "cai:32e36d98-a288-49e2-9597-e9bfe7cb48b4",
+                                        "provider": "congaai",
+                                        "fieldType": "extractedField"
+                                    }
+                                ],
+                                "summary": "( Extracted Data.Original Expiration Date (fundamental) Natural Language less than 2 years from ${Effective Date} )",
+                                "shortInsightName": "MSA term is less tha...",
+                                "shortRelatedProvisionsName": "Original Expiration ...",
+                                "shortGuidance": "High value North Ame...",
+                                "criteriaPlan": {
+                                    "expressionType": "allCondition",
+                                    "expression": "(1)",
+                                    "criteriaDetails": [
+                                        {
+                                            "objectType": "ExtractedData",
+                                            "objectValue": "ExtractedData",
+                                            "objectLabel": "Extracted Data",
+                                            "field": "Original Expiration Date",
+                                            "fieldLabel": "Original Expiration Date (fundamental)",
+                                            "fieldDataType": "EXTRACTEDDATA",
+                                            "fieldId": "cai:32e36d98-a288-49e2-9597-e9bfe7cb48b4",
+                                            "provider": "congaai",
+                                            "value": "less than 2 years from ${Effective Date}",
+                                            "fieldType": "extractedField",
+                                            "operator": "Natural Language",
+                                            "fieldReferenceLabel": "",
+                                            "display": "Extracted Data.Original Expiration Date (fundamental) Natural Language less than 2 years from ${Effective Date}"
+                                        }
+                                    ]
+                                },
+                                "highlightInsight": false,
+                                "highlightInfos": [
+
+                                ]
+                            },
+                            {
+                                "insightName": "Force Majeure does not include pandemic",
+                                "type": "Risk",
+                                "insightRating": 9,
+                                "insightRatingIcon": "https://usw2maxsedemosa503.blob.core.windows.net/max-static-contents-sedemo/IDD/database/iddContent/icons/square.png",
+                                "insightRatingLevel": "High Risk",
+                                "insightRatingLabel": "9 (High Risk)",
+                                "guidance": "Better to include specific pandemic inclusion in Force Majeure",
+                                "relatedProvisions": [
+                                    {
+                                        "fieldName": "Force Majeure (premium)",
+                                        "fieldNumber": "zai:c4914eb9-f229-4c39-8fc0-3af5ae86ac46",
+                                        "provider": "zuva",
+                                        "fieldType": "extractedClause"
+                                    }
+                                ],
+                                "summary": "( Extracted Data.Force Majeure (premium) Doesn't Contain pandemic )",
+                                "shortInsightName": "Force Majeure does n...",
+                                "shortRelatedProvisionsName": "Force Majeure (premi...",
+                                "shortGuidance": "Better to include sp...",
+                                "criteriaPlan": {
+                                    "expressionType": "allCondition",
+                                    "expression": "(1)",
+                                    "criteriaDetails": [
+                                        {
+                                            "objectType": "ExtractedData",
+                                            "objectValue": "ExtractedData",
+                                            "objectLabel": "Extracted Data",
+                                            "field": "Force Majeure",
+                                            "fieldLabel": "Force Majeure (premium)",
+                                            "fieldDataType": "EXTRACTEDDATA",
+                                            "fieldId": "zai:c4914eb9-f229-4c39-8fc0-3af5ae86ac46",
+                                            "provider": "zuva",
+                                            "value": "pandemic",
+                                            "fieldType": "extractedClause",
+                                            "operator": "Doesn't Contain",
+                                            "fieldReferenceLabel": "",
+                                            "display": "Extracted Data.Force Majeure (premium) Doesn't Contain pandemic"
+                                        }
+                                    ]
+                                },
+                                "highlightInsight": false,
+                                "highlightInfos": [
+
+                                ]
+                            },
+                            {
+                                "insightName": "Governing law",
+                                "type": "Risk",
+                                "insightRating": 2,
+                                "insightRatingIcon": "https://usw2maxsedemosa503.blob.core.windows.net/max-static-contents-sedemo/IDD/database/iddContent/icons/circle.png",
+                                "insightRatingLevel": "Low Risk",
+                                "insightRatingLabel": "2 (Low Risk)",
+                                "guidance": "Acceptable Governing Law in USA: Delaware, New York or Delaware.",
+                                "relatedProvisions": [
+                                    {
+                                        "fieldName": "Governing Law (Full Paragraph) (premium)",
+                                        "fieldNumber": "zai:e98ac3eb-4dce-446e-91b4-36b8a3f1f22f",
+                                        "provider": "zuva",
+                                        "fieldType": "extractedClause"
+                                    }
+                                ],
+                                "summary": "( Extracted Data.Governing Law (Full Paragraph) (premium) Contains Texas )",
+                                "shortInsightName": "Governing law",
+                                "shortRelatedProvisionsName": "Governing Law (Full ...",
+                                "shortGuidance": "Acceptable Governing...",
+                                "criteriaPlan": {
+                                    "expressionType": "allCondition",
+                                    "expression": "(1)",
+                                    "criteriaDetails": [
+                                        {
+                                            "objectType": "ExtractedData",
+                                            "objectValue": "ExtractedData",
+                                            "objectLabel": "Extracted Data",
+                                            "field": "Governing Law (Full Paragraph)",
+                                            "fieldLabel": "Governing Law (Full Paragraph) (premium)",
+                                            "fieldDataType": "EXTRACTEDDATA",
+                                            "fieldId": "zai:e98ac3eb-4dce-446e-91b4-36b8a3f1f22f",
+                                            "provider": "zuva",
+                                            "value": "Texas",
+                                            "fieldType": "extractedClause",
+                                            "operator": "Contains",
+                                            "fieldReferenceLabel": "",
+                                            "display": "Extracted Data.Governing Law (Full Paragraph) (premium) Contains Texas"
+                                        }
+                                    ]
+                                },
+                                "highlightInsight": false,
+                                "highlightInfos": [
+
+                                ]
+                            }
+                        ]
+                    };
+                    var JSON ={};
+                    // Commented by Japan Bhavsar as SEProd and SEDev are on same version
+                    // if($scope.isDevOrProd == 'Prod'){
+                    //     JSON.worksheets = [ 
+                    //             {
+                    //                 "id":$scope.defaultWorksheet.id,
+                    //                 "insights":devJSON.insights
+                    //             }
+                    //         ]
+                    // }
+                    // else{
+                    //     JSON = devJSON;
+                    // }
+                    JSON.worksheets = [ 
+                                        {
+                                            "id":$scope.defaultWorksheet.id,
+                                            "insights":devJSON.insights
+                                        }
+                                    ]
+                    $http({
+                        method: "POST",
+                        url: setInsightMapAPIUrl,
+                        headers: {
+                            "Authorization": "Bearer " + $scope.token,
+                            "X-API-Key": $scope.apiKey
+                        },
+                        data: JSON
+                    }).then(function mySuccess(response) {
+                        console.log('setInsightMap:');
+                        console.log(response);
+                        $scope.progress = false;
+
+                        $scope.result['Set Insight Map'] = 'Insight Created';
+                        window.open($scope.iddBaseURL+'/cci/admin/data-extraction-setup/extract/'+$scope.recordtype);
+                    }, function myError(response) {
+                        console.log('testProvider:' + response);
+                        console.log(response);
+
+                    });
+                }
+                //$scope.registerProvider();
+
+                // Function added on 9/24/2023 by Japan Bhavsar
+                $scope.changeEnvironment = function(){
+                    // if($scope.isDevOrProd == 'Prod'){
+                    //     $scope.iddBaseURL = 'https://max-azseprod.apttuscloud.com';
+                    // }else{
+                    //     $scope.iddBaseURL = 'https://max-azsedev.apttuscloud.com';
+                    // }
+                    // $scope.apiUrl = $scope.iddBaseURL + '/idd/api/v2';
+                    $scope.getCCISettingFromMaster();
+                }
+
+                $scope.updateCCISettings = function(){
+                    $scope.progress = true;
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.APTSMD_CCICreateProvisionMappingV2.changeCCICustomSettings}',
+                        $scope.apiKey,
+                        $scope.apiUrl,
+                        $scope.iddBaseURL,
+                        $scope.tenant,
+                        '{!moduleType}',
+                        function(result, event){
+                            $scope.progress = false;
+                            if (event.status) {
+                                // Get DOM IDs for HTML and Visualforce elements like this
+                                console.log(result);
+                                //window.location.reload();
+                            } else if (event.type === 'exception') {
+                                
+                            } else {
+
+                            }
+                        }, 
+                        {escape: true, timeout: 120000}
+                    );
+                }
+            });
+        </script>
+        <style>
+            .loading {
+                /* height: calc(100vh - 190px) !important; */
+                height: 100% !important;
+                width: 100% !important;
+                position: absolute !important;
+                z-index: 9999 !important;
+                align-items: center !important;
+            }
+            .container{
+                padding: 0px 10px;
+                overflow: hidden;
+            }
+            .margin-right{
+                margin-right: 1rem !important;
+            }
+            .inline-flex{
+                display: inline-flex;
+            }
+            .scroll{
+                height: calc(100vh - 265px) !important;
+                overflow-y: scroll;
+            }
+
+            /* The switch - the box around the slider */
+            .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 20px;
+            }
+
+            /* Hide default HTML checkbox */
+            .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            }
+
+            /* The slider */
+            .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            }
+
+            .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 0px;
+            bottom: 0px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            }
+
+            input:checked + .slider {
+            background-color: #2196F3;
+            }
+
+            input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+            }
+
+            input:checked + .slider:before {
+            -webkit-transform: translateX(30px);
+            -ms-transform: translateX(30px);
+            transform: translateX(30px);
+            }
+
+            /* Rounded sliders */
+            .slider.round {
+            border-radius: 34px;
+            }
+
+            .slider.round:before {
+            border-radius: 50%;
+            }
+        </style>
+    </head>
+
+    <body ng-controller="AppCtrl">
+        <div class="container">
+            <div class="loading" style="height:6rem;position:relative" ng-show="progress">
+                <div class="slds-spinner_container">
+                    <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                        <span class="slds-assistive-text">Loading</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-page-header">
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-opportunity" title="opportunity">
+                                    <svg class="slds-icon slds-page-header__icon" aria-hidden="true">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/standard-sprite/svg/symbols.svg#opportunity')}"></use>
+                                    </svg>
+                                    <span class="slds-assistive-text"></span>
+                                </span>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span class="slds-page-header__title slds-truncate" title="Rohde Corp - 80,000 Widgets">CCI Provision Setup</span>
+                                        </h1>
+                                    </div>
+                                </div>
+                                <p class="slds-page-header__name-meta">Load Default Provision Configuration</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-page-header__col-actions">
+                        <!-- <div style="padding-top:10px;">
+                            <label><b>Select Environment</b></label>&nbsp;&nbsp;
+                            <input type="radio" ng-model="isDevOrProd" value="Dev" ng-change="changeEnvironment();"/><label>Dev</label>
+                            <input type="radio" ng-model="isDevOrProd" value="Prod" ng-change="changeEnvironment();"/><label>Prod</label>
+                        </div>                         -->
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="slds-path">
+                <div class="slds-grid slds-path__track">
+                  <div class="slds-grid slds-path__scroller-container">
+                    <div class="slds-path__scroller">
+                      <div class="slds-path__scroller_inner">
+                        <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal">
+                          <li class="slds-path__item" ng-class="stage == 'config' ? 'slds-is-current slds-is-active' : 'slds-is-incomplete'" role="presentation">
+                            <a aria-selected="true" class="slds-path__link" ng-click="gotoConfig()" id="path-1" role="option" tabindex="0">
+                              <span class="slds-path__stage">
+                                <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                  <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#check')}"></use>
+                                </svg>
+                                <span class="slds-assistive-text">Current Stage:</span>
+                              </span>
+                              <span class="slds-path__title">Review Configuration</span>
+                            </a>
+                          </li>
+                          <li class="slds-path__item"  ng-class="stage == 'mapping' ? 'slds-is-current slds-is-active' : 'slds-is-incomplete'"  role="presentation">
+                            <a aria-selected="false" class="slds-path__link" ng-click="gotoMapping()" id="path-2" role="option" tabindex="-1">
+                              <span class="slds-path__stage">
+                                <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                  <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#check')}"></use>
+                                </svg>
+                              </span>
+                              <span class="slds-path__title">Select Mapping</span>
+                            </a>
+                          </li>
+                          <li class="slds-path__item "  ng-class="stage == 'setup' ? 'slds-is-current slds-is-active' : 'slds-is-incomplete'"  role="presentation">
+                            <a aria-selected="false" class="slds-path__link" ng-click="gotoSetup()" id="path-3" role="option" tabindex="-1">
+                              <span class="slds-path__stage">
+                                <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                  <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#check')}"></use>
+                                </svg>
+                              </span>
+                              <span class="slds-path__title">Start Setup</span>
+                            </a>
+                          </li>
+                          
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+            </div>
+
+            <div class="container" ng-show="stage == 'config'">
+                
+                <div class="slds-row">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col" style="width:0px;">
+                            <div class="slds-form-element">
+                                <!-- Rounded switch -->
+                                <label  class="slds-form-element__label" for="text-input-id-46">Use Production Environment</label>
+                                <div class="slds-form-element__control">
+                                    <label class="switch">
+                                        <input type="checkbox" ng-model="isDevOrProd" ng-true-value="'Prod'" ng-false-value="'Dev'" ng-change="changeEnvironment();"/>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col" style="width:0px;">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-46">
+                                <abbr class="slds-required" title="required">* </abbr>IDD Base URL</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-46" placeholder="IDD Base URL" required="" ng-model="iddBaseURL" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>            
+                </div>
+                <div class="slds-row">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-46">
+                                <abbr class="slds-required" title="required">* </abbr>IDD API URL</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-46" placeholder="IDD API URL" required="" disabled="true" ng-model="apiUrl" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-46">
+                                <abbr class="slds-required" title="required">* </abbr>Tenant</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-46" placeholder="Tenant" required="" ng-model="tenant" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>            
+                </div>
+                <div class="slds-row">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-46">
+                                <abbr class="slds-required" title="required">* </abbr>Instance URL</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-46" placeholder="Instance URL" disabled="true" required="" ng-model="instanceURL" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-46">
+                                <abbr class="slds-required" title="required">*</abbr>Token</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-46" placeholder="Token" required="" ng-model="token" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>            
+                </div>
+                <div class="slds-row">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-46">
+                                <abbr class="slds-required" title="required">* </abbr>Conga AI Name</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-46" placeholder="Conga AI Name" disabled="true" required="" ng-model="congaAIName" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-46">
+                                <abbr class="slds-required" title="required">* </abbr>API Key</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-46" placeholder="API Key" required="" ng-model="apiKey" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>            
+                </div>
+                <div class="slds-row">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col" style="width: 0%;">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-46">
+                                <abbr class="slds-required" title="required">* </abbr>Module</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-46" placeholder="Module" disabled="true" required="" ng-model="module" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col" style="width: 0%;">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-46">
+                                <abbr class="slds-required" title="required">* </abbr>IDE Service URL</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-46" placeholder="IDE Service URL" required="" ng-model="ideServiceURL" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>            
+                </div>
+                <br/>
+                <div class="slds-row">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <div class="slds-form-element">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="slds-col">
+                            <!-- <div class="slds-form-element">
+                                <button class="slds-button slds-button_brand" ng-click="registerProvider()">Start Setup</button>
+                            </div> -->
+                            <div class="slds-form-element">
+                                <button class="slds-button slds-button_brand" ng-click="gotoMapping()">Next</button>
+                            </div>
+                        </div>
+                    </div>            
+                </div>
+                <br/>
+                
+                
+            </div>
+
+            <div class="container" ng-show="stage == 'mapping'">
+                <div class="slds-row">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-46">
+                                <abbr class="slds-required" title="required">* </abbr>Source Record Type</label>
+                                <div class="slds-form-element__control">
+                                    <!-- <input type="text" id="text-input-id-46" placeholder="Record Type" required="" ng-model="recordtype" class="slds-input" /> -->
+                                    <select class="slds-input" ng-model="selectedccirecordtype" ng-change="recordTypeChanged()">
+                                        <option class="slds-input" ng-repeat="r in recordTypeCCI" value="{{r.RecordType}}" ng-if="(module == 'clm' && r.RecordType != 'Services') || (module == 'cfs' && r.RecordType == 'Services')">{{r.RecordType}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-46">
+                                <abbr class="slds-required" title="required">* </abbr>Target Record Type</label>
+                                <div class="slds-form-element__control">
+                                    <!-- <input type="text" id="text-input-id-46" placeholder="Record Type" required="" ng-model="recordtype" class="slds-input" /> -->
+                                    <select class="slds-input" ng-model="recordtype" >
+                                        <option class="slds-input" ng-repeat="r in recordTypeSF" value="{{r.Name}}" ng-if="(module == 'clm' && r.Name != 'Services') || (module == 'cfs' && r.Name == 'Services')">{{r.Name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>   
+                </div>
+                <br/>
+                <div class="slds-row scroll" >
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                        <thead>
+                            <tr>
+                                <th style="width:50%" ng-show="!isRecordTypeExist()">
+                                    Missing Record Type in Salesforce
+                                </th>
+                                <th ng-show="selectedrecordtypeclauses.length > 0 && missingrecordtypeclauses.length > 0">
+                                    Missing Clauses in Salesforce
+                                </th>
+                            </tr>
+                            <tr>
+                                <td ng-show="!isRecordTypeExist()" >
+                                    <button class="slds-button slds-button_success margin-right" ng-click="createRecordTypeInSF()">Create {{selectedccirecordtype}} Record Type</button><br/>
+                                    <i>Create record type with exact same name and then reload this page</i>
+                                </td>
+                                <td ng-show="selectedrecordtypeclauses.length > 0 && missingrecordtypeclauses.length > 0" >
+                                    <button class="slds-button slds-button_success margin-right" ng-click="createClausesInSF()">Create Clauses</button>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td ng-show="!isRecordTypeExist()">
+                                    {{selectedccirecordtype}}
+                                </td>
+                                <td ng-show="selectedrecordtypeclauses.length > 0 && missingrecordtypeclauses.length > 0">
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                                        <tbody>
+                                            <tr ng-repeat= " c in missingrecordtypeclauses track by $index">
+                                                <td>{{c}}</td>
+                                            </tr>
+                                        </tbody>
+                                        
+                                    </table>  
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                    
+                </div>
+                
+                <br/>
+                <div class="slds-row">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <div class="slds-form-element">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="slds-col">
+                            <div class="slds-col inline-flex">
+                                <div class="slds-form-element">
+                                    <button class="slds-button slds-button_neutral margin-right" ng-click="gotoConfig()">Previous</button>
+                                </div>
+                                <div class="slds-form-element">
+                                    <button class="slds-button slds-button_brand" ng-click="gotoSetup()">Next</button>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>            
+                </div>
+            </div>
+
+            <div class="container" ng-show="stage == 'setup'">
+                <!----><br/>
+                <div class="slds-row scroll" ng-if="!showResultTable">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                        <thead>
+                            <tr>
+                                <th colspan="2" style="text-align:center">{{selectedccirecordtype}} Mapping Preview</th>
+                            </tr>
+                            <tr>
+                                <th style="width:50%;text-align:center">
+                                    Field Mapping
+                                </th>
+                                <th style="width:50%;text-align:center">
+                                    Clause Mapping
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="width:50%;"> 
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                                        <tbody>
+                                            <tr ng-repeat= " c in selectedrecordtypefields track by $index">
+                                                <td>{{c.objectFieldLabel}}</td>
+                                                <td>{{c.name}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>  
+                                </td>
+                                <td style="width:50%;"> 
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                                        <tbody>
+                                            <tr ng-repeat= " c in selectedrecordtypeclauses track by $index">
+                                                <td>{{c.clauseLabel}}</td>
+                                                <td>{{c.name}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>  
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+                <div class="slds-row">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <div class="slds-form-element">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="slds-col inline-flex">
+                            <div class="slds-form-element">
+                                <button class="slds-button slds-button_neutral margin-right" ng-click="gotoMapping()">Previous</button>
+                            </div>
+                            <div class="slds-form-element">
+                                <button class="slds-button slds-button_brand" ng-click="registerProvider()">Start Setup</button>
+                            </div>
+                            
+                        </div>
+                    </div>            
+                </div>
+                <br/>
+                <p style="color:red;text-align:right">* enable pop-ups in your browser</p>
+                <br/>
+                <div class="slds-row" ng-if="showResultTable">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                        <thead>
+                            <tr class="slds-hint-parent">
+                                <th>Step</th>
+                                <th>Status</th>
+                                <th>Message</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="slds-hint-parent" ng-repeat="(key,value) in result">
+                                <td>{{key}}</td>
+                                <td>
+                                    <svg ng-show="value!= ''" class="slds-icon slds-icon_small" aria-hidden="true" id="headerIcon">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" style="fill:green" xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/action-sprite/svg/symbols.svg#check')}"></use>
+                                    </svg>
+                                </td>
+                                <td>
+                                    <b>{{value}}</b>
+                                </td>
+                            </tr>
+                        </tbody>
+        
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+</apex:page>

@@ -1,0 +1,18 @@
+<apex:page >
+    <apex:includeScript value="/soap/ajax/41.0/connection.js"/>
+    <apex:includeScript value="/soap/ajax/41.0/apex.js"/>
+    <script>
+        sforce.connection.sessionId = "{!$Api.Session_ID}";
+        var duplicateTemplatesQuery = sforce.connection.query("SELECT Id, Name, Apttus__Type__c, Apttus__IsActive__c FROM Apttus__APTS_Template__c WHERE Apttus__Type__c = 'Clause' AND Apttus__Category__c = 'Category' AND Apttus__Subcategory__c = 'SubCategory' AND Apttus__IsActive__c = True");
+        var duplicateTemplateList = duplicateTemplatesQuery.getArray("records");
+        console.log('duplicateTemplateList ',duplicateTemplateList);
+        if(duplicateTemplateList.length > 0){
+            for(var i = 0; i < duplicateTemplateList.length; i++){
+                duplicateTemplateList[i].Apttus__IsActive__c = false;
+            }
+            var updateResult = sforce.connection.update(duplicateTemplateList);
+        }
+        window.top.location = '/';
+        console.log('updateResult ',updateResult);
+    </script>
+</apex:page>

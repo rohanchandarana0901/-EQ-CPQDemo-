@@ -1,0 +1,116 @@
+<apex:page standardStylesheets="false" sidebar="false" showHeader="false">
+    <html ng-app="myApp" ng-clock="">
+        <head>
+            <title>XAE App</title>
+            <script type="text/javascript" src="/js/functions.js"></script>
+            <script src="/soap/ajax/26.0/connection.js"></script>
+            <script type="text/javascript" src="/xdomain/xdomain.js"></script>
+            <script type="text/javascript" src="/support/console/28.0/integration.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-route.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-animate.js"></script>
+            <!-- <script src="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.js"></script> -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.1/angular-material.js" integrity="sha512-ubrioXp1YyKCrLVzg68ZvLejBz5giN2J1XDmOV+JxN9bkkWbtooESyAtPW1j//3f97oBzCHEIy19eWgHPGXZRg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-aria.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-messages.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-resource.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+            <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/t-114/svg-assets-cache.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+            <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.css" rel="stylesheet"/>
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/angular-material-data-table/0.10.10/md-data-table.css" rel="stylesheet"/>
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>  
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+            <link rel="https://rawgit.com/alalonde/angular-scrollable-table/master/scrollable-table.css" />
+            <link href="http://fonts.googleapis.com/icon?family=Material+Icons"/>
+            <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" /> 
+            <script>
+            
+                var myApp = angular.module('myApp', ['ngMaterial', 'ngMessages', 'ngAnimate', 'ngRoute','material.svgAssetsCache']);
+                myApp.config(function ($mdThemingProvider) {
+                    $mdThemingProvider.theme('default')
+                        .primaryPalette('blue', {
+                         'default': '700', 
+                          'hue-1': '800', 
+                          'hue-2': '600', 
+                          'hue-3': '600' 
+                    })
+                    .accentPalette('orange', {
+                          'default': '400', 
+                          'hue-1': '100', 
+                          'hue-2': '600', 
+                          'hue-3': 'A100' 
+                    });
+                });
+                myApp.config(function($mdIconProvider) {
+                $mdIconProvider
+                    .iconSet('call', 'img/icons/sets/communication-icons.svg', 24);
+                });
+                myApp.filter('pagination', function(){
+                    return function(input, start){
+                        if (!input || !input.length) { return; }
+                        start = +start;
+                        return input.slice(start);
+                    }
+                });
+                var parentId;
+                var Id;
+                var configRequestId;
+                var flow;
+                var oppId;
+                myApp.controller('AppCtrl',['$scope','$location','$window',function($scope,$location,$window){
+                    $(document).ready(function(){
+                        sforce.connection.sessionId = '{!$Api.Session_ID}';
+                        parentId = "{!$CurrentPage.parameters.id}";
+                        oppId = "{!$CurrentPage.parameters.oppId}";
+                        var hostUrl = "emptystring";
+                        var appId = "985ec0cd-4d68-47a7-bfe4-5d1ea4e06512";
+                        var sessionId = '{!GETSESSIONID()}';
+                        var qResult = sforce.connection.query("SELECT Apttus__InstanceUrl__c FROM Apttus__ComplySystemProperties__c limit 1");
+                        records = qResult.getArray("records");
+                        for(var i=0; i< records.length; i++){
+                            var record = records[i];
+                            hostUrl = record.Apttus__InstanceUrl__c;
+                        }
+                        var urlVal = ('xauthorforexcel:export '+ appId + ' ' + parentId + ' ' + sessionId + ' ' + hostUrl );
+                        console.log('urlVal',urlVal);
+                        window.top.location.href = urlVal;
+                        //window.history.back();
+                    });
+                }]);
+                
+                function doBack(){
+                    if(oppId != null && oppId != '')
+                        window.top.location.href = '/'+ oppId;
+                    else
+                        window.top.location.href = '/'+ parentId;
+                }
+                
+            </script>
+            <style>
+                .marginTop70 {
+                    margin-top: 70px;
+                }
+            </style>
+        </head>
+        <body ng-controller="AppCtrl" layout="column">
+            <c:APTSMD_CommonHeader pageName1="Quote In Excel" objectName="" iconName="account" type="standard"/>
+            <div class="apttusContainer" style="height:100%;">            
+                
+                <div class="textAlignRight marginBottom10 marginTop70">
+                    <button type="button" class="apttusBtn" onclick="doBack();">Back</button> 
+                </div>
+                
+                <div class="apttusPanel textAlignCenter marginTop15 marginBottom150">
+                    <p class="textAlignCenter smallMsgText margin0">
+                         X-Author app will be launched. Please click on Back button once you are done with X-Author app.
+                    </p>
+                </div>
+                
+            </div>
+        </body>
+    </html>
+</apex:page>

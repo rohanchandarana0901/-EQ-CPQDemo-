@@ -1,0 +1,100 @@
+<apex:page contentType="application/json; charset=utf-8" language="{!$CurrentPage.parameters.language}">
+
+{
+  "ERROR": {
+    "MIN-OPTIONS": "{!$Label.eCom_MIN_OPTIONS}",
+    "CART": {
+      "TOO_MANY_ATTEMPTS": "{!$Label.ecom_TOO_MANY_ATTEMPTS}",
+      "PRICE_CHANGE": "{!$Label.eCom_PRICE_CHANGE}",
+      "PRICE_CHANGE_TOASTR_TITLE": "{!$Label.eCom_PRICE_CHANGE_TOASTR_TITLE}"
+    },
+    "APPLICATION_ERROR_TOASTR_TITLE": "{!$Label.eCom_APPLICATION_ERROR_TOASTR_TITLE}"
+  },
+  "SUCCESS": {
+    "CART": {
+      "ITEM_ADDED_TOASTR_MESSAGE": "{!$Label.eCom_ITEM_ADDED_TOASTR_MESSAGE}",
+      "ITEM_ADDED_TOASTR_TITLE": "{!$Label.eCom_ITEM_ADDED_TOASTR_TITLE}"
+    }
+  },
+  "ASSETS": {
+    "CHANGECONFIGURATION_SUCCESS": "{!$Label.eCom_Assets_ChangeConfigurationSuccess}",
+    "CHANGECONFIGURATION_START_DATE": "{!$Label.eCom_Assets_ChangeConfigurationStartDate}",
+    "CHANGECONFIGURATION_END_DATE": "{!$Label.eCom_Assets_ChangeConfigurationEndDate}"
+  },
+  "MY_ACCOUNT": {
+    "LAST_LOGIN_DATE": "{!$Label.eCom_LAST_LOGIN_DATE}"
+  },
+  "BUTTON": {
+    "Change Configuration": "{!$Label.eCom_Button_ChangeConfiguration}"
+  },
+  "PRODUCT_CARD": {
+    "INSTALLED_PRODUCT": "{!$Label.eCom_PRODUCT_CARD_INSTALLED_PRODUCT}",
+    "STANDARD_PRICE": "{!$Label.eCom_PRODUCT_CARD_STANDARD_PRICE}"
+  },
+  "PAGINATION": {
+    "FIRST": "{!$Label.eCom_PAGINATION_FIRST}"
+  },
+  "COMMON": {
+    "ORDERS": "{!$Label.eCom_COMMON_ORDERS}",
+    "USERNAME": "{!$Label.eCom_COMMON_USERNAME}",
+    "QUANTITY": "{!$Label.eCom_COMMON_QUANTITY}",
+    "CHANGE_CONFIGURATION": "{!$Label.eCom_Common_ChangeConfiguration}",
+    "ADD_TO_CART": "{!$Label.eCom_Add_to_Cart}"
+  },
+  "CONSTRAINT_POPOVER": {
+    "PRODUCTS_INCLUDED_EXCLUDED_HEADING": "{!$Label.eCom_PRODUCTS_INCLUDED_EXCLUDED_HEADING}"
+  },
+  "CART": {
+    "PAYMENT": {
+      "PAYMENT_TITLE": "{!$Label.eCom_CART_PAYMENT_TITLE}"
+    },
+    "CART_SUMMARY": {
+      "QUANTITY": "{!$Label.eCom_CART_SUMMARY_QUANTITY}"
+    },
+    "CHECKOUT": "{!$Label.eCom_CHECKOUT}",
+    "BILLING_AND_SHIPPING_INFORMATION": "{!$Label.eCom_BILLING_AND_SHIPPING_INFORMATION}"
+  },
+  "MANAGE_CART": {
+    "CART_SUMMARY": {
+      "CART_SUMMARY_TITLE": "{!$Label.eCom_Cart_Summary_Title}",
+      "SUB_TOTAL": "{!$Label.eCom_Sub_Total}"
+    },
+    "CART_TABLE": {
+      "ITEMS_IN_YOURCART": "{!$Label.eCom_ITEMS_IN_YOUR_CART}"
+    }
+  },
+  "FOOTER": {
+    "PRODUCTS": "{!$Label.eCom_FOOTER_PRODUCTS}"
+  },
+  "HEADER": {
+    "SUBMIT": "{!$Label.eCom_HEADER_SUBMIT}",
+    "ENTER_YOUR_SEARCH_TERM": "{!$Label.eCom_ENTER_YOUR_SEARCH_TERM}",
+    "LAST_LOGIN": "{!$Label.eCom_HEADER_LAST_LOGIN}",
+    "HOME": "{!$Label.eCom_HEADER_HOME}",
+    "LOG_OUT": "{!$Label.eCom_HEADER_LOG_OUT}",
+    "LOG_IN": "{!$Label.eCom_HEADER_LOG_IN}"
+  },
+  "PROMOTION": {
+    "PROMO_CODE": "{!$Label.eCom_PROMOTION_PROMO_CODE}",
+    "PROMOTION_APPLIED": "{!$Label.eCom_PROMOTION_APPLIED}",
+    "APPLIED_PROMOTION": "{!$Label.eCom_APPLIED_PROMOTION}"
+  },
+  "LOGIN": {
+    "USERNAME": "{!$Label.eCom_LOGIN_USERNAME}",
+    "SIGN_IN": "{!$Label.eCom_LOGIN_SIGN_IN}",
+    "INCORRECT_CREDENTIALS_TOASTR_MESSAGE": "{!$Label.eCom_INCORRECT_CREDENTIALS_TOASTR_MESSAGE}"
+  },
+  "PRODUCT_DETAILS": {
+    "PRODUCT_DETAIL": "{!$Label.eCom_PRODUCT_DETAIL}",
+    "PRODUCT_CODE": "{!$Label.eCom_PRODUCT_CODE}",
+    "STANDARD_PRICE": "{!$Label.eCom_PRODUCT_DETAILS_STANDARD_PRICE}",
+    "UPDATE_CONFIGURATION": "{!$Label.eCom_PRODUCT_DETAILS_UPDATE_CONFIGURATION}"
+  },
+  "INSTALLED_PRODUCTS": {
+    "PRODUCT_FAMILY": "{!$Label.eCom_INSTALLED_PRODUCTS_PRODUCT_FAMILY}"
+  },
+  "MINI_CART": {
+    "YOUR_CART_IS_EMPTY": "{!$Label.eCom_MINI_CART_YOUR_CART_IS_EMPTY}"
+  }
+}
+</apex:page>

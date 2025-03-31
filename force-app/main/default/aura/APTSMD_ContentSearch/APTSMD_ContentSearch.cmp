@@ -1,0 +1,72 @@
+<aura:component implements="flexipage:availableForAllPageTypes" controller="APTSMD_ContentSearch">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<aura:attribute name="searchText" type="string" description="search Text"/>
+    <aura:attribute name="lstRecordTypes" type="Object" />
+    <aura:attribute name="lstAccounts" type="Object" />
+<div style="padding: 0px 15px;border-radius: 5px;background:white;padding-bottom: 0px" class="mainDiv">
+<div class="slds-card__header slds-grid" style="margin-bottom:0.2rem;padding-top: 5px;padding-left:0rem;font-weight: bold;" data-aura-rendered-by="663:0">
+   <header class="header-title-container slds-has-flexi-truncate" data-aura-rendered-by="664:0">
+      <h2 data-aura-rendered-by="665:0"><span class="slds-text-heading_small" data-aura-rendered-by="666:0">Contract Search</span></h2>
+   </header>
+</div>
+    <!--<h3 style="font-weight:bold;font-size: 1.5em;">Contract Search</h3><br/>-->
+    <div class="c-container" style="margin-bottom: -8px;">
+        <lightning:layout pullToBoundary="medium">
+            
+            <lightning:layoutItem flexibility="auto" padding="horizontal-medium" size="7">
+                	<ui:inputSelect label="Account"  aura:id="selectAccount" class="accountClass" >
+                    	<ui:inputSelectOption text="" label="-- None --"/>
+                        <aura:iteration items="{!v.lstAccounts}" var="item">
+                            <ui:inputSelectOption text="{!item}"/>
+            			</aura:iteration>
+                </ui:inputSelect>
+                    <br/>
+                
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="auto" padding="horizontal-medium" size="5">
+                <ui:inputSelect label="Record Type"  aura:id="selectRecordType" class="recordType" >
+                    <ui:inputSelectOption text="" label="-- None --"/>
+                    	 <aura:iteration items="{!v.lstRecordTypes}" var="item">
+                            <ui:inputSelectOption text="{!item}"/>
+            			</aura:iteration>
+                </ui:inputSelect>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+    <!--
+    <div style="text-align: left;">
+        <div>
+        
+        
+    
+        </div>
+        </div>-->
+    
+    
+    <div class="c-containerSearch" >
+        <lightning:layout pullToBoundary="small">
+            <lightning:layoutItem flexibility="auto" padding="horizontal-small" size="11">
+
+                	<ui:inputText aura:id="searchText" class="searchText" keyup="{!c.searchContentEnter}" placeholder="Search Contracts" value="{!v.searchText}"/><br/><br/>
+
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="auto" padding="horizontal-small" size="1">
+
+                	<lightning:buttonIcon  size="x-large" iconName="utility:search"  onclick="{! c.searchContent }" variant="border-filled" alternativeText="Settings" class="searchIcon"/>
+
+            </lightning:layoutItem>
+           
+        </lightning:layout>
+    </div>
+    
+    
+    
+    <!--
+    <div style="text-align: right;">
+        <a target="_blank">
+            <ui:button aura:id="button" class="button" label="Search" press="{!c.searchContent}"/>
+        </a> 
+    </div>-->
+    <!--<a href="/apex/APTSMD_ContractSearch?search=owens" target="_Blank">GOGO</a> href="{!'/apex/APTSMD_ContractSearch?search='+v.searchText}"-->
+</div>     
+</aura:component>

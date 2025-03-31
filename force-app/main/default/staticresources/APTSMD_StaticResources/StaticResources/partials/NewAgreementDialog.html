@@ -1,0 +1,38 @@
+<md-dialog aria-label="Activate Agreement">
+  
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>New Agreement</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancelNewAgreement()">
+          <md-icon md-svg-src="{{envPath}}/img/icons/ic_close_black_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="height:190px;min-width:800px;">
+     <md-content class="md-padding">
+
+    <h5>Select Agreement Record type</h5>
+    <hr/>
+    <span style="padding-left:20%;">Record Type</span> <br/>
+    <select style="margin-left:20%;width:60%;" ng-options="key as value for (key , value) in recordTypeJSON" ng-model="recordTypeSelected" class="form-control" id="recordTypeSelectedId"></select>
+    
+    <br/>
+   <!--  <div style="float:right;margin-right:20%;">
+    <a href="#"  style="background: white;border:1px solid;border-color:#185A7D;text-decoration: none;color: #185A7D;padding: 7px;border-radius: 5px;font-size: 15px;font-weight: 100;">Cancel</a>
+    &nbsp;
+    <a href="/apex/agreementDtlsCreate?recordType={{recordTypeSelected}}"  style="background: #185A7D;text-decoration: none;color: white;padding: 7px;border-radius: 5px;font-size: 15px;font-weight: 100;">Continue</a>
+    </div>
+		 -->
+      </md-content>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+    <!--  <md-button ng-click="activateAgreement()" >
+        Activate
+      </md-button> -->
+      <md-button class="md-raised md-button-border-blue default-btn" ng-click="cancelNewAgreement();">Cancel</md-button>
+       <md-button class="md-raised md-button-border-blue default-btn" ng-click="newAgreementContinue();">Continue</md-button>
+    </md-dialog-actions>
+ 
+</md-dialog> 

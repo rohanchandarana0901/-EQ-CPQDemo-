@@ -1,0 +1,59 @@
+<aura:component implements="flexipage:availableForAllPageTypes" controller="APTSMD_ListViewIdGeneric">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="myAgreementsList" type="String"/>
+    <aura:attribute name="clausesList" type="String"/>
+    <aura:attribute name="agreementTemplateList" type="String"/>
+    <aura:attribute name="presalesSetting" type="Map" default="{}" />
+    
+<div style="background-color:white;border-radius: 5px;padding: 10px !important;" class="mainDiv" >
+<p  style="width:100%;text-align:center">
+    
+	<div class="slds-grid slds-wrap" style="padding-top: 16px;padding-bottom: 15px;">
+        <div class="slds-col slds-size_2-of-12">
+            <a aura:id="NDA Wizard" class="HideLine" onclick="{!c.gotoMyAgreements}">
+                <lightning:icon iconName="standard:record" class="iconstyle" size="large" alternativeText="NDA Wizard"/>
+                <br/>
+                <span class="osOutputLabel">My<br/>Agreements</span>
+            </a>
+        </div>
+        <div class="slds-col slds-size_2-of-12">
+            <a aura:id="NDA Wizard" class="HideLine" onclick="{!c.createACW}">
+                <lightning:icon iconName="standard:record_create" class="iconstyle" size="large" alternativeText="New Agreement"/>
+                <br/>
+                <span class="osOutputLabel">New<br/>Agreement</span>
+            </a>
+        </div>
+        <div class="slds-col slds-size_2-of-12">
+            <a aura:id="NDA Wizard" class="HideLine" onclick="{!c.createNDA}">
+                <lightning:icon iconName="standard:contract" class="iconstyle" size="large" alternativeText="NDA Wizard"/>
+                <br/>
+                <span class="osOutputLabel">NDA<br/>Wizard</span>
+            </a>
+        </div>
+        <div class="slds-col slds-size_2-of-12">
+            <a aura:id="NDA Wizard" class="HideLine" onclick="{!c.gotoClauses}">
+                <lightning:icon iconName="doctype:box_notes" class="iconstyle" size="large" alternativeText="MSA Wizard"/>
+                <br/>
+                <span class="osOutputLabel">Clauses</span>
+            </a>
+        </div>
+        <div class="slds-col slds-size_2-of-12">
+            <a aura:id="NDA Wizard" class="HideLine" onclick="{!c.goToOfflineImport}">
+                <lightning:icon iconName="standard:logging" class="iconstyle" size="large" alternativeText="NDA Wizard"/>
+                <br/>
+                <span class="osOutputLabel">Store<br/>Executed</span>
+            </a>
+        </div>
+        <div class="slds-col slds-size_2-of-12">
+            <a aura:id="Contract Portal" class="HideLine" onclick="{!c.openPortal}">
+                <lightning:icon iconName="standard:customer_portal_users" class="iconstyle" size="large" alternativeText="NDA Wizard"/>
+                <br/>
+                <span class="osOutputLabel">Templates</span>
+            </a>
+        </div>
+        
+        
+    </div>
+</p>
+</div>
+</aura:component>

@@ -1,0 +1,20 @@
+<apex:page showHeader="false" sidebar="false" controller="APTSMD_AgreementSubmitController" action="{!generateDocNext}">
+    <html>
+    <head>
+        <style>
+     .centered {
+         margin-top : 20%;
+        display: flex;
+        justify-content: center;
+    }
+  </style>
+        
+    </head>
+    <body>
+        <div ng-controller="myCtrl" class="centered">  
+            <img id="mySpinner" src="{!$Resource.APTSMD_spinner}" width="70vw" height="70w"/>
+        </div>
+       
+    </body>
+</html>
+</apex:page>

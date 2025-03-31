@@ -1,0 +1,102 @@
+<apex:page docType="html-5.0" standardController="Account" extensions="APTSMD_GenerateInvoiceController" lightningStylesheets="true">
+    
+    
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/jquery.js')}"/> 
+   
+    <script>
+        
+        function cancelClick(){
+            $("#loaderid").addClass( "loaderstatus" );
+            $("#loaderid").removeClass( "noloader" );
+        }
+        
+        function onDatesChange(){
+            $("#fill_dates").addClass('disp-none');
+        }
+        
+         function validateDate(){
+             invoicedate = document.getElementsByClassName("invoice_date_class")[0].value;
+             invoiceThroughDate = document.getElementsByClassName("invoice_through_date_class")[0].value;
+             
+             if(!invoicedate || !invoiceThroughDate){
+                $("#fill_dates").removeClass('disp-none');
+                 return false;
+             }
+             else{
+                
+                    $("#loaderid").addClass( "loaderstatus" );
+             
+                    $("#loaderid").removeClass( "noloader" );
+             }
+             return true;
+         }
+    </script>
+    <head>
+        <style type="text/css">
+            .fill-dates-warning{
+                background-color: #FEEFB3;
+                height: 27px;
+                padding: 4px;
+                margin-bottom: 12px;
+                font-weight: bold;
+                color: #9F6000;
+            }
+            .disp-none{
+                display:none !important;
+            }
+            .noloader{
+                display:none;
+            }
+            .loader_image{
+                position:absolute;
+                top:45%;
+                left:45%;
+            }
+            .loaderstatus {
+                display:block;
+                background-color:white;
+                opacity: 0.75;
+                position:fixed;
+                top: 0;
+                left: 0;
+                bottom:0;
+                right:0;
+                heigh:100%;
+                width:100%;
+                z-index:1000;
+            }
+        </style>
+    </head>
+    
+    <div id="loaderid" class="noloader">
+               <img class="loader_image" src="{!$Resource.APTSMD_Loading}" style="width:100px;height:100px" />
+    </div>
+            
+    <apex:sectionHeader title="Generate Invoice"/>
+        <apex:pageMessages id="error_message"></apex:pageMessages>
+        <div id="fill_dates" class="disp-none fill-dates-warning">
+            <p>Please fill Invoice Date and Invoice Through date to proceed.</p>
+        </div>
+        
+        <apex:form id="invoice_form">
+            <apex:pageBlock id="invoice_block">
+                <apex:pageblocksection columns="1" id="invoice_section">
+                    <apex:pageBlockSectionItem id="invoice_item_1">
+                        <apex:outputLabel value="Invoice Date:" for="invoice_date"/>
+                        <apex:inputField value="{!invoiceAccount.Apttus_Billing__ReadyForInvoiceDate__c}" onchange="onDateChange(); onDatesChange();" styleClass="invoice_date_class"/>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="invoice_item_2">
+                        <apex:outputLabel value="Invoice Through Date:" for="invoice_through_date"/>
+                        <apex:inputField value="{!invoiceAccount.Apttus_Billing__LastInvoicedDate__c}" onchange="onDateChange(); onDatesChange();" styleClass="invoice_through_date_class"/>
+                    </apex:pageBlockSectionItem>
+                </apex:pageblocksection>
+                <apex:pageBlockButtons location="top">   
+                
+                    <apex:commandButton id="generat_invoice" value="Generate" action="{!createInvoice}" status="loader"  styleClass="generate-invoice-btn" onclick="return validateDate()"/>
+                    <apex:commandButton id="cancel_invoice" value="Cancel" action="{!cancel}" status="loader" onclick="cancelClick()"/>
+                
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+        </apex:form>
+</apex:page>

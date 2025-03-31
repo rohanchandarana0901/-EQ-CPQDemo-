@@ -1,0 +1,151 @@
+<aura:component  implements="flexipage:availableForAllPageTypes" controller="APTSMD_SE_LINK_Controller">
+	<aura:dependency resource="markup://lightning:empApi"/>
+    <!-- Attribute customProperties  -->
+    <aura:attribute name="customProperties" type="Object" />
+	<!-- Call init method to get presales config setting and comply system properties -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div style="border-radius:5px;padding: 10px; background-color:white;" class="mainDiv">
+        <h2 style="font-weight:normal;font-size: 1.3em;cursor:pointer" onclick="{!c.toggle}">
+            <lightning:icon style="margin-right:5px" aura:id="firstButton" iconName="utility:chevronright"
+                size="x-small" alternativeText="Expand" />
+            <span style="vertical-align: middle;">SE Links</span>
+        </h2>
+        <br></br>
+        <ul id="link-list" style="list-style-type:disc;padding-left: 30px;display:none">
+            <li style="margin-bottom: 5px;">
+                <a aura:id="proposalQuote" onclick="{!c.clearaccount}">
+                    <span class="osOutputLabel">Clear Account With Keyword</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a aura:id="proposalQuote" onclick="{!c.mdoreset}">
+                    <span class="osOutputLabel">Clear Data</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+				<a href="https://apttustest-my.sharepoint.com/:f:/g/personal/dbrahmbhatt_conga_com/EssSkccXoyJMrSIInqB9ZecBGWfJXQ5CHBsBtLJSje7lOA?e=q5lGJB"
+                    target="_BLANK">
+                    <span class="osOutputLabel">CCI Setup and Documents</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+				<a onclick="{!c.createProvision}">
+                    <span class="osOutputLabel">Auto Create CCI Provision Mapping</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+				<a aura:id="congaLabAPIApps" onclick="{!c.congalabapiapps}" 
+                    target="_BLANK">
+                    <span class="osOutputLabel">Conga Lab API Apps (Beta)</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+				<a aura:id="congaLabAPIApps" onclick="{!c.congalabapiappslearn}" 
+                    target="_BLANK">
+                    <span class="osOutputLabel">Conga Lab API Learning</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a href="https://apttustest-my.sharepoint.com/:w:/g/personal/dbrahmbhatt_conga_com/Efsp3cDCdUlAiUPdPX_wPGIBBZUpZD9upiUpLj39-Dgb_g?e=ejtfr3"
+                    target="_BLANK">
+                    <span class="osOutputLabel">DocuSign OAuth Setup</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <ui:outputURL aura:id="oURL5" label="Custom Setting Search" target="_Blank"
+                    value="/apex/APTSMD_CustomSettingFieldList" />
+            </li>
+            <li style="margin-bottom: 5px;">
+                <ui:outputURL aura:id="oURL5" label="Custom Setting Comparator" target="_Blank"
+                    value="/apex/APTSMD_CustomSettingComparator" />
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a aura:id="proposalQuote" onclick="{!c.massdeleteactivity}">
+                    <span class="osOutputLabel">Mass Delete Activity</span>
+                </a>
+            </li>
+
+            <!--<li style="margin-bottom: 5px;">
+         
+                            <a aura:id="proposalQuote" onclick="{!c.MDOReleaseNotes}">
+
+                                <span class="osOutputLabel">Release Notes</span>
+                            </a>
+       </li>-->
+            <li style="margin-bottom: 5px;">
+
+                <!--<a aura:id="proposalQuote" onclick="{!c.MDODemoScripts}">-->
+                <a href="https://apttustest-my.sharepoint.com/:f:/g/personal/dbrahmbhatt_conga_com/Er_2RwCNP7BAuVnuwPTFyqwBdq1PzrqgSIzTFgT6okBFjw?e=oIlKxM"
+                    target="_BLANK">
+                    <span class="osOutputLabel">Tier1 Demo Scripts</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a href="https://apttustest-my.sharepoint.com/:x:/g/personal/dbrahmbhatt_conga_com/EdEPJa4vOxpNgEg8dH0Zs94B-tcTdXOU1WieEJ2R9Jfw6g?e=j57NkV"
+                    target="_BLANK">
+                    <span class="osOutputLabel">MDO Custom Vs OOB Features</span>
+                </a>
+            </li>
+            <!-- <li style="margin-bottom: 5px;">
+                <a href="https://apttustest-my.sharepoint.com/:f:/g/personal/dbrahmbhatt_conga_com/EvMQEEBk0DdMqcFeePTfYWcBCKjsj6a1v4-hz9IjWIIrzg?e=zXmox6"
+                    target="_BLANK">
+                    <span class="osOutputLabel">Intelligent Import Sample Documents</span>
+                </a>
+            </li> -->
+            <li style="margin-bottom: 5px;">
+                <a href="https://apttustest-my.sharepoint.com/:w:/g/personal/dbrahmbhatt_conga_com/EUQOe4qWznVBn8E9ULV-WcMBWVoupQnRkoFfCmrtI1fmWg?e=DY66vN"
+                    target="_BLANK">
+                    <span class="osOutputLabel">Risk Scoring Sample Document</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+
+                <a aura:id="proposalQuote" onclick="{!c.updateDateField}">
+
+                    <span class="osOutputLabel">Update Report Data With Latest Dates</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a aura:id="deleteDupClauses" onclick="{!c.deleteDuplicateClauses}">
+                    <span class="osOutputLabel">Delete Duplicate Clauses</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a href="https://apttustest-my.sharepoint.com/:f:/g/personal/dbrahmbhatt_conga_com/EvHG2ef_XSRGlx4HdTLZFSEBjionGxRp73-OCuU6iE3T_A?e=tEGnhv"
+                    target="_BLANK">
+                    <span class="osOutputLabel">New SE Toolkit</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a href="https://apttustest-my.sharepoint.com/:w:/g/personal/dbrahmbhatt_conga_com/EUabbI4zLEJIkdHTgebL7QUBVQysmV9zzoi61eQbgZKjJw?e=GcuhAB"
+                    target="_BLANK">
+                    <span class="osOutputLabel">Steps to Enroll for Push Upgrade</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a aura:id="proposalQuote" onclick="{!c.setupadobesign}">
+                    <span class="osOutputLabel">Setup Adobe Sign</span>
+                </a>
+            </li>
+            <li style="margin-bottom: 5px;">
+                <a aura:id="MFA" onclick="{!c.openMFA}">
+                    <span class="osOutputLabel">MFA Demo User Creation</span>
+                </a>
+            </li>
+            <li>
+                <aura:if isTrue="{! NOT(v.customProperties.complySystemProperties.Apttus__EnableGoogleDrive__c)}">
+                	<a aura:id="toggleGoogleDoc" onclick="{!c.toggleGoogleDocAction}">
+                        <span class="osOutputLabel">Switch Settings to Conga for Google Docs</span>
+                    </a>
+                </aura:if>
+                <aura:if isTrue="{! v.customProperties.complySystemProperties.Apttus__EnableGoogleDrive__c}">
+                	<a aura:id="toggleGoogleDoc" onclick="{!c.toggleGoogleDocAction}">
+                        <span class="osOutputLabel">Switch Settings to Conga CLM</span>
+                    </a>
+                </aura:if>
+            </li>
+        </ul>
+    </div>
+
+</aura:component>

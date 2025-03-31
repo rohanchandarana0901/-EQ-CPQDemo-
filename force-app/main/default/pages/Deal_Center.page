@@ -1,0 +1,72 @@
+<apex:page sidebar="false" showHeader="true" docType="html-4.01-strict">
+<div id="tabstrip" style="display:none;"> <ul> 
+<li class="k-state-active">Pipeline (FY)</li>
+<li>Opportunities (My)</li>
+<li>Proposals (My)</li>
+<li>Proposals (Open)</li>
+<li>Open Tasks</li>
+<li>Sign Transactions (My)</li>
+</ul>
+
+
+<!-- Opportunities -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="Opportunity" DelayLoad="true"  ViewID="a9fHs000000grfa" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+<!-- Opportunities -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="Opportunity" DelayLoad="false"  ViewID="a9fHs000000grfb" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+<!-- Proposals (My) -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="Apttus_Proposal__Proposal__c" DelayLoad="true"  ViewID="a9fHs000000grg9" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+<!-- Proposals (open) -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="Apttus_Proposal__Proposal__c" DelayLoad="true"  ViewID="a9fHs000000grg8" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+<!-- Open Tasks -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="Task" DelayLoad="true"  ViewID="" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+ 
+ 
+<!-- Sign Transactions (My) -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="APXT_CongaSign__Transaction__c" DelayLoad="true"  ViewID="a9fHs000000grg7" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+</div>
+<script>
+$(document).ready(function() {
+    $("#tabstrip").kendoTabStrip({
+      activate: function(e){
+        setTimeout(function(){          $(window).resize();        });
+      }
+    });
+    $("#tabstrip").css("display", "block");
+});
+ </script>
+</apex:page>

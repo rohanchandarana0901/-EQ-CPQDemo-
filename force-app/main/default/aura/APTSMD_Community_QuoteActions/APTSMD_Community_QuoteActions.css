@@ -1,0 +1,56 @@
+.THIS {
+    white-space: nowrap;
+}
+.THIS .osOutputLabel {
+    font-size: .75rem;
+    color: #54698D;
+}
+.THIS .dataCol {
+    color: #16325C;
+}
+.THIS .forcePageBlockItemView .dataCol {
+    font-weight: normal;
+}
+.THIS .spacer {
+    margin: 0 .4rem;
+}
+.THIS .forcePageBlockItem .forcePageBlockItemView{
+	margin-top: 0;    
+	margin-bottom: 0;    
+}
+.THIS .forcePageBlockItemView.full {    
+    border-bottom: 0;
+}
+
+.THIS .forcePageBlockItemView.full:last-child {
+    border-left: 0px;
+}
+.THIS .forcePageBlockItemView.full {
+    padding: 1px 10px 6px 10px;
+    margin-top: 10px 5px 2px 5px;
+}
+.THIS .h3 {
+    color: #16325C;
+    font-weight: bold; 
+}
+.THIS #apttuslogo {
+    padding-left: 10px;
+    padding-right: 4px;
+    margin-bottom: -6px;
+    height: 22px;
+}
+.THIS .actionCol {
+    display: inline-block;
+}
+
+.THIS .disabledButtons {
+    opacity:0.3;
+}
+.THIS .disabledButtons a{
+    text-decoration:none!important;
+    cursor: default;
+}
+.THIS .eSignIcon{
+    width: 36px;
+    margin-top: -0.3rem;
+}

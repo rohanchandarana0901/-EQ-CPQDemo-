@@ -1,0 +1,18 @@
+<apex:page standardController="Opportunity" showheader="True" extensions="APTSMD_CommunityCreateQuote" action="{!createQuoteAndRedirect}">
+    <script>console.log('in remoting');</script>
+    <!--<script>-->
+    <!--console.log('in remoting');-->
+    <!--    Visualforce.remoting.Manager.invokeAction(-->
+    <!--    '{!$RemoteAction.APTSMD_CommunityCreateQuote.createQuoteAndReqirect}',-->
+    <!--   "{!$CurrentPage.parameters.Id}",-->
+    <!--    function(result){-->
+    <!--        console.log(result);-->
+    <!--        if(result != null){-->
+                
+    <!--            window.top.location.href = result;-->
+    <!--        }-->
+       
+    <!--    });-->
+    
+    <!--</script>-->
+</apex:page>

@@ -1,0 +1,69 @@
+<apex:page sidebar="false" showHeader="true" docType="html-4.01-strict">
+<div id="tabstrip" style="display:none;"> <ul> 
+<li class="k-state-active">Agreements (My)</li>
+<li>Agreements (Pending)</li>
+<li>Agreements (Sent for Legal Review)</li>
+<li>Agreement Clauses</li>
+<li>Obligations (My)</li>
+<li>Sign Transactions (My)</li>
+</ul>
+<!-- Agreements (My) -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="Apttus__APTS_Agreement__c" DelayLoad="false"  ViewID="a9fHs000000grfc" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+<!-- Agreements (Pending) -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="Apttus__APTS_Agreement__c" DelayLoad="true"  ViewID="a9fHs000000grg0" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+    
+    <!-- Agreements (Sent for Legal Review) -->
+    <div style="overflow:hidden;">
+      <CRMC_PP:Grid ObjectName="Apttus__APTS_Agreement__c" DelayLoad="true" ViewID="a9fHs000000grfo" EnableNewButton="true" EnableNewInline="true"
+        EnableEdit="true" EnableActions="true" EnableFieldChooser="true" EnableStickyViews="true" EnableToolbar="true" EnableViews="true"
+        EnableFormatting="true" EnableReadingPane="true" />
+      <CRMC_PP:DrillUp />
+    </div>
+    
+    <!-- Agreement Clauses -->
+	<div style="overflow:hidden;"> 
+		<CRMC_PP:Grid ObjectName="Apttus__Agreement_Clause__c" DelayLoad="true"  ViewID="a9fHs000000grfp" 
+ 			EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ 			EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ 		<CRMC_PP:DrillUp /> 
+ 	</div>
+
+<!-- Obligations (My) -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="Apttus__Obligation__c" DelayLoad="true"  ViewID="a9fHs000000grfz" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+<!-- Sign Transactions (My) -->
+<div style="overflow:hidden;"> 
+<CRMC_PP:Grid ObjectName="APXT_CongaSign__Transaction__c" DelayLoad="true"  ViewID="a9fHs000000grg6" 
+ EnableNewButton="true"  EnableNewInline="true"  EnableEdit="true"  EnableActions="true"  EnableFieldChooser="true" 
+ EnableStickyViews="true"  EnableToolbar="true"  EnableViews="true"  EnableFormatting="true"  EnableReadingPane="true" />
+ <CRMC_PP:DrillUp /> 
+ </div>
+
+</div>
+<script>
+$(document).ready(function() {
+    $("#tabstrip").kendoTabStrip({
+      activate: function(e){
+        setTimeout(function(){          $(window).resize();        });
+      }
+    });
+    $("#tabstrip").css("display", "block");
+});
+ </script>
+</apex:page>

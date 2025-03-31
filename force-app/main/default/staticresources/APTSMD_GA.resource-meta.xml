@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Public</cacheControl>
+    <contentType>text/javascript</contentType>
+    <description>This js file contains few line of google&apos;s provided code to call function from &apos;APTSMD_gTag&apos; static resources</description>
+</StaticResource>

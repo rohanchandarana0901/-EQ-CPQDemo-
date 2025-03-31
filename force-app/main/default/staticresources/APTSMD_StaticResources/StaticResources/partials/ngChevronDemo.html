@@ -1,0 +1,38 @@
+<html lang="en">
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+<script>
+	
+	(function(angular) {
+  		'use strict';
+		angular.module('heroApp', []).controller('mainCtrl', function() {
+  		this.chevronconfig = {
+    	  heading: 'Spawn',
+          activeColor : 'blue',
+          inactiveColor :'green',
+          itemValue : 'XYZ',
+          KeyValues : ['ABC','XYZ','PQR']
+
+  			}; 
+		
+      
+		});
+	})(window.angular);
+
+</script>
+
+<script src="ngChevron.js"></script>
+  
+
+  
+</head>
+<body ng-app="heroApp">
+  <!-- components match only elements -->
+  Hello
+<div ng-controller="mainCtrl as ctrl">
+  <ng-chevron chevronconfig="ctrl.chevronconfig"></ng-chevron>
+  
+  <!-- activeColor="blue" inactiveColor="red" itemValue="XYZ" KeyValues="{{['ABC','XYZ','PQR']}}" -->
+</div>
+</body>
+</html>

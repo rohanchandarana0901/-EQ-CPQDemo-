@@ -1,0 +1,32 @@
+<!-----------------------------------------------------------------
+@Name: APTS_Max
+@Author: Apttus
+@CreateDate:14/03/2018
+@purpose: This page is use to load MAX chat wondow and send user
+          details to MAX while loading page.
+------------------------------------------------------------------>
+
+<apex:page controller="APTSMD_getUserDetails" lightningStylesheets="true" >
+   
+    <apex:form id="result">
+        
+        <apex:outputPanel rendered="{!flag}">
+            <iframe width="100%" height="430" src='{!$Label.APTSMD_MAX}&username={!$User.UserName}&userid={!$User.Id}' allow="microphone *" id="theFrame"/>
+            <script>document.getElementById('theFrame').height = window.innerHeight;</script>
+        </apex:outputPanel>
+       <apex:outputPanel rendered="{!!flag}">
+           <apex:pageBlock >
+               <apex:pageBlockSection columns="1">
+                   <center>
+                    <h3>
+                        Something is not set up correctly. <br/><br/>Please contact your Salesforce Administrator
+                    </h3>
+                   </center>
+                   </apex:pageBlockSection>
+               </apex:pageBlock>
+        </apex:outputPanel>
+         <apex:actionPoller action="{!APTS_Poller}" interval="300"/>
+    </apex:form>
+        
+    
+ </apex:page>

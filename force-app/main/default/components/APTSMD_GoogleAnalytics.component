@@ -1,0 +1,9 @@
+<apex:component controller="APTSMD_GoogleAnalytics">
+
+    <!-- Include Google Tags Script -->
+    <apex:outputText rendered="{!IF(isEnableGA == true,true,false)}">
+        <script async="true" src="https://www.googletagmanager.com/gtag/js?id=UA-131485697-1"></script>
+        <apex:includeScript value="{!$Resource.APTSMD_GA}"/>
+    </apex:outputText>
+
+</apex:component>

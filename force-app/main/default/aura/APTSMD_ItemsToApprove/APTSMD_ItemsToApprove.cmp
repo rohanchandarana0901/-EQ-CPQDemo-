@@ -1,0 +1,98 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,forceCommunity:availableForAllPageTypes" controller="APTSMD_ItemsToApproveController">
+<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+<aura:attribute name="approvals" type="Apttus_Approval__Approval_Request__c"/>	
+<div class="slds" style="margin-top: 0.75rem; padding: 5px; padding-bottom: 10px; border-radius: 5px;background-color:white">
+<div class="slds-card__header slds-grid" style="padding-top: 5px;font-weight: bold;" data-aura-rendered-by="663:0">
+   <header class="header-title-container slds-has-flexi-truncate" data-aura-rendered-by="664:0">
+      <h2 data-aura-rendered-by="665:0"><span class="slds-text-heading_small" data-aura-rendered-by="666:0">Items To Approve</span></h2>
+   </header>
+</div>
+    
+<div class="slds-accordion">
+    <ul class="slds-accordion" >
+		<aura:iteration items="{!v.approvals}" var="item">
+            <li class="slds-accordion__list-item" style="border:0;">
+         <section class="slds-accordion__section" title="{!item.Id}" style="border:0;padding: 0rem 1rem 0rem 1rem;">
+            <div class="slds-accordion__summary" style="margin-bottom:0px;border-bottom: 1px solid rgb(221, 219, 218);padding-top: 1.25rem;padding-bottom: .40rem;">
+               <h3 class="slds-accordion__summary-heading" style="width:70%;">
+                  <button onclick="{!c.hideShowSection}" data-value="{!item.Id}" style="    text-decoration: none;" aria-controls="accordion-details-01" class="slds-button slds-button_reset slds-accordion__summary-action">
+                      
+                      <lightning:icon aura:id="ic11" class="" title="{!item.Id}" iconName="utility:chevronright" size="xx-small" alternativeText="Indicates approval"/>
+                      <lightning:icon aura:id="ic22" class="displaynone" title="{!item.Id}" iconName="utility:chevrondown" size="xx-small" alternativeText="Indicates approval"/>
+                      
+                      <span class="slds-truncate" style="padding-left: 8px;" >
+                          <aura:if isTrue="{!or(item.Apttus_Approval__Object_Type__c == 'Apttus__APTS_Agreement__c',item.Apttus_Approval__Object_Type__c == 'Apttus_Proposal__Proposal__c')}">
+                          	<lightning:icon iconName="custom:custom18" size="small" alternativeText="Object Icon"/>&nbsp;
+                          </aura:if>
+                          <aura:if isTrue="{!or(item.Apttus_Approval__Object_Type__c == 'Apttus__Agreement_Clause__c',item.Apttus_Approval__Object_Type__c == 'Apttus_Config2__ProductConfiguration__c')}">
+                          	<lightning:icon iconName="custom:custom55" size="small" alternativeText="Object Icon"/>&nbsp;
+                          </aura:if>
+                          <aura:if isTrue="{!or(item.Apttus_Approval__Object_Type__c == 'Apttus__Agreement_Term_Exception__c',item.Apttus_Approval__Object_Type__c == 'Apttus_Config2__LineItem__c')}">
+                          	<lightning:icon iconName="standard:display_text" size="small" alternativeText="Object Icon"/>&nbsp;
+                          </aura:if>
+                          <a onclick="{!c.openRecord}" style="text-decoration:none" data-value="{!item.Apttus_Approval__Object_Id__c}" role="menuitem" tabindex="-1">
+                              <span class="slds-truncate uiOutputTextArea" style="font-size: 14px !important;max-width: 70%;    white-space: nowrap;">{!item.Apttus_Approval__Object_Name__c}</span>                              
+                          </a>                          
+                      </span>                      
+                  </button>
+                   
+               </h3>
+               <div class="slds-dropdown-trigger slds-dropdown-trigger_click">
+                  <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" aria-haspopup="true" title="Show More">
+                     <lightning:icon iconName="utility:down" size="x-small" alternativeText="Indicates approval"/>                      
+                     <span class="slds-assistive-text">Show More</span>
+                  </button>
+                  <div class="slds-dropdown slds-dropdown_actions slds-dropdown_right" style="display: block;">
+                     <ul class="slds-dropdown__list" role="menu">
+                        <li class="slds-dropdown__item" role="presentation">
+                           <a onclick="{!c.openActionPage}" data-value="{!item.Id}" data-action="reassign" role="menuitem" tabindex="0">
+                           		<span class="slds-truncate" title="Reassign">Reassign</span>
+                           </a>
+                        </li>
+                        <li class="slds-dropdown__item" role="presentation">
+                           <a onclick="{!c.openActionPage}" data-value="{!item.Id}" data-action="approveReject" role="menuitem" tabindex="-1">
+                           <span class="slds-truncate" title="Approve/Reject">Approve/Reject</span>
+                           </a>
+                        </li>
+                        <li class="slds-dropdown__item" role="presentation">
+                           <a onclick="{!c.openActionPage}" data-value="{!item.Id}" data-action="addComment" role="menuitem" tabindex="-1">
+                           <span class="slds-truncate" title="Add Comment">Add Comment</span>
+                           </a>
+                        </li>
+                     </ul>
+                  </div>
+               </div>
+            </div>
+            <div aria-hidden="true" class="slds-accordion__content" id="accordion-details-01">
+                <table style="margin-left: 20px;margin-bottom: 7px;font-size: .7525rem;">
+                	<tr>
+                        <td style="width: 28%;vertical-align: top;">Assigned Date</td>
+                        <td style="padding-right: 20px;"><lightning:formattedDateTime value="{!item.Apttus_Approval__DateAssigned__c}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                 minute="2-digit" hour12="true"/></td>
+					</tr>
+                    <tr>
+                    	<td style="width: 28%;vertical-align: top;">Approval Detail</td>
+                        <td style="padding-right: 20px;">{!item.Apttus_Approval__Request_Comments__c}</td>
+                    </tr>
+                    <tr>
+                    	<td style="width: 28%;vertical-align: top;">Comments</td>
+                        <td style="padding-right: 20px;">{!item.Apttus_Approval__SubmissionComment1__c}</td>
+                    </tr>
+                </table>
+                
+            </div>
+         </section>
+      </li>
+        </aura:iteration>
+    </ul>
+    <!--<div style="border-bottom: 1px solid rgb(221, 219, 218);margin: 0rem 1rem 0rem 1rem;">
+    </div>-->
+    <aura:if isTrue="{!empty(v.approvals)}">
+        <div style="padding-top:0.5rem;">
+        <span style="margin: 0rem 1rem 0rem 1rem;">No Request is pending for your Approval</span>
+            </div>
+    </aura:if>
+</div>
+    
+</div>
+</aura:component>

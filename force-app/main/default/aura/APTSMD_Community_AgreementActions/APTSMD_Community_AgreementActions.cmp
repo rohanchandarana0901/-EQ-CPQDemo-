@@ -1,0 +1,429 @@
+<!-- 
+    Apttus Contract Management
+    Agreement Actions Lightning Component
+     
+    @2015-2016 Apttus Inc. All rights reserved.
+
+ -->
+
+
+<aura:component controller="APTSMD_AgreementStatusController" implements="flexipage:availableForAllPageTypes,force:hasRecordId,forceCommunity:availableForAllPageTypes">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="recordId" type="Id" description="The Id of the record"/>
+    <aura:attribute name="showApprovals" type="Boolean"/>
+    <aura:attribute name="newAgreement" type="Boolean" default="true"/>
+    <aura:attribute name="grandTotal" type="Double"/>
+    <aura:attribute name="agreement" type="Apttus__APTS_Agreement__c"/>
+    
+    
+    <ltng:require styles="/resource/slds080/assets/styles/salesforce-lightning-design-system-vf.css" />
+    <div style="border: 1px solid lightgray; padding: 5px; margin-bottom: 10px; border-radius: 5px;background-color:white">
+        <div style="margin-bottom: 7px; color: gray; font-weight: 700; font-size: 16px;">
+            <span>
+                <!--<img src="{!$Resource.APTSMD_ApttusLogo}" id="apttuslogo" alt="Primary Agreement" border="0"/>-->
+				Agreement Actions
+            </span>
+        </div>
+        <div class="full forcePageBlockSectionRow">
+            <!--<p class="full forcePageBlockItem forcePageBlockItemView"><div class="labelCol"><span class="osOutputLabel">Quote Status</span></div><div class="dataCol"><ui:outputText aura:id="quoteStatus" value="{!v.primaryProposal.Apttus_Proposal__Approval_Stage__c}"/></div></p><p class="full forcePageBlockItem forcePageBlockItemView"><div class="labelCol"><span class="osOutputLabel">Total ACV</span></div><div class="dataCol"><ui:outputCurrency aura:id="grandTotal" value="{!v.primaryProposal.Apttus_Proposal__Grand_Total__c}"/></div></p>-->
+            <p class="full forcePageBlockItem forcePageBlockItemView" style="width:100%;text-align:center">
+                <div class="slds">
+                    
+                    
+                    
+                    <br/>
+                       
+                        <div class="slds-grid slds-grid--align-spread">
+                            <aura:if isTrue="{!v.agreement.Apttus__Status_Category__c=='Request'}">
+                            	<div class="slds-col slds-size--3-of-12">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.agreementPreview}">
+                                    <lightning:icon iconName="standard:stage" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Preview</span>
+                            </div> 
+							</aura:if>
+                            
+                            <aura:if isTrue="{!v.agreement.Apttus__Status_Category__c!='Request'}">
+                            	<div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.agreementPreview}">
+                                    <lightning:icon iconName="standard:stage" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Preview</span>
+                            </div> 
+							</aura:if>
+                            <aura:if isTrue="{!v.agreement.Apttus__Status_Category__c=='Request'}">
+                                <div class="slds-col  slds-size--3-of-12 ">
+                                    <a aura:id="Generate" onclick="{!c.generateAgreement}">
+                                        <lightning:icon iconName="standard:contract" size="medium" alternativeText="Generate"/>
+                                        <br/>
+                                        <span class="osOutputLabel">Generate</span>
+                                    </a>
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!v.agreement.Apttus__Status_Category__c!='Request'}">
+                                <div class="slds-col  slds-size--3-of-12 disabledButtons">
+                                    <a aura:id="Generate" onclick="{!c.generateAgreement}">
+                                        <lightning:icon iconName="standard:contract" size="medium" alternativeText="Generate"/>
+                                        <br/>
+                                        <span class="osOutputLabel">Generate</span>
+                                    </a>
+                                </div>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!or((v.agreement.Apttus__Status_Category__c=='In Signatures'), (v.agreement.Apttus__Status_Category__c=='In Authoring'))}">
+                            	<div class="slds-col slds-size--3-of-12">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.agreementReview}">
+                                    <lightning:icon iconName="custom:custom21" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Send <br/>for Review</span>
+                            </div> 
+							</aura:if>
+                        
+                        	<aura:if isTrue="{!!(or((v.agreement.Apttus__Status_Category__c=='In Signatures'), (v.agreement.Apttus__Status_Category__c=='In Authoring')))}">
+                            	<div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.agreementReview}">
+                                    <lightning:icon iconName="custom:custom21" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Send <br/>for Review</span>
+                            </div> 
+							</aura:if>
+                            
+                            <aura:if isTrue="{!v.agreement.Apttus__Status_Category__c=='Request'}">
+							<div class="slds-col slds-size--3-of-12">                            
+                                <a aura:id="approvals" onclick="{!c.sendForApprovals}">
+                                <lightning:icon iconName="standard:approval" size="medium" alternativeText="Approvals"/>
+                                <br/> 
+                                <span class="osOutputLabel">Approvals</span>
+                            </a>
+                        </div>	                                
+                        </aura:if>
+                            
+                        <aura:if isTrue="{!v.agreement.Apttus__Status_Category__c!='Request'}">
+							<div class="slds-col slds-size--3-of-12 disabledButtons">                            
+                                <a aura:id="approvals" onclick="{!c.sendForApprovals}">
+                                <lightning:icon iconName="standard:approval" size="medium" alternativeText="Approvals"/>
+                                <br/> 
+                                <span class="osOutputLabel">Approvals</span>
+                            </a>
+                        </div>	                                
+                        </aura:if>
+                            
+                         
+                        </div>                    
+                    <br/>
+                    <div class="slds-grid slds-grid--align-spread">
+                    	<aura:if isTrue="{!v.agreement.Apttus__Status_Category__c=='Request'}">
+                             <div class="slds-col slds-size--3-of-12">                            
+                                <a aura:id="myapproval" onclick="{!c.myApprovals}">
+                                <lightning:icon iconName="standard:approval" size="medium" alternativeText="Approvals"/>
+                                <br/> 
+                                    <span class="osOutputLabel">My <br/>Approvals</span>
+                            	</a>
+                        	</div>
+                         </aura:if>
+                            
+                         <aura:if isTrue="{!v.agreement.Apttus__Status_Category__c!='Request'}">
+                             <div class="slds-col slds-size--3-of-12 disabledButtons">                            
+                                <a aura:id="myapproval" onclick="{!c.myApprovals}">
+                                <lightning:icon iconName="standard:approval" size="medium" alternativeText="Approvals"/>
+                                <br/> 
+                                    <span class="osOutputLabel">My <br/>Approvals</span>
+                            	</a>
+                        	</div>
+                         </aura:if>
+                         
+                        <aura:if isTrue="{!or(and(v.agreement.Apttus__Status_Category__c=='In Effect',not(v.agreement.Apttus__Status__c=='Being Renewed'),not(v.agreement.Apttus__Status__c=='Being Amended')))}">
+                            	<div class="slds-col slds-size--3-of-12">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.agreementRenew}">
+                                    <lightning:icon iconName="standard:work_type" size="medium" alternativeText="Renew"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Renew</span>
+                            </div>
+							</aura:if>
+                        
+                        	<aura:if isTrue="{!!(or(and(v.agreement.Apttus__Status_Category__c=='In Effect',not(v.agreement.Apttus__Status__c=='Being Renewed'),not(v.agreement.Apttus__Status__c=='Being Amended'))))}">
+                            	<div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.agreementRenew}">
+                                    <lightning:icon iconName="standard:work_type" size="medium" alternativeText="Renew"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Renew</span>
+                            </div>
+							</aura:if>
+                        	
+                        	<aura:if isTrue="{!or((v.agreement.Apttus__Status_Category__c=='In Signatures'), (v.agreement.Apttus__Status_Category__c=='In Filing'), and((v.agreement.Apttus__Status_Category__c=='In Authoring'),(v.agreement.Apttus__Source__c=='Other Party Paper')))}">
+                                <div class="slds-col slds-size--3-of-12 " style="left-padding:3vw;">
+                                    <a aura:id="Activate" onclick="{!c.activateAgreement}">
+                                        <lightning:icon iconName="standard:marketing_actions" size="medium" alternativeText="Activate"/>
+                                    </a>
+                                    <br/>
+                                    <span class="osOutputLabel">Activate</span>
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!!(or((v.agreement.Apttus__Status_Category__c=='In Signatures'), (v.agreement.Apttus__Status_Category__c=='In Filing'), and((v.agreement.Apttus__Status_Category__c=='In Authoring'),(v.agreement.Apttus__Source__c=='Other Party Paper'))))}">
+                                <div class="slds-col slds-size--3-of-12 disabledButtons" style="left-padding:3vw;">
+                                    <a aura:id="Activate" onclick="{!c.activateAgreement}">
+                                        <lightning:icon iconName="standard:marketing_actions" size="medium" alternativeText="Activate"/>
+                                    </a>
+                                    <br/>
+                                    <span class="osOutputLabel">Activate</span>
+                                </div>
+                            </aura:if>
+                        
+                        	<aura:if isTrue="{!or(and((v.agreement.Apttus__Status_Category__c=='In Effect'),not((v.agreement.Apttus__Status__c=='Being Amended')), not((v.agreement.Apttus__Status__c=='Being Renewed'))))}">
+                            	<div class="slds-col slds-size--3-of-12">
+                                <!--a aura:id="Amend" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementAmend?id=' + v.recordId}"-->
+                                <a aura:id="Amend" onclick="{!c.agreementAmend}">
+                                    <lightning:icon iconName="standard:custom" size="medium" alternativeText="Amend"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Amend</span>
+                            </div>
+							</aura:if>
+                        
+                        <aura:if isTrue="{!!(or(and((v.agreement.Apttus__Status_Category__c=='In Effect'),not((v.agreement.Apttus__Status__c=='Being Amended')), not((v.agreement.Apttus__Status__c=='Being Renewed')))))}">
+                            	<div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <!--a aura:id="Amend" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementAmend?id=' + v.recordId}"-->
+                                <a aura:id="Amend" onclick="{!c.agreementAmend}">
+                                    <lightning:icon iconName="standard:custom" size="medium" alternativeText="Amend"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Amend</span>
+                            </div>
+							</aura:if>
+                            
+                    </div>
+                    
+                    <div class="slds-grid slds-grid--align-spread">
+                        	
+                        
+                        	<aura:if isTrue="{!or(and((v.agreement.Apttus__Status_Category__c=='In Effect'),not((v.agreement.Apttus__Status__c=='Being Amended')), not((v.agreement.Apttus__Status__c=='Being Renewed'))))}">
+                             	<div class="slds-col slds-size--3-of-12">
+                                <!--a aura:id="Ternimate" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementTerminate?id=' + v.recordId}"-->
+                                <a aura:id="Terminate" onclick="{!c.agreementTerminate}">
+                                    <lightning:icon iconName="standard:resource_absence" size="medium" alternativeText="Terminate"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Terminate</span>
+                            </div>
+							</aura:if>
+                        
+                        <aura:if isTrue="{!!(or(and((v.agreement.Apttus__Status_Category__c=='In Effect'),not((v.agreement.Apttus__Status__c=='Being Amended')), not((v.agreement.Apttus__Status__c=='Being Renewed')))))}">
+                             	<div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <!--a aura:id="Ternimate" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementTerminate?id=' + v.recordId}"-->
+                                <a aura:id="Terminate" onclick="{!c.agreementTerminate}">
+                                    <lightning:icon iconName="standard:resource_absence" size="medium" alternativeText="Terminate"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Terminate</span>
+                            </div>
+							</aura:if>
+                        	
+                        	<aura:if isTrue="{!or(and((v.agreement.Apttus__Status_Category__c=='In Effect'),not((v.agreement.Apttus__Status__c=='Being Amended')), not((v.agreement.Apttus__Status__c=='Being Renewed'))))}">
+                            	 <div class="slds-col slds-size--3-of-12">
+                                <!--a aura:id="Approvals" href="{!'https://angieslistdemo.my.salesforce.com/apex/Apttus__AgreementExpire?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.agreementExpire}">
+                                    <lightning:icon iconName="standard:opportunity_splits" size="medium" alternativeText="Expire"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Expire</span>
+                            </div>
+							</aura:if>
+                        
+                        	<aura:if isTrue="{!!(or(and((v.agreement.Apttus__Status_Category__c=='In Effect'),not((v.agreement.Apttus__Status__c=='Being Amended')), not((v.agreement.Apttus__Status__c=='Being Renewed')))))}">
+                            	 <div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <!--a aura:id="Approvals" href="{!'https://angieslistdemo.my.salesforce.com/apex/Apttus__AgreementExpire?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.agreementExpire}">
+                                    <lightning:icon iconName="standard:opportunity_splits" size="medium" alternativeText="Expire"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Expire</span>
+                            </div>
+							</aura:if>
+                        
+                        	<aura:if isTrue="{!or((v.agreement.Apttus__Status_Category__c=='In Authoring'), (v.agreement.Apttus__Status_Category__c=='In Signatures'), (v.agreement.Apttus__Status_Category__c=='In Filing'))}">
+                            	<div class="slds-col slds-size--3-of-12">
+                               
+                                <a aura:id="Renew" onclick="{!c.regenerateDoc}">
+                                    <lightning:icon iconName="standard:drafts" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Regenerate</span>
+                            </div> 
+							</aura:if>
+                            
+                            <aura:if isTrue="{!!(or((v.agreement.Apttus__Status_Category__c=='In Authoring'), (v.agreement.Apttus__Status_Category__c=='In Signatures'), (v.agreement.Apttus__Status_Category__c=='In Filing')))}">
+                            	<div class="slds-col slds-size--3-of-12 disabledButtons">
+                                
+                                <a aura:id="Renew">
+                                    <lightning:icon iconName="standard:drafts" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Regenerate</span>
+                            </div> 
+							</aura:if>
+                            
+                            <aura:if isTrue="true">
+                            	<div class="slds-col slds-size--3-of-12">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.generatesupportAgreement}">
+                                    <lightning:icon iconName="standard:orders" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Generate <br/>Supporting <br/>Document</span>
+                            </div> 
+							</aura:if>
+                        </div>
+                    
+                    	<div class="slds-grid slds-grid--align-spread">
+                    		<aura:if isTrue="{!not(or((v.agreement.Apttus__Status_Category__c=='In Effect'), (v.agreement.Apttus__Status_Category__c=='Expired'),(v.agreement.Apttus__Status_Category__c=='Terminated'),(v.agreement.Apttus__Status_Category__c=='Amended'),(v.agreement.Apttus__Status_Category__c=='Cancelled')))}">
+                            	<div class="slds-col slds-size--3-of-12">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.importOfflineDoc}">
+                                    <lightning:icon iconName="standard:document" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Import <br/>Offline <br/>Document</span>
+                            </div> 
+							</aura:if>
+                            
+                            <aura:if isTrue="{!!(not(or((v.agreement.Apttus__Status_Category__c=='In Effect'), (v.agreement.Apttus__Status_Category__c=='Expired'),(v.agreement.Apttus__Status_Category__c=='Terminated'),(v.agreement.Apttus__Status_Category__c=='Amended'),(v.agreement.Apttus__Status_Category__c=='Cancelled'))))}">
+                            	<div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.importOfflineDoc}">
+                                    <lightning:icon iconName="standard:document" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Import <br/>Offline <br/>Document</span>
+                            </div> 
+							</aura:if>
+                            
+                            <aura:if isTrue="{!and((v.agreement.Apttus__Status_Category__c=='Request'),or((v.agreement.Apttus__Status__c=='Request'),(v.agreement.Apttus__Status__c=='In Amendment'),(v.agreement.Apttus__Status__c=='In Renewal'),(v.agreement.Apttus__Status__c=='none')))}">
+                            	<div class="slds-col slds-size--3-of-12">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.submitAgreementReq}">
+                                    <lightning:icon iconName="standard:partner_fund_request" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Submit <br/>Request</span>
+                            </div> 
+							</aura:if>
+                            
+                            <aura:if isTrue="{!!(and((v.agreement.Apttus__Status_Category__c=='Request'),or((v.agreement.Apttus__Status__c=='Request'),(v.agreement.Apttus__Status__c=='In Amendment'),(v.agreement.Apttus__Status__c=='In Renewal'),(v.agreement.Apttus__Status__c=='none'))))}">
+                            	<div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.submitAgreementReq}">
+                                    <lightning:icon iconName="standard:partner_fund_request" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Submit <br/>Request</span>
+                            </div> 
+							</aura:if>
+                            
+                            <aura:if isTrue="{!and(or((v.agreement.Apttus__Status_Category__c=='Request'), (v.agreement.Apttus__Status_Category__c=='In Authoring'), (v.agreement.Apttus__Status_Category__c=='In Signatures'), (v.agreement.Apttus__Status_Category__c=='In Filing')),not((v.agreement.Apttus__Status__c=='Cancelled Request')))}">
+                            	<div class="slds-col slds-size--3-of-12">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.cancelAgreement}">
+                                    <lightning:icon iconName="standard:opportunity_splits" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Cancel</span>
+                            </div> 
+							</aura:if>
+                            
+                            <aura:if isTrue="{!!(and(or((v.agreement.Apttus__Status_Category__c=='Request'), (v.agreement.Apttus__Status_Category__c=='In Authoring'), (v.agreement.Apttus__Status_Category__c=='In Signatures'), (v.agreement.Apttus__Status_Category__c=='In Filing')),not((v.agreement.Apttus__Status__c=='Cancelled Request'))))}">
+                            	<div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <!--a aura:id="Renew" href="{!'https://apttus-config2.gus.visual.force.com/apex/Apttus__AgreementRenew?id=' + v.recordId}"-->
+                                <a aura:id="Renew" onclick="{!c.cancelAgreement}">
+                                    <lightning:icon iconName="standard:opportunity_splits" size="medium" alternativeText="Review"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Cancel</span>
+                            </div> 
+							</aura:if>
+                            
+                            <aura:if isTrue="{!(v.agreement.Apttus__Agreement_Number__c=='Echosign') &amp;&amp; (v.agreement.Apttus__Status_Category__c=='In Authoring' || (v.agreement.Apttus__Status_Category__c=='In Signatures' &amp;&amp; v.agreement.Apttus__Status__c=='Ready for Signatures'))}">
+                                <div class="slds-col slds-size--3-of-12" style="left-padding:3vw;">
+                                <a aura:id="SendforSignatures" onclick="{!c.sendForEchoSignature}">
+                                    <lightning:icon iconName="custom:custom18" size="medium" alternativeText="Send for eSignature"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Send <br/>for <br/>eSignature</span><!--Echo Sign-->
+                                </div>
+                        	</aura:if>
+                        <aura:if isTrue="{!(v.agreement.Apttus__Agreement_Number__c=='Echosign') &amp;&amp; !((v.agreement.Apttus__Status_Category__c=='In Authoring' || (v.agreement.Apttus__Status_Category__c=='In Signatures' &amp;&amp; v.agreement.Apttus__Status__c=='Ready for Signatures')))}">
+						<div class="slds-col slds-size--3-of-12 disabledButtons" style="left-padding:3vw;">
+                            <a aura:id="SendforSignatures" onclick="{!c.sendForEchoSignature}">
+                                <lightning:icon iconName="custom:custom18" size="medium" alternativeText="Send for eSignature"/>
+                            </a>
+                            <br/>
+                            <span class="osOutputLabel">Send <br/>for <br/>eSignature</span><!--Echo Sign-->
+                        </div>
+                        </aura:if>
+                        <aura:if isTrue="{!(v.agreement.Apttus__Agreement_Number__c=='Docusign') &amp;&amp; (v.agreement.Apttus__Status_Category__c=='In Authoring' || (v.agreement.Apttus__Status_Category__c=='In Signatures' &amp;&amp; v.agreement.Apttus__Status__c=='Ready for Signatures'))}">
+						<div class="slds-col slds-size--3-of-12" style="left-padding:3vw;">
+                            <a aura:id="SendforSignatures" onclick="{!c.sendForDocuSignature}">
+                                <lightning:icon iconName="custom:custom18" size="medium" alternativeText="Send for eSignature"/>
+                            </a>
+                            <br/>
+                            <span class="osOutputLabel">Send <br/>for <br/>eSignature</span><!--Docu Sign-->
+                        </div>
+                        </aura:if>
+                        <aura:if isTrue="{!(v.agreement.Apttus__Agreement_Number__c=='Docusign') &amp;&amp; !((v.agreement.Apttus__Status_Category__c=='In Authoring' || (v.agreement.Apttus__Status_Category__c=='In Signatures' &amp;&amp; v.agreement.Apttus__Status__c=='Ready for Signatures')))}">
+						<div class="slds-col slds-size--3-of-12 disabledButtons" style="left-padding:3vw;">
+                            <a aura:id="SendforSignatures" onclick="{!c.sendForDocuSignature}">
+                                <lightning:icon iconName="custom:custom18" size="medium" alternativeText="Send for eSignature"/>
+                            </a>
+                            <br/>
+                            <span class="osOutputLabel">Send <br/>for <br/>eSignature</span><!--Docu Sign-->
+                        </div>
+                        </aura:if>
+                    	</div>
+                    
+                    	<div class="slds-grid slds-grid--align-spread">
+                            
+                        
+                            <div class="slds-col slds-size--3-of-12" style="left-padding:3vw;">
+                            <a aura:id="Merge Documents" onclick="{!c.mergeDoc}">
+                                <lightning:icon iconName="standard:partners" size="medium" alternativeText="Merge Documents"/>
+                            </a>
+                            <br/>
+                            <span class="osOutputLabel">Merge <br/>Documents</span>
+                            </div>
+                            <aura:if isTrue="{!(v.agreement.Apttus__Agreement_Number__c=='Docusign') &amp;&amp; ((v.agreement.Apttus__Status_Category__c=='In Signatures' &amp;&amp; v.agreement.Apttus__Status__c=='Other Party Signatures'))}">
+                            <div class="slds-col slds-size--3-of-12" style="left-padding:3vw;">
+                                <a aura:id="SendforSignatures" onclick="{!c.checkESignature}">
+                                    <lightning:icon iconName="custom:custom18" size="medium" alternativeText="Send for eSignature"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Check <br/>eSignature <br/>Status</span><!--Docu Sign status check-->
+                            </div>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!(v.agreement.Apttus__Agreement_Number__c=='Docusign') &amp;&amp; not(v.agreement.Apttus__Status_Category__c=='In Signatures' &amp;&amp; v.agreement.Apttus__Status__c=='Other Party Signatures')}">
+                            <div class="slds-col slds-size--3-of-12 disabledButtons" style="left-padding:3vw;">
+                                <a aura:id="SendforSignatures">
+                                    <lightning:icon iconName="custom:custom18" size="medium" alternativeText="Send for eSignature"/>
+                                </a>
+                                <br/>
+                                <span class="osOutputLabel">Check <br/>eSignature <br/>Status</span><!--Docu Sign status check-->
+                            </div>
+                            </aura:if>
+                    	</div>
+                    <!--removed unwanted code-->
+                </div>
+            </p>
+        </div>
+    </div>
+</aura:component>

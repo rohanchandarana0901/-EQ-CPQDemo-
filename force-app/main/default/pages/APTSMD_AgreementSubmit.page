@@ -1,0 +1,2 @@
+<apex:page showHeader="false" sidebar="false" controller="APTSMD_AgreementSubmitController" action="{!createParentAgreementIfRecordTypeMSA}">
+</apex:page>

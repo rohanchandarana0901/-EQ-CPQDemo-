@@ -1,0 +1,51 @@
+<apex:page extensions="APTSMD_FinalizeQuoteController" standardController="Apttus_Config2__ProductConfiguration__c" showHeader="false" sidebar="false">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.15/angular-filter.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"/>
+    <script>
+        var app=angular.module("ngApp",[]);
+        $( document ).ready(function() {
+            angular.element(document.getElementById('mainBody')).scope().process();
+                console.log( "ready!" );
+            });
+        app.controller("accLocCtrl",["$scope",function($scope,$filter){
+            $scope.configId = '{!configId}';
+            $scope.finalizeClicked = '{!finalizeBtn}';
+            console.log('Configuration ID :'+$scope.configId);
+            console.log('finalizeClicked :'+$scope.finalizeClicked);
+            $('#SiteLoadingImg').show();
+            $scope.process = function(){
+                if($scope.configId != null){
+                    Visualforce.remoting.Manager.invokeAction(
+                                  '{!$RemoteAction.APTSMD_FinalizeQuoteController.init}', $scope.configId, $scope.finalizeClicked,
+                                  function(result, event) {
+                                      console.log('result');
+                                      console.log(result);
+                                      if (result != null && result != 'false') {
+                                            //sforce.one.navigateToSObject(result);
+                                            $('#mainBody').hide();
+                                            window.top.location = ''+result;
+                                      }else{
+                                          console.log('Result is null');
+                                      }
+                                  });
+                }
+            }
+        }]);
+    </script>
+    <style>
+        .loadingimg{
+            padding-top: 20%;
+            padding-left: 48%;
+        }
+    </style>
+    <body ng-app="ngApp" ng-controller="accLocCtrl" id="mainBody">
+        <p style="align:center;">Finalizing Cart.Please Wait...</p> <!--Loading&#8230;-->
+        <!--<div id="SiteLoadingImg" class="loadingimg" style="display:none;">-->
+        <!--    <img src="{!$Resource.APTSMD_Loading}" border="0"/>-->
+        <!--</div>-->
+    </body>
+</apex:page>

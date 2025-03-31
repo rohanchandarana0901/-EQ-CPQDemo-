@@ -1,0 +1,41 @@
+<md-dialog aria-label="Activate Agreement">
+  
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Activate Agreement</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancelActivateAgreement()">
+          <md-icon md-svg-src="{{envPath}}/img/icons/ic_close_black_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="max-height:810px; min-width:1000px;">
+     <md-content class="md-padding">
+      
+   <!--  <h2>Activate Agreement</h2> -->
+    <h6>Please confirm the documents below contains a copy of the contract</h6>
+    <h6>Please select the appropriate document(s) and click Activate.</h6>
+
+    <table class="table">
+    <tr>
+        <th>Select</th>
+        <th>Attachment Name</th>
+    </tr>
+      <tr ng-repeat="x in reviewAttachments">
+        <td><md-checkbox ng-model="x.isSelected" aria-label="">
+            </md-checkbox></td>
+        <td>{{ x.name}}</td>
+      </tr>
+    </table>
+		
+      </md-content>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+    <!--  <md-button ng-click="activateAgreement()" >
+        Activate
+      </md-button> -->
+      <md-button class="md-raised md-button-border-blue default-btn" ng-click="activateAgreement();">Activate</md-button>
+    </md-dialog-actions>
+ 
+</md-dialog> 

@@ -1,0 +1,18 @@
+<apex:page standardController="Apttus__APTS_Agreement__c" extensions="APTSMD_AgreementSubmitV2Controller" action="{!sendForEsignature}">
+    <html>
+    <head>
+        <style>
+             .centered {
+                 margin-top : 20%;
+                display: flex;
+                justify-content: center;
+            }
+  		</style>
+    </head>
+    <body>
+         <div ng-controller="myCtrl" class="centered">  
+             <img id="mySpinner" src="{!$Resource.APTSMD_spinner}" width="70vw" height="70w"/>
+        </div>
+    </body>
+</html>
+</apex:page>

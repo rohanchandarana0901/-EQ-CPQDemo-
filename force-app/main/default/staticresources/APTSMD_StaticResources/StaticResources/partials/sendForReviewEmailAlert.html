@@ -1,0 +1,98 @@
+ <script src="https://cdn.tinymce.com/4/tinymce.min.js"></script>
+<md-dialog aria-label="Send an Email">
+  
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h3>Send an Email</h3>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancelAttachmentForReviewEmail()">
+          <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="min-width:1000px;max-height:1000px; ">
+     <md-content class="md-padding">
+
+      <div class="slds-form-element slds-m-left--medium slds-m-right--medium container" >
+
+      <table>
+        <tr>
+           <td>
+             <label for="usr">&nbsp; &nbsp;To &nbsp;</label>
+           </td>
+            <td>
+              <input type="text" class="form-control default-input" id="agreementName" ng-model="eSignatureData.toContact">
+           </td>
+        </tr>
+         <tr>
+           <td>
+              <label for="usr">&nbsp; &nbsp;Subject &nbsp;</label>
+           </td>
+            <td>
+             <input type="text" class="form-control default-input" id="agreementName" ng-model="eSignatureData.subject">
+           </td>
+        </tr>
+         <tr>
+           <td colspan="2">
+              <div style="width : 600px; height : 100px;">
+                 <textarea></textarea>
+               </div>
+           </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <b><u>Attachments</u></b><br/>
+            <ul class="attachmentWithEmail">
+                <li aria-selected="false" class="slds-picklist__item" draggable="true" id="po-2-2" role="option" tabindex="-1" ng-repeat="reviewAttachment in reviewAttachments | filter : {isSelected : 'true' }">
+                    <span class="slds-truncate" >
+                        <span class="fa fa-close defaultCloseIcon" style="margin-right: 2px;"/>
+                        <span >{{reviewAttachment.Name}}</span>
+                    </span>
+                </li>
+            </ul>
+          </td>
+        </tr>
+
+      </table>
+      
+      
+       <!--  <div layout="row">
+          <div><label for="usr">&nbsp; &nbsp;To &nbsp;</label></div>
+          <div> <input type="text" class="form-control default-input" id="agreementName" ng-model="eSignatureData.toContact"></div>
+        </div>
+
+        <div layout="row">
+          <div> <label for="usr">&nbsp; &nbsp;Subject &nbsp;</label></div>
+          <div> <input type="text" class="form-control default-input" id="agreementName" ng-model="eSignatureData.subject"></div>
+        </div>
+
+        <div>
+           <div style="width : 600px; height : 200px;">
+             <textarea></textarea>
+           </div>
+        </div> -->
+      <!--   <div>
+           <b><u>Attachments</u></b><br/>
+            <ul class="attachmentWithEmail">
+                <li aria-selected="false" class="slds-picklist__item" draggable="true" id="po-2-2" role="option" tabindex="-1" ng-repeat="reviewAttachment in reviewAttachments | filter : {isSelected : 'true' }">
+                    <span class="slds-truncate" >
+                        <span class="fa fa-close defaultCloseIcon" style="margin-right: 2px;"/>
+                        <span >{{reviewAttachment.Name}}</span>
+                    </span>
+                </li>
+            </ul>
+        </div> -->
+       </div>
+    </md-content>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+     <md-button ng-click="answerAttachmentForReviewEmail('Cancel')" >
+        Cancel
+      </md-button>
+      <md-button ng-click="answerAttachmentForReviewEmail('Save')" >
+        Next
+      </md-button>
+    </md-dialog-actions>
+ 
+</md-dialog> 

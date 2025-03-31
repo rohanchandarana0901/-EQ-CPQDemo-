@@ -1,0 +1,30 @@
+<aura:component controller="APTSMD_PersonaLinksController" implements="flexipage:availableForAllPageTypes,force:appHostable">
+    <aura:attribute name="userDetails" type="Map"/>
+    <aura:attribute name="userRedirectionURL" type="String"/>
+     
+    <!--Declare Handler-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
+     
+    <!--Component Start-->
+    <div class="slds" style="margin-top: 0.75rem; padding: 5px; padding-bottom: 10px; border-radius: 5px;background-color:white">
+        <div class="slds-card__header slds-grid" style="padding-top: 5px;font-weight: bold;" data-aura-rendered-by="663:0">
+           <header class="header-title-container slds-has-flexi-truncate" data-aura-rendered-by="664:0">
+              <h2 data-aura-rendered-by="665:0"><span class="slds-text-heading_small" data-aura-rendered-by="666:0">Persona Links</span></h2>
+           </header>
+        </div>
+        <div class="slds-m-around--medium">
+            <div class="container-fluid" style="width:50%">
+                <div class="form-group">
+                    <lightning:select aura:id="userPicklist" value="{!v.userRedirectionURL}" name="userPicklist" label="Select Persona">
+                        <option value="">--None--</option>
+                        <aura:iteration items="{!v.userDetails}" var="itr" indexVar="key">
+                            <option text="{!itr.value}" value="{!itr.key}" selected="{!itr.key==v.userRedirectionURL}" />
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+            </div>
+            <br/>
+            <lightning:button variant="brand" label="Login" onclick="{!c.personaLogin}" />              
+        </div>
+    </div>
+</aura:component>

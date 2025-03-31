@@ -1,0 +1,597 @@
+<!-- UI/UX chnages made by Japan Bhavsar on 12/12/2018  -->
+<apex:page showHeader="false" sidebar="false" docType="html-5.0" controller="APTSMD_LoadObligationCtrl"
+    lightningStyleSheets="true" standardStylesheets="false">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-animate.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-aria.js"></script>
+        <script src="bower_components/angular-filter/dist/angular-filter.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"/>
+        <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js" />
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"/>
+        <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyDcnpPziswnjdt2pMAnrNxHxNZf5a0jHw0"></script>
+        <!-- <script src="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.1/angular-material.js" integrity="sha512-ubrioXp1YyKCrLVzg68ZvLejBz5giN2J1XDmOV+JxN9bkkWbtooESyAtPW1j//3f97oBzCHEIy19eWgHPGXZRg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+        <!-- <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.css"
+            rel="stylesheet" /> -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.10/angular-material.min.css" integrity="sha512-lUExuDw/YQOmNO0LN2XplczGTyTxTEUvXBPKOnfBNloscpdzpfrYBiyWtPeyF0guAgihG/6RrOfDpoyywWMk/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+
+        <apex:includeScript value="{!$Resource.APTSMD_NovaThemeProvider}" />
+        <apex:stylesheet value="{!$Resource.APTSMD_Nova_Css}" />
+        <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+
+        <script>
+            var App = angular.module('myApp', ['ngMaterial', 'ngAnimate',
+                'ngAria'
+            ]);
+
+            App.controller('myctrl', function($scope) {
+
+                $scope.masterObligations = {!masterObligations
+                }
+                $scope.agreement = {!agreement
+                }
+                var master1 = {
+                    Name: "",
+                    Obligation_Type__c: "",
+                    Agreement_RecordType__c: "",
+                    Due_Date__c: "",
+                    Obligation_Topic_Description__c: "",
+                    Obligation_Extract__c: "",
+                    Create_Master__c: "false"
+                };
+                var master2 = {
+                    Name: "",
+                    Obligation_Type__c: "",
+                    Agreement_RecordType__c: "",
+                    Due_Date__c: "",
+                    Obligation_Topic_Description__c: "",
+                    Obligation_Extract__c: "",
+                    Create_Master__c: "false"
+                };
+                var master3 = {
+                    Name: "",
+                    Obligation_Type__c: "",
+                    Agreement_RecordType__c: "",
+                    Due_Date__c: "",
+                    Obligation_Topic_Description__c: "",
+                    Obligation_Extract__c: "",
+                    Create_Master__c: "false"
+                };
+
+                var newObligations = [master1, master2, master3];
+                $scope.formOne = {};
+                $scope.formOne.newObligations = newObligations;
+
+                var recurValBlank = '';
+                var recurVal1 = "One-Time";
+                var recurVal2 = "Once a Week";
+                var recurVal4 = "Once a Month";
+
+                var recurVals = [recurValBlank, recurVal1, recurVal2,
+                    recurVal4
+                ];
+                $scope.formTwo = {};
+                $scope.formTwo.recurVals = recurVals;
+                $scope.coconut = "One-Time";
+
+                $scope.selected = [];
+                $scope.selectedInModal = [];
+
+                $scope.exist = function(item) {
+                    return $scope.selected.indexOf(item) > -1;
+                }
+
+                $scope.existInModal = function(item) {
+                    return $scope.selectedInModal.indexOf(item) > -
+                        1;
+                }
+
+                $scope.reRoute = function() {
+                    window.location.replace('/' + $scope.agreement.Id);
+                }
+
+                $scope.toggleSelection = function(item) {
+                    var idx = $scope.selected.indexOf(item);
+                    if (idx > -1) {
+                        $scope.selected.splice(idx, 1);
+                    } else {
+                        $scope.selected.push(item);
+                    }
+                }
+
+                $scope.goBack = function() {
+                    goBack();
+                }
+
+                $scope.toggleSelectionInModal = function(item) {
+                    var idx = $scope.selectedInModal.indexOf(item);
+                    if (idx > -1) {
+                        $scope.selectedInModal.splice(idx, 1);
+                    } else {
+                        $scope.selectedInModal.push(item);
+                    }
+                }
+
+                $scope.checkAll = function() {
+                    if ($scope.selectAll) {
+                        angular.forEach($scope.masterObligations,
+                            function(item) {
+                                idx = $scope.selected.indexOf(
+                                    item);
+                                if (idx >= 0) {
+                                    return true;
+                                } else {
+                                    $scope.selected.push(item);
+                                }
+                            })
+                    } else {
+                        $scope.selected = [];
+                    }
+                }
+
+                $scope.checkAllInModal = function() {
+                    if ($scope.selectAllInModal) {
+                        angular.forEach($scope.formOne.newObligations,
+                            function(item) {
+                                idx = $scope.selectedInModal.indexOf(
+                                    item);
+                                if (idx >= 0) {
+                                    return true;
+                                } else {
+                                    $scope.selectedInModal.push(
+                                        item);
+                                }
+                            })
+                    } else {
+                        $scope.selectedInModal = [];
+                    }
+                }
+
+                $scope.addAG = function() {
+                    if (!$scope.selected || $scope.selected.length ==
+                        0) {
+                        window.alert(
+                            "Please select atleast one obligation for agreement."
+                        );
+                        return;
+                    }
+                    addToAgreement(JSON.stringify($scope.selected));
+                }
+
+                $scope.addNewObligation = function() {
+
+                    if (!$scope.selectedInModal || $scope.selectedInModal
+                        .length == 0) {
+                        window.alert(
+                            "Please select/add atleast one new obligation for agreement."
+                        );
+                        return;
+                    }
+
+                    addNewObligationToAgreement(JSON.stringify(
+                        $scope.selectedInModal));
+                }
+
+                $scope.checkForCheckBox = function(index) {
+                    if ($scope.formOne.newObligations[index].Name) {
+                        var idx = $scope.selectedInModal.indexOf(
+                            $scope.formOne.newObligations[index]
+                        );
+                        if (idx == -1) {
+                            $scope.toggleSelectionInModal($scope.formOne
+                                .newObligations[index]);
+                        }
+                    } else {
+                        var idx = $scope.selectedInModal.indexOf(
+                            $scope.formOne.newObligations[index]
+                        );
+                        if (idx > -1) {
+                            $scope.selectedInModal.splice(idx, 1);
+                        }
+                    }
+                }
+            });
+
+        </script>
+        <style>
+            .ands-dialog--md {
+                width: calc(99% - 2.25rem) !important;
+            }
+            
+            .ands-app-bar-logo {
+                width: 6.205rem !important;
+                height: 1.165rem !important;
+            }
+            
+            .RiskcalStyle {
+                color: red;
+            }
+            
+            .div-table {
+                display: table;
+                width: auto;
+                border-spacing: 5px;
+            }
+            
+            .div-table-row {
+                display: table-row;
+                width: auto;
+                clear: both;
+                border-bottom: 1px solid black;
+            }
+            
+            .div-table-col-h {
+                display: table-column;
+                width: 173px;
+                font-size: 16px;
+                font-size: 14px;
+                line-height: 16px;
+                font-weight: 500;
+                color: #9c9ea8;
+                padding-left: 10px;
+            }
+            
+            .div-table-col {
+                float: left;
+                display: table-column;
+                width: 175px;
+                font-weight: 400;
+            }
+            /*ands-list-table table a {*/
+            /*    color: #3ba1d9 !important;*/
+            /*}*/
+            
+            .ands-row .ands-offset-5:not(first-child) {
+                margin-left: calc(41.66667% - 0.875rem+ 6.2rem) !important;
+            }
+            
+            .ands-row .ands-col-2 {
+                width: calc(16.66667% - 5.25rem) !important;
+            }
+            
+            .secondButton {
+                margin-left: 2rem !important;
+            }
+            
+            .recurrence-element {
+                padding-bottom: 3.7% !important;
+            }
+            
+            .container {
+                background-color: #f4f6f9;
+                margin-left: 2px;
+                width: 100%;
+                color: black;
+            }
+            
+            #popUpPage .modal-dialog {
+                width: 95%;
+                margin-top: 130px;
+            }
+            
+            .modal-content {
+                background-color: white;
+                border: 1px solid #bdc3c7;
+                border-radius: 0;
+                outline: 0;
+            }
+            
+            .ands-list-table {
+                box-shadow: 0 0px 0px 0 rgba(37, 49, 66, 0.2) !important;
+            }
+            
+            .buttonFixedBottomRight {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                padding-bottom: 13px;
+                padding-right: 28px;
+            }
+            
+            .md-select-menu-container {
+                z-index: 99999;
+            }
+            
+            .modal-backdrop {
+                z-index: 79;
+            }
+
+        </style>
+
+        <!-- stylesheets for CPQ like formatting -->
+        <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQCommon.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQOptions.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources, 'CPQDelight.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap.min.css')}"
+        />
+
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap-theme.min.css')}"
+        />
+        <!-- CSS -->
+
+    </head>
+    <c:APTSMD_CommonHeader pageName1="Load Obligations for Agreement" objectName="{{agreement.Name}}"
+        iconName="account" type="standard" />
+    <style>
+        .moved {
+            margin-top: 47px;
+        }
+        
+        .modal-header .close {
+            margin-top: -20px;
+        }
+        
+        button.close {
+            -webkit-appearance: none;
+            padding: -8px;
+            cursor: pointer;
+            height: 2rem;
+            width: 2rem;
+            e background: 0 0;
+            border: 0;
+            font-size: xx-large;
+        }
+        
+        body input[type="radio"]:before,
+        body input[type="checkbox"]:before,
+        .slds-vf-scope input[type="radio"]:before,
+        .slds-vf-scope input[type="checkbox"]:before {
+            border: none;
+            background: none;
+        }
+        
+        .slds-scope table {
+            width: auto;
+        }
+        
+        .md-calendar-scroll-mask {
+            width: ;
+        }
+        
+        md-calendar > div {
+            width: min-content;
+        }
+        
+        .md-calendar-date-selection-indicator {
+            text-align: center;
+        }
+        
+        md-input-container .md-input {
+            height: 26px;
+        }
+
+    </style>
+
+    <body ng-app="myApp" ng-controller="myctrl" ng-cloak="true">
+        <script>
+            function pageReload() {
+                window.alert('Obligation are successfully added on agreement');
+
+                window.location.reload();
+            }
+
+        </script>
+
+
+        <!-- New Header-bar -->
+
+
+        <!-- Apttus Container -->
+        <div class="apttusContainer moved">
+
+            <!-- button section -->
+            <div class="floatRight apttusPanel buttonCls">
+                <button class="apttusBtn floatRight" data-toggle="modal" data-target="#popUpPage">New Obligation</button>
+                <button class="apttusBtnWhite slds-button slds-button--brand floatRight marginLeft10 marginRight10"
+                    ng-click="addAG()">Add To Agreement</button>
+                <button class="apttusBtnWhite slds-button slds-button--brand floatRight" ng-click="goBack()">Cancel</button>
+            </div>
+
+
+            <!-- Filter Section -->
+            <div class="apttusPanel marginTop60">
+                <div>
+                    <p class="blackBold margin0 displayIB" ng-click="showFilter = !showFilter"><i ng-init="showFilter = false;" class="material-icons verticalMiddle">{{showFilter ? 'expand_more' : 'chevron_right'}}</i>&nbsp;Search
+                        Filters</p>
+                </div>
+                <div ng-show="showFilter">
+
+                    <div class="row margin0 padding0 marginTop10">
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                            <md-input-container class="ands-input-container marginTop5" md-no-float="true" type="text">
+                                <input class="ands-input" placeholder="Search Master Obligations" ng-model="searchText"
+                                />
+                            </md-input-container>
+                        </div>
+                        <div class="col-md-1 col-sm-6 col-xs-12">
+                            <div ng-click="searchText = ''">
+                                <button class="apttusBtnWhite slds-button slds-button--brand floatRight">
+                            Clear
+                        </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="backgroundWhite apttusPanel">
+                <div class="ands-list-table divScroll">
+                    <table class="ands-col-12">
+                        <thead>
+                            <tr>
+                                <th class="ands-col-1 blackBold verticalMiddle tableHeader">
+                                    <input class="form-checkbox marginLeft10" type="checkbox" ng-model="selectAll" ng-click="checkAll()"
+                                    />
+                                </th>
+                                <th class="ands-col-2 blackBold verticalMiddle tableHeader" ng-click="orderByField='masterObligation.Name'; reverseSort = ! reverseSort">
+                                    Name
+                                </th>
+                                <th class="ands-col-2 blackBold verticalMiddle tableHeader" ng-click="orderByField='masterObligation.Obligation_Type__c'; reverseSort = ! reverseSort">
+                                    Obligation Type
+                                </th>
+                                <th class="ands-col-2 blackBold verticalMiddle tableHeader" ng-click="orderByField='masterObligation.Agreement_RecordType__c'; reverseSort = ! reverseSort">
+                                    Agreement Record Type
+                                </th>
+                                <th class="ands-col-3 blackBold verticalMiddle tableHeader">
+                                    Clause
+                                </th>
+                                <th class="ands-col-2 blackBold verticalMiddle tableHeader">
+                                    Obligation Description
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="masterObligation in masterObligations | filter:searchText | orderBy:orderByField:reverseSort">
+                                <td class="ands-col-1 verticalMiddle">
+                                    <input class="form-checkbox marginLeft20" type="checkbox" name="" ng-model="selected"
+                                        ng-checked="exist(masterObligation)" ng-click="toggleSelection(masterObligation)"
+                                    />
+                                </td>
+                                <td class="ands-col-2 verticalMiddle normalTextFont">
+                                    {{masterObligation.Name}}
+                                </td>
+                                <td class="ands-col-2 verticalMiddle normalTextFont">
+                                    {{masterObligation.APTSMD_Obligation_Type__c}}
+                                </td>
+                                <td class="ands-col-2 verticalMiddle normalTextFont">
+                                    {{masterObligation.APTSMD_Agreement_RecordType__c}}
+                                </td>
+                                <td class="ands-col-3 verticalMiddle normalTextFont">
+                                    {{masterObligation.APTSMD_Clause_Name__c}}
+                                </td>
+                                <td class="ands-col-2 verticalMiddle normalTextFont">
+                                    {{masterObligation.APTSMD_Obligation_Topic_Description__c}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Modal -->
+        <div id="popUpPage" width="80%" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true" style="z-index: 100;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h3 class="blackBold textAlignLeft">
+                            Obligation Details
+                        </h3>
+                    </div>
+                    <div class="">
+                        <div class="ands-list-table">
+                            <table class="ands-col-12">
+                                <thead>
+                                    <tr>
+                                        <th class="ands-col-1 tableHeader">
+                                            <input class="form-checkbox marginLeft10" type="checkbox" ng-model="selectAllInModal"
+                                                ng-click="checkAllInModal()" />
+                                        </th>
+                                        <th class="ands-col-2 blackBold tableHeader paddingRight10 verticalMiddle">
+                                            Obligation Extract
+                                        </th>
+                                        <th class="ands-col-3 blackBold tableHeader paddingRight10 verticalMiddle">
+                                            Due Date
+                                        </th>
+                                        <th class="ands-col-2 blackBold tableHeader paddingRight10 verticalMiddle">
+                                            Recurrence
+                                        </th>
+                                        <th class="ands-col-2 blackBold tableHeader paddingRight10 verticalMiddle">
+                                            Payment Amount
+                                        </th>
+                                        <th class="ands-col-2 blackBold tableHeader paddingRight10 verticalMiddle">
+                                            Description
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="newObligation in formOne.newObligations">
+                                        <td class="ands-col-1">
+                                            <input class="form-checkbox marginLeft20" type="checkbox" name="" ng-model="selectedInModal"
+                                                ng-checked="existInModal(newObligation)"
+                                                ng-click="toggleSelectionInModal(newObligation)"
+                                            />
+                                        </td>
+                                        <td class="ands-col-2 paddingRight10 paddingTop0 verticalMiddle">
+                                            <md-input-container class="md-block ands-input-container " md-no-float="true" flex-gt-sm="true">
+                                                <input class="ands-input" ng-model="newObligation.Name" ng-change="checkForCheckBox($index);"
+                                                />
+                                            </md-input-container>
+                                        </td>
+                                        <td class="ands-col-3 paddingRight10 paddingTop0 verticalMiddle">
+                                            <md-input-container class="md-block ands-datepicker-container paddingRight5" md-no-float="true"
+                                                flex-gt-sm="true" style="top: -6px" z-index="99999">
+                                                <md-datepicker md-open-on-focus="false" class="ands-datepicker" placeholder="Due Date"
+                                                    ng-model="newObligation.APTSMD_Due_Date__c">
+                                                </md-datepicker>
+                                            </md-input-container>
+                                        </td>
+                                        <td class="ands-col-2 paddingRight10 paddingTop0 verticalMiddle">
+                                            <md-input-container class="md-block ands-input-container paddingRight5" md-no-float="true"
+                                                flex-gt-sm="true">
+                                                <md-select ng-model="newObligation.APTSMD_Recurrence__c">
+                                                    <md-option ng-value="value" ng-repeat="value in formTwo.recurVals">
+                                                        {{value}}
+                                                    </md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                        </td>
+                                        <td class="ands-col-2 paddingRight10 paddingTop0 verticalMiddle">
+                                            <md-input-container class="md-block ands-input-container paddingRight5" md-no-float="true"
+                                                flex-gt-sm="true">
+                                                <input class="ands-input" type="number" ng-model="newObligation.APTSMD_Payment_Amount__c"
+                                                />
+                                            </md-input-container>
+                                        </td>
+                                        <td class="ands-col-2 paddingRight10 paddingTop0 verticalMiddle">
+                                            <md-input-container class="md-block ands-input-container paddingRight5" md-no-float="true"
+                                                flex-gt-sm="true">
+                                                <input class="ands-input" ng-model="newObligation.APTSMD_Obligation_Topic_Description__c"
+                                                />
+                                            </md-input-container>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="marginTop10 marginBottom10 textAlignCenter">
+                        <button class="apttusBtn" ng-click="addNewObligation()">
+                        Add To Agreement
+                    </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <apex:form >
+            <apex:actionFunction name="addToAgreement" action="{!addToAgreement}" oncomplete="pageReload()"
+                rerender="none">
+                <apex:param name="myParam" value="" />
+            </apex:actionFunction>
+            <apex:actionFunction name="addNewObligationToAgreement" action="{!addNewObligationToAgreement}"
+                oncomplete="pageReload()" rerender="none">
+                <apex:param name="newObligations" value="" />
+            </apex:actionFunction>
+            <apex:actionFunction name="goBack" action="{!reRoute}" rerender="none">
+            </apex:actionFunction>
+        </apex:form>
+    </body>
+
+</apex:page>

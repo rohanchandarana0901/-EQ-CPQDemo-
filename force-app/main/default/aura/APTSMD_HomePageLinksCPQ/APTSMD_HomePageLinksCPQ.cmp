@@ -1,0 +1,70 @@
+<aura:component implements="flexipage:availableForAllPageTypes" controller="APTSMD_ListViewIdGeneric">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="myOppList" type="String"/>
+    <aura:attribute name="proposalList" type="String"/>
+    <aura:attribute name="acceptedProposalList" type="String"/>
+    <aura:attribute name="collabList" type="String"/>
+    <aura:attribute name="dashboardId" type="String"/>
+    <aura:attribute name="preSaleConfigVal" type="APTSMD_Apttus_PreSales_Config_Settings2__c"/>
+    <aura:attribute name="eCommerceURL" type="String"/>
+    <aura:attribute name="partnerCommerceURL" type="String"/>
+    
+<div style="background-color:white;margin-bottom: 10px;border-radius: 5px;padding: 10px !important;" class="mainDiv" >
+<p  style="width:100%;text-align:center">
+    
+	<div class="slds-grid slds-wrap" style="padding-top: 16px;padding-bottom: 15px;">
+        <div class="slds-col slds-size_1-of-7"><!--style="{!v.preSaleConfigVal.APTSMD_Is_Ecommerce_Enabled_Org__c==False?'margin-right:17px;':''}"-->
+            <a aura:id="My Opportunities" class="HideLine" onclick="{!c.gotoMyOpportunities}">
+                <lightning:icon iconName="standard:opportunity" class="iconstyle" size="large" alternativeText="NDA Wizard"/>
+                <br/>
+                <span class="osOutputLabel">My<br/>Opportunities</span>
+            </a>
+        </div>
+        <div class="slds-col slds-size_1-of-7"><!--style="{!v.preSaleConfigVal.APTSMD_Is_Ecommerce_Enabled_Org__c==False?'margin-right:17px;':''}"-->
+            <a aura:id="My Proposals" class="HideLine" onclick="{!c.gotoMyProposals}">
+                <lightning:icon iconName="standard:quotes" class="iconstyle" size="large" alternativeText="New Agreement"/>
+                <br/>
+                <span class="osOutputLabel">My<br/>Proposals</span>
+            </a>
+        </div>
+        <div class="slds-col slds-size_1-of-7"><!-- style="{!v.preSaleConfigVal.APTSMD_Is_Ecommerce_Enabled_Org__c==False?'margin-right:17px;':''}"-->
+            <a aura:id="Accepted Proposals" class="HideLine" onclick="{!c.gotoAcceptedProposals}">
+                <lightning:icon iconName="standard:orders" class="iconstyle" size="large" alternativeText="NDA Wizard"/>
+                <br/>
+                <span class="osOutputLabel">Accepted<br/>Proposals</span>
+            </a>
+        </div>       
+        <div class="slds-col slds-size_1-of-7"><!-- style="{!v.preSaleConfigVal.APTSMD_Is_Ecommerce_Enabled_Org__c==False?'margin-right:17px;':''}" -->
+            <a aura:id="NDA Wizard" class="HideLine" onclick="{!c.goToCollaboration}">
+                <lightning:icon iconName="standard:customers" class="iconstyle" size="large" alternativeText="NDA Wizard"/>
+                <br/>
+                <span class="osOutputLabel">Collaboration<br/>Requests</span>
+            </a>
+        </div>
+        <div class="slds-col slds-size_1-of-7">
+            <a aura:id="dashboard" class="HideLine" onclick="{!c.goDashboard}">
+                <lightning:icon iconName="standard:dashboard" class="iconstyle" size="large" alternativeText="NDA Wizard"/>
+                <br/>
+                <span class="osOutputLabel">CPQ<br/>Dashboard</span>
+            </a>
+        </div>
+        <aura:if isTrue="{!v.preSaleConfigVal.APTSMD_Is_Ecommerce_Enabled_Org__c==True}">
+            <div class="slds-col slds-size_1-of-7">
+                <a aura:id="ecom" class="HideLine" onclick="{!c.goToWebstore}">
+                    <lightning:icon iconName="custom:custom93" class="iconstyle" size="large" alternativeText="MSA Wizard"/>
+                    <br/>
+                    <span class="osOutputLabel">Ecommerce</span>
+                </a>
+            </div>
+        </aura:if>
+        <div class="slds-col slds-size_1-of-7">
+            <a aura:id="ecom" class="HideLine" onclick="{!c.goToPartnerCommerce}">
+                <lightning:icon iconName="standard:partners" class="iconstyle" size="large" alternativeText="Partner Commerce"/>
+                <br/>
+                <span class="osOutputLabel">Partner<br/>Commerce</span>
+            </a>
+        </div>
+    </div>
+</p>
+</div>
+</aura:component>

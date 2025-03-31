@@ -1,0 +1,89 @@
+html{
+	overflow: hidden !important;
+}
+.question-text-section{
+	margin-bottom : 10px !important;
+}
+.field-container > div{
+	margin: 15px 0px !important;
+}
+.field-container > div.commentSection{
+	margin : 0px !important;
+}
+.titleHeaderPencilDisplay{
+	display : None !important;
+}
+.secondary-ctrl.default{
+	background-color: #0079cc !important;
+    border: 1px solid #0079cc !important; 
+}
+.createAgrement{
+	display : None !important;
+}
+
+.question-container-section{
+	width:45% !important;
+}
+.questionSection{
+	min-height:0px !important;
+	float:none;
+	width:45% !important;
+	margin:25px 25px 0px 0px !important;
+	padding:5px 5px 5px 5px !important;
+	border:0px solid lightgrey;
+}
+.questionSection > div{
+	margin-bottom: 5px !important;
+}
+textarea {
+	width: 400px !important;
+	height: 30px !important;
+}
+ul.sidePannel {
+	width: 250px !important;
+	display: block !important;
+}
+.runtime-footer{
+	top: -8px !important;
+}
+.runtime-header h2{
+	color: #666666 !important;
+}
+.free {
+    width: 250px !important;
+}
+.docked {
+    width: 250px !important;
+}
+#dock {
+	display: none !important;
+}
+.field-container > div.questionSection{
+	margin: 0px 0px 15px 0px !important;
+}
+.commentSection {
+	    float: none !important;
+}
+.runtime-header-container .title{
+	margin-top: 5px !important;
+}
+.header {
+	margin-left: -20px !important;
+    background-color: #222 !important;
+    height: 57px !important;    
+}
+.header .title {
+	padding-left: 1% !important;
+    line-height: 45px !important;
+	color: white !important;
+    font-weight: bold !important;
+}
+
+.header .logo > img
+{
+	display : none !important;
+}
+
+.runtime-header {
+    margin-bottom: 15px;
+}

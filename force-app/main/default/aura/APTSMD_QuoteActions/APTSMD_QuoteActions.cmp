@@ -1,0 +1,251 @@
+<!-- 
+    Apttus Proposal Management
+    Quote Actions Lightning Component
+     
+    @2015-2016 Apttus Inc. All rights reserved.
+
+ -->
+<aura:component controller="APTSMD_QuoteActionsController" implements="flexipage:availableForAllPageTypes,force:hasRecordId">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="force:refreshView" action="{!c.update}"/>
+    <aura:attribute name="recordId" type="Id" description="The Id of the record"/>
+    <aura:attribute name="proposal" type="Apttus_Proposal__Proposal__c"/>
+    <aura:attribute name="cloudServerId" type="Id" description="The Id of the cloud server solution record"/>
+    <aura:attribute name="preSalesConfigSettingRecord" type="APTSMD_Apttus_PreSales_Config_Settings2__c" description="Presales Config Setting record"/>
+    
+    <ltng:require styles="/resource/slds080/assets/styles/salesforce-lightning-design-system-vf.css" />
+    <div style="border: 1px solid lightgray; padding: 5px; margin-bottom: 10px; border-radius: 5px;background-color:white;">
+        <div style="margin-left: 7px; margin-bottom: 7px; color: black; font-weight: 700; font-size: 16px;">
+            <span>
+                <!--<img src="/resource/APTSMD_ApttusLogo" id="apttuslogo" alt="Quote Actions" border="0"/>-->Quote Actions
+            </span>
+        </div>
+        
+        <div class="full forcePageBlockSectionRow">
+            <p class="full forcePageBlockItem forcePageBlockItemView" style="width:100%;text-align:center">
+                <div class="slds">
+                    <!--First Line-->
+                    <div class="slds-grid slds-grid--align-spread">
+                        <!--Action for Configure-->
+                        <aura:if isTrue="{!v.proposal.Apttus_QPConfig__PriceListId__c != null}">
+                            <div class="slds-col slds-size--3-of-12 hideLine">
+                                <a aura:id="ConfigureProducts" onclick="{!c.configureProducts}" class="hideLine">
+                                    <lightning:icon iconName="custom:custom93" size="medium" alternativeText="Configure"/><br/>
+                                	<span class="osOutputLabel">Configure <br/>Products</span>
+                                </a>
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="slds-col slds-size--3-of-12 disabledButtons">
+                                    <a aura:id="ConfigureProducts" class="disabledButtons hideLine">
+                                        <lightning:icon iconName="custom:custom93" size="medium" alternativeText="Configure"/><br/>
+                                    	<span class="osOutputLabel">Configure <br/>Products</span>
+                                    </a>
+                                </div>
+                            </aura:set>
+                        </aura:if>
+                        <!--Action My Approvals-->
+                        <div class="slds-col slds-size--3-of-12">
+                            <a aura:id="SyncWithOpty" onclick="{!c.myApprovals}" class="hideLine">
+                                <lightning:icon iconName="standard:approval" size="medium" alternativeText="My Approvals"/><br/>
+                            	<span class="osOutputLabel">My <br/>Approvals</span>
+                            </a>
+                        </div>
+                        <!--Action for Generate-->
+                        <aura:if isTrue="{!v.proposal.Apttus_Proposal__ReadyToGenerate__c}">
+                            <div class="slds-col slds-size--3-of-12">
+                                <a aura:id="Generate" onclick="{!c.generateProposal}" class="hideLine">
+                                    <lightning:icon iconName="standard:contract" size="medium" alternativeText="Generate"/><br/>
+                                	<span class="osOutputLabel">Send<br/>Proposal</span>
+                                </a>
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="slds-col slds-size--3-of-12 disabledButtons">
+                                    <a aura:id="Generate" class="disabledButtons hideLine">
+                                        <lightning:icon iconName="standard:contract" size="medium" alternativeText="Generate"/><br/>
+                                        <span class="osOutputLabel">Send<br/>Proposal</span>
+                                    </a>
+                                </div>
+                            </aura:set>    
+                        </aura:if>
+                        <!--Action for Send for eSignature using Echosign-->
+                        <aura:if isTrue="{!v.proposal.Apttus_Proposal__ReadyToPresent__c &amp;&amp; v.proposal.Apttus_Proposal__Description__c=='Echosign'}">
+                            <div class="slds-col slds-size--3-of-12">
+                                <a aura:id="Preview" onclick="{!c.sendForEchoSign}" class="hideLine">
+                                    <!--<lightning:icon iconName="custom:custom18" size="medium" alternativeText="eSignature"/><br/>-->
+                                    <img src="{!$Resource.AdobeSign}" class="eSignIcon"/>
+                                	<span class="osOutputLabel"><br/>eSignature</span>
+                                </a>
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.proposal.Apttus_Proposal__ReadyToPresent__c == false &amp;&amp; v.proposal.Apttus_Proposal__Description__c=='Echosign'}">
+                            <div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <a aura:id="Preview" class="disabledButtons hideLine">
+									<!--<lightning:icon iconName="custom:custom18" size="medium" alternativeText="eSignature"/><br/>-->
+                                    <img src="{!$Resource.AdobeSign}" class="eSignIcon"/>
+                                	<span class="osOutputLabel"><br/>eSignature</span>
+                                </a>
+                            </div>
+                        </aura:if>
+                        <!--Action for Send for eSignature using Docusign-->
+                        <aura:if isTrue="{!v.proposal.Apttus_Proposal__ReadyToPresent__c &amp;&amp; v.proposal.Apttus_Proposal__Description__c=='Docusign'}">
+                            <div class="slds-col slds-size--3-of-12">
+                                <a aura:id="Preview" onclick="{!c.sendForDocuSign}" class="hideLine">
+                                    <!--<lightning:icon iconName="custom:custom18" size="medium" alternativeText="eSignature"/><br/>-->
+                                    <img src="{!$Resource.Docusign}" class="eSignIcon"/>
+                                	<span class="osOutputLabel"><br/>eSignature</span>
+                                </a>
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.proposal.Apttus_Proposal__ReadyToPresent__c == false &amp;&amp; v.proposal.Apttus_Proposal__Description__c=='Docusign'}">
+                            <div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <a aura:id="Preview" class="disabledButtons hideLine">
+									<!--<lightning:icon iconName="custom:custom18" size="medium" alternativeText="eSignature"/><br/>-->
+                                    <img src="{!$Resource.Docusign}" class="eSignIcon"/>
+                                	<span class="osOutputLabel"><br/>eSignature</span>
+                                </a>
+                            </div>
+                        </aura:if>
+                        <!--Action for Send for eSignature using Congasign-->
+                        <aura:if isTrue="{!v.proposal.Apttus_Proposal__ReadyToPresent__c &amp;&amp; v.proposal.Apttus_Proposal__Description__c=='Congasign'}">
+                            <div class="slds-col slds-size--3-of-12">
+                                <a aura:id="Preview" onclick="{!c.sendForCongaSign}" class="hideLine">
+                                    <!--<lightning:icon iconName="custom:custom18" size="medium" alternativeText="eSignature"/><br/>-->
+                                    <img src="{!$Resource.Congasign}" class="eSignIcon"/>
+                                	<span class="osOutputLabel"><br/>eSignature</span>
+                                </a>
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.proposal.Apttus_Proposal__ReadyToPresent__c == false &amp;&amp; v.proposal.Apttus_Proposal__Description__c=='Congasign'}">
+                            <div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <a aura:id="Preview" class="disabledButtons hideLine">
+									<!--<lightning:icon iconName="custom:custom18" size="medium" alternativeText="eSignature"/><br/>-->
+                                    <img src="{!$Resource.Congasign}" class="eSignIcon"/>
+                                	<span class="osOutputLabel"><br/>eSignature</span>
+                                </a>
+                            </div>
+                        </aura:if>
+                    </div>
+                    <!--Second Line-->
+                    <div class="slds-grid slds-grid--align-spread">
+                        <!--Action for Check eSignature Status-->
+                        <aura:if isTrue="{!v.proposal.Apttus_Proposal__Approval_Stage__c=='Presented' &amp;&amp; v.proposal.Apttus_Proposal__Description__c=='Docusign'}">
+                            <div class="slds-col slds-size--3-of-12">
+                                <a aura:id="Preview" onclick="{!c.checkESignature}" class="hideLine">
+                                    <lightning:icon iconName="custom:custom18" size="medium" alternativeText="Check eSignature Status"/><br/>
+                                	<span class="osOutputLabel">Check <br/>eSignature <br/>Status</span>
+                                </a>
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.proposal.Apttus_Proposal__Approval_Stage__c != 'Presented' &amp;&amp; v.proposal.Apttus_Proposal__Description__c=='Docusign'}">
+                            <div class="slds-col slds-size--3-of-12 disabledButtons">
+                                <a aura:id="Preview" class="disabledButtons hideLine">
+									<lightning:icon iconName="custom:custom18" size="medium" alternativeText="Check eSignature Status"/><br/>
+                                	<span class="osOutputLabel">Check <br/>eSignature <br/>Status</span>
+                                </a>
+                            </div>
+                        </aura:if>
+                        <!--Action for Accept Quote-->
+                        <aura:if isTrue="{!v.proposal.Apttus_Proposal__Approval_Stage__c == 'Presented'}">
+                            <div class="slds-col slds-size--3-of-12">
+                                <a aura:id="Accept" onclick="{!c.acceptProposal}" class="hideLine">
+                                    <lightning:icon iconName="standard:task" size="medium" alternativeText="Accept"/><br/>
+                                	<span class="osOutputLabel">Accept</span>
+                                </a>
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="slds-col slds-size--3-of-12 disabledButtons">
+                                    <a aura:id="Accept" class="disabledButtons hideLine">
+                                        <lightning:icon iconName="standard:task" size="medium" alternativeText="Accept"/><br/>
+                                    	<span class="osOutputLabel">Accept</span>
+                                    </a>
+                                </div>
+                            </aura:set>
+                        </aura:if>
+                        <!--Action for Synchronize with Opportunity-->
+                        <aura:if isTrue="{!v.proposal.Apttus_Proposal__Opportunity__c != null}">
+                            <div class="slds-col slds-size--3-of-12">
+                                <a aura:id="SyncWithOpty" onclick="{!c.syncWithOppty}" class="hideLine">
+                                    <lightning:icon iconName="standard:merge" size="medium" alternativeText="Sync"/><br/>
+                                	<span class="osOutputLabel">Sync</span>
+                                </a>
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="slds-col slds-size--3-of-12 disabledButtons">
+                                    <a aura:id="SyncWithOpty" class="disabledButtons hideLine">
+                                        <lightning:icon iconName="standard:merge" size="medium" alternativeText="Sync"/><br/>
+                                    	<span class="osOutputLabel">Sync</span>
+                                    </a>
+                                </div>
+                            </aura:set>
+                        </aura:if>
+                        <!--Action for Create Agreement-->
+                        <aura:if isTrue="{!or(or(v.proposal.Apttus_Proposal__Approval_Stage__c == 'Accepted',v.proposal.Apttus_Proposal__Approval_Stage__c == 'Presented'),v.proposal.Apttus_Proposal__Approval_Stage__c == 'Generated',v.proposal.Apttus_Proposal__Approval_Stage__c == 'Approved')}">
+                            <div class="slds-col slds-size--3-of-12">
+                                <a aura:id="agreement" onclick="{!c.createAgreement}" class="hideLine">
+                                    <lightning:icon iconName="standard:contract" size="medium" alternativeText="Create Agreement"/><br/>
+                                	<span class="osOutputLabel">Create <br/>Agreement</span>
+                                </a>
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="slds-col slds-size--3-of-12 disabledButtons">
+                                    <a aura:id="agreement" class="disabledButtons hideLine">
+                                        <lightning:icon iconName="standard:contract" size="medium" alternativeText="Create Agreement"/><br/>
+                                        <span class="osOutputLabel">Create <br/>Agreement</span>
+                                    </a>
+                                </div>
+                            </aura:set>
+                        </aura:if>
+                        <!-- RLP Config Product Button -->
+                        <div class="slds-col slds-size--3-of-12 hideLine">
+                            <aura:if isTrue="{! AND(v.proposal.Apttus_QPConfig__PriceListId__c != null,v.preSalesConfigSettingRecord.APTSMD_Enable_Configure_Product_RLP__c)}">                                
+                                <a aura:id="ConfigureProducts" onclick="{!c.configureProductsRLP}" class="hideLine">
+                                    <lightning:icon iconName="custom:custom93" size="medium" alternativeText="Configure"/><br/>
+                                    <span class="osOutputLabel">Configure <br/>Products (RLP)</span>
+                                </a>                                
+                            </aura:if>
+                        </div>
+                    </div>
+                    <!--Third Line-->
+                    <div class="slds-grid slds-grid--align-spread">
+                        <aura:if isTrue="{! v.preSalesConfigSettingRecord.APTSMD_Enable_Configure_Product_RLP__c}">
+                            <div class="slds-col slds-size--3-of-12 hideLine"> 
+                                <a aura:id="ConfigureProducts" onclick="{!c.myApprovalsRLP}" class="hideLine">
+                                    <lightning:icon iconName="standard:approval" size="medium" alternativeText="My Approvals"/><br/>
+                                    <span class="osOutputLabel">My<br/>Approvals (RLP)</span>
+                                </a>  
+                        	</div>                                                          
+                        </aura:if>
+                        <!--Action for Configure Products with Limited Access-->
+                        <aura:if isTrue="{!v.proposal.Apttus_QPConfig__PriceListId__c != null}">
+                            <div class="slds-col slds-size--3-of-12 hideLine displayAction">
+                                <a aura:id="ConfigureProducts" onclick="{!c.configureProductsLA}" class="hideLine">
+                                    <lightning:icon iconName="custom:custom93" size="medium" alternativeText="Configure"/><br/>
+                                	<span class="osOutputLabel">Configure <br/>Products <br/> (Limited Access)</span>
+                                </a>
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="slds-col slds-size--3-of-12 disabledButtons">
+                                    <a aura:id="ConfigureProducts" class="disabledButtons hideLine displayAction">
+                                        <lightning:icon iconName="custom:custom93" size="medium" alternativeText="Configure"/><br/>
+                                        <span class="osOutputLabel">Configure <br/>Products <br/> (Limited Access)</span>
+                                    </a>
+                                </div>
+                            </aura:set>
+                        </aura:if>
+                        <div class="slds-col slds-size--3-of-12 hideLine">
+                            <!--Action for Configure Cloud Server-->
+                            <a aura:id="CloudServer" onclick="{!c.configureCloudServer}" class="hideLine displayAction">
+                                <lightning:icon iconName="custom:custom93" size="medium" alternativeText="ConfigureCloudServer"/><br/>
+                                <span class="osOutputLabel">Configure <br/>Cloud Server</span>
+                            </a>
+                        </div>
+                        <div class="slds-col slds-size--3-of-12 hideLine">
+                        </div>
+                        <div class="slds-col slds-size--3-of-12 hideLine">
+                        </div>
+                    </div>
+                </div>
+            </p>
+        </div>
+    </div>
+</aura:component>

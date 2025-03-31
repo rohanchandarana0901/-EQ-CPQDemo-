@@ -1,0 +1,379 @@
+<apex:page controller="APTSMD_NewAgreementFromQuoteCls" standardStylesheets="false">
+   <head>
+        <title>Create New Agreement</title>
+        <apex:variable var="envPath" value="{!URLFOR($Resource.APTSMD_StaticResources,'/StaticResources')}" /> 
+        <apex:variable var="envPathCDN" value="{!URLFOR($Resource.APTSMD_StaticResourcesCDN,'/StaticResourcesCDN')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_SLDS,'assets/styles/salesforce-lightning-design-system-vf.css')}"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <apex:includeScript value="//ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.min.js"/>
+        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" media="all"/>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-sanitize.js"></script>
+        <script src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.2.0.js"></script>
+        <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+        
+        <script src="{!envPath}/node_modules/angular-aria/angular-aria.js"></script>
+        <script src="{!envPath}/node_modules/angular-animate/angular-animate.js"></script>
+        <script src="{!envPath}/node_modules/angular-material/angular-material.js"></script>
+        <script src="{!envPath}/node_modules/angular-messages/angular-messages.js"></script>
+        <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css' />
+        
+        <link rel="stylesheet" href="{!envPathCDN}/lib/Font-Awesome-master/css/font-awesome.css" />
+        <link rel="stylesheet" href="{!envPathCDN}/lib/ng-table-master/dist/ng-table.css" />
+        <link rel="stylesheet" href="{!envPathCDN}/lib/angular-pickadate-master/dist/angular-pickadate.css"/>
+        <script type="text/javascript" src="{!envPathCDN}/lib/angular-pickadate-master/dist/angular-pickadate.js"></script>
+        <!--<script src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"></script>-->
+        
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.2.0/ui-bootstrap-tpls.min.js"></script>-->
+        
+        <script src="https://getbootstrap.com/2.3.2/assets/js/bootstrap-typeahead.js" type="text/javascript"></script> 
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_SLDS,'assets/styles/salesforce-lightning-design-system-vf.css')}"/>
+        
+        <style>
+          .typeahead-demo .custom-popup-wrapper {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1000;
+            display: none;
+            background-color: #f9f9f9;
+          }
+        
+          .typeahead-demo .custom-popup-wrapper > .message {
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+            color: #868686;
+          }
+        
+          .typeahead-demo .custom-popup-wrapper > .dropdown-menu {
+            position: static;
+            float: none;
+            display: block;
+            min-width: 160px;
+            background-color: transparent;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+          }
+          .form-control{
+              width:50%! important;
+              //display:inline-block ! important;
+          }
+          .mandatory{
+              color:red;
+          }
+          [uib-typeahead-popup].dropdown-menu {
+              width:50%! important; 
+          }
+        </style>
+        
+        <script>
+            var app=angular.module("newAgreementApp",['ui.bootstrap']);
+            
+            // define factory for data source
+            app.factory("Accounts", function(){
+              var accounts = {!accJSON};
+              console.log('accounts');
+              console.log(accounts);
+              return accounts;
+            });
+            
+            app.controller("newAgreementCtrl",["$scope",function($scope,Accounts){
+                $scope.newAgreement = {!agreementJSON};
+                console.log('$scope.newAgreement');
+                // console.log('$scope.newAgreement');
+                $scope.newAgreement.RecordTypeId="!!";
+                $scope.proposal={!quoteJSON};
+                $scope.contacts={!contactJSON};
+                $scope.account=Accounts;
+                $scope.accounts={!accJSON};
+                $scope.opportunities={!oppJSON};
+                $scope.recordTypes={!agrRecordTypeJSON};
+                $scope.payTerm={!payTermJSON};
+                $scope.supportExhibit={!supportExhibitJSON};
+                $scope.quoteId='{!quoteId}';
+                $scope.allQuotes={!allQuoteJSON};
+                $scope.newAgreement.Apttus__Contract_Start_Date__c=new Date();
+                var numberOfDaysToAdd = 364;
+                $scope.newAgreement.Apttus__Contract_End_Date__c=new Date();
+                $scope.newAgreement.Apttus__Contract_End_Date__c.setDate($scope.newAgreement.Apttus__Contract_End_Date__c.getDate() + numberOfDaysToAdd);
+                $scope.newAgreement.RecordTypeId = '';
+                console.log($scope.newAgreement);
+                console.log($scope.contacts);
+                console.log($scope.accounts);
+                console.log($scope.opportunities);
+                console.log($scope.recordTypes);
+                console.log($scope.payTerm);
+                console.log($scope.supportExhibit);
+                
+                if($scope.proposal.Apttus_Proposal__Opportunity__c!=undefined){
+                    angular.forEach($scope.opportunities, function(item){
+                             if(item.Id==$scope.proposal.Apttus_Proposal__Opportunity__c){
+                                 $scope.selectOpp=item;
+                             }
+                    });
+                }
+                if($scope.proposal.Apttus_Proposal__Account__c!=undefined){
+                    angular.forEach($scope.accounts, function(item){
+                             if(item.Id==$scope.proposal.Apttus_Proposal__Account__c){
+                                 $scope.selectAcc=item;
+                             }
+                    });
+                }
+                if($scope.proposal.Id!=undefined){
+                    angular.forEach($scope.allQuotes, function(item){
+                             if(item.Id==$scope.proposal.Id){
+                                 $scope.selectQuote=item;
+                             }
+                    });
+                }
+                // if($scope.proposal.Apttus_Proposal__Account__c!=undefined){
+                //     angular.forEach($scope.opportunities, function(item){
+                //              if(item.Id==$scope.proposal.Apttus_Proposal__Opportunity__c){
+                //                  $scope.selectOpp=item;
+                //              }
+                //     });
+                // }
+                
+                $scope.modelOptions = {
+                    debounce: {
+                      default: 500,
+                      blur: 250
+                    },
+                    getterSetter: true
+                  };
+                
+                $scope.getAccountValue=function(name){
+                    angular.forEach($scope.accounts, function(item){
+                         if(item.Name==name){
+                             return item.Id;
+                         }
+                    });
+                }
+                $scope.getContactValue=function(name){
+                    angular.forEach($scope.contacts, function(item){
+                         if(item.Name==name){
+                            $scope.selectContact = item;
+                            console.debug($scope.proposal);
+                             return item.Id;
+                         }
+                    });
+                }
+                $scope.getRecordTypeValue=function(name){
+                    angular.forEach($scope.recordTypes, function(item){
+                         if(item.Name==name){
+                            $scope.selectRecordType = item;
+                             return item.Id;
+                         }
+                    });
+                }
+                $scope.getOppValue=function(name){
+                    angular.forEach($scope.opportunities, function(item){
+                         if(item.Name==name){
+                             return item.Id;
+                         }
+                    });
+                }
+                $scope.continue=function(){
+                    console.log($scope.newAgreement);
+                    
+                    if($scope.newAgreement.Apttus__Contract_Start_Date__c!=undefined){
+                        $scope.newAgreement.Apttus__Contract_Start_Date__c=$scope.convertDateCart($scope.newAgreement.Apttus__Contract_Start_Date__c);
+                    }
+                    if($scope.newAgreement.Apttus__Contract_End_Date__c!=undefined){
+                        $scope.newAgreement.Apttus__Contract_End_Date__c=$scope.convertDateCart($scope.newAgreement.Apttus__Contract_End_Date__c);
+                    }
+                    console.log($scope.newAgreement);
+                    Visualforce.remoting.Manager.invokeAction(
+                          '{!$RemoteAction.APTSMD_NewAgreementFromQuoteCls.insertAgreement}',angular.toJson($scope.newAgreement),'{!quoteId}',
+                          function(result, event) {
+                              console.log(result);
+                               if( (typeof sforce != 'undefined') && (sforce != null) ) {
+                                // Salesforce1 navigation
+                                sforce.one.navigateToSObject(result);
+                              } else {
+                               // open in new window
+                                window.location = '/'+result;
+                              }
+                              
+                              $scope.$apply();
+                          }
+                    );
+                }
+                function normalizeDate(mydate){
+                   mydate = new Date(mydate );
+                   mydate = new Date(mydate - mydate.getTimezoneOffset() * 60000);
+                   return mydate;
+                }
+                function normalizeDateExtended(mydate){
+                    mydate = new Date(mydate);
+                    data = new Date(mydate -  mydate.getTimezoneOffset() * 60000);
+                    var d = mydate.getDate();
+                    var m = mydate.getMonth()+1;
+                    var y = mydate.getFullYear();
+                    return ''+ (m<=9?'0'+m:m) +'-' + (d<=9?'0'+d:d)+'-' + y;
+                }
+                
+                $scope.accountNames=[];
+                angular.forEach($scope.accounts, function(item){
+                     $scope.accountNames.push(item.Name);
+                });
+                
+                $scope.contactNames=[];
+                angular.forEach($scope.contacts, function(item){
+                     $scope.contactNames.push(item.Name);
+                });
+                
+                $scope.oppNames=[];
+                angular.forEach($scope.opportunities, function(item){
+                     $scope.oppNames.push(item.Name);
+                });
+                
+                $('document').ready(function(){
+                    $( '#accounts').typeahead( { source:$scope.accountNames } );
+                    $( '#contacts').typeahead( { source:$scope.contactNames } );
+                    $( '#opportunity').typeahead( { source:$scope.oppNames } );
+                });
+                
+                
+                $scope.convertDateCart =function(date) {
+                    var utcDate = new Date(date).toUTCString();
+                    var d = new Date(utcDate),
+                        month = '' + (d.getMonth() + 1),
+                        day = '' + d.getDate(),
+                        year = d.getFullYear();
+                
+                    if (month.length < 2) month = '0' + month;
+                    if (day.length < 2) day = '0' + day;
+                    
+                    date=[year, month , day ].join('-');
+                    console.log('>>> to UTC String :'+d);
+                    if(isNaN(year)){
+                        return '';
+                    }
+                    return date;
+                }  
+                
+                $scope.cancel=function(){
+                    if($scope.quoteId==[]){
+                        window.location='/{!accId}';
+                    }
+                    else{
+                        // window.location='/'+$scope.quoteId;
+                        window.history.back();
+                    }
+                }
+            }]);
+        </script>
+    </head> 
+    <body ng-app="newAgreementApp" ng-controller="newAgreementCtrl" ng-cloak="true">
+        <div class="slds" style="width:95%;margin:auto;border: 1px solid #d8dde6;background-color:white"><!--rgb(22, 50, 92);-->
+        <div class="slds-page-header" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media slds-media--top slds-no-space slds-grow">
+                        <div class="slds-media__figure">
+                            <span class="slds-avatar slds-avatar--small approve-icon">
+                                <img style="background-color: #4dca76;" src="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, 'assets/icons/custom/custom18_60.png')}" alt="" />
+                            </span>
+                        </div>
+                        <div class="slds-media__body">
+                            <h1 class="slds-page-header__title slds-truncate slds-text-heading--medium slds-section__title" title="New Agreement">New Agreement</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <form ng-submit="newAgreement.RecordTypeId!='!!' && continue();">
+            <div class="row" style="margin: auto;">
+            <!--<div class="col-xs-6 form-group">
+                <label for="acc" class="control-label">Record Type</label><span class="mandatory"> *</span>
+                <select ng-model="newAgreement.RecordTypeId" ng-required="true" class="form-control">
+                    <option value="!!">Select Record Type</option>
+                    <option value="{{record.Id}}" ng-repeat="record in recordTypes">{{record.Name}}</option>
+                </select>
+                <span class="error" ng-show="submitted && newAgreement.RecordTypeId=='!!'">Please select Record Type to proceed</span>
+            </div>-->
+            <div class="col-xs-6 form-group">
+                 <label for="acc" class="">Record Type</label><span class="mandatory"> *</span>
+                 <input id="recordType" name="recordTypes" type="text" typeahead-show-hint="true" typeahead-min-length="0" ng-model="selectRecordType" ng-value="newAgreement.RecordTypeId=selectRecordType.Id" ng-model-options="modelOptions" uib-typeahead="recordType as recordType.Name for recordType in recordTypes | filter:{Name:$viewValue}" class="form-control" ng-init="getRecordTypeValue('MSA');"/>
+                 <span class="error" ng-show="submitted && newAgreement.RecordTypeId=='!!'">Please select Record Type to proceed</span>
+            </div>
+            <div class="col-xs-6 form-group">
+                <label for="acc" class="">Agreement Name</label><span class="mandatory"> *</span>
+                <input type="text" ng-required="true" ng-model="newAgreement.Name" class="form-control "/>
+            </div>
+            <div class="col-xs-6 form-group">
+                 <label for="accounts" class="">Account</label><span class="mandatory"> *</span>
+                 <!--<input id="accounts" type="text" name="accounts" class="form-control" ng-model="newAgreement.Apttus__Account__c"/>-->
+                 <input id="accounts" name="accounts" type="text" typeahead-show-hint="true" typeahead-min-length="0" ng-model="selectAcc" ng-value="newAgreement.Apttus__Account__c=selectAcc.Id" ng-model-options="modelOptions" uib-typeahead="account as account.Name for account in accounts | filter:{Name:$viewValue} | limitTo:8" class="form-control "/>
+            </div>
+            <div class="col-xs-6 form-group">
+                <label for="opportunity" class="">Opportunity</label>
+                <input id="opportunity" name="opportunity" type="text" typeahead-show-hint="true" typeahead-min-length="0" ng-model="selectOpp" ng-value="newAgreement.Apttus__Related_Opportunity__c=selectOpp.Id" ng-model-options="modelOptions" uib-typeahead="opp as opp.Name for opp in opportunities | filter:{Name:$viewValue} | limitTo:8" class="form-control "/>
+                <!--<input class="form-control" ng-model="newAgreement.Apttus__Related_Opportunity__c" id="opportunity" type="text"/>-->
+            </div>
+            
+            <div class="col-xs-6 form-group">
+                 <label for="contacts" class="">Primary Contact</label>
+                 <input id="contacts" name="contacts" type="text" typeahead-show-hint="true" typeahead-min-length="0" ng-model="selectContact" ng-value="newAgreement.Apttus__Primary_Contact__c=selectContact.Id" ng-model-options="modelOptions" uib-typeahead="contact as contact.Name for contact in contacts | filter:{Name:$viewValue} | limitTo:8" class="form-control" ng-init="getContactValue('Diego Francis');"/>
+                 <!--<input class="form-control " ng-model="newAgreement.Apttus__Primary_Contact__c" id="contacts" type="text"/>-->
+            </div>
+            
+            <div class="col-xs-6 form-group">
+                 <label for="payTerm" class="">Payment Term</label>
+                 <input id="payTerm" name="payTerm" type="text" typeahead-show-hint="true" typeahead-min-length="0" ng-model="selectPayTerm" ng-value="newAgreement.Apttus_CMConfig__PaymentTermId__c=selectPayTerm.Id" ng-model-options="modelOptions" uib-typeahead="pay as pay.Name for pay in payTerm | filter:{Name:$viewValue} | limitTo:8" class="form-control" ng-init="selectPayTerm=payTerm[0]"/>
+                 <!--<input class="form-control " ng-model="newAgreement.Apttus__Primary_Contact__c" id="contacts" type="text"/>-->
+            </div>
+            
+            <div class="col-xs-6 form-group">
+                 <label for="contacts" class="">Related Quote</label>
+                 <input id="quote" name="quote" type="text" typeahead-show-hint="true" typeahead-min-length="0" ng-model="selectQuote" ng-value="newAgreement.Apttus_QPComply__RelatedProposalId__c=selectQuote.Id" ng-model-options="modelOptions" uib-typeahead="quote as quote.Name for quote in allQuotes | filter:{Name:$viewValue} | limitTo:8" class="form-control"/>
+                 <!--<input class="form-control " ng-model="newAgreement.Apttus__Primary_Contact__c" id="contacts" type="text"/>-->
+            </div>
+            
+            <div class="col-xs-6 form-group">
+                 <label for="acc" class="">Total Agreement Value</label>
+                 <input type="number" class="form-control " ng-model="newAgreement.Apttus__Total_Contract_Value__c" step="0.01"/>
+            </div>
+            <div class="col-xs-6 form-group">
+                 <label for="acc" class="">Term</label>
+                 <input type="number" class="form-control " ng-model="newAgreement.Apttus__Term_Months__c"/>
+            </div>
+            <div class="col-xs-6 form-group">
+                 <label for="acc" class="">Agreement Start Date</label>
+                 <input type="date" class="form-control" ng-model="newAgreement.Apttus__Contract_Start_Date__c"/>
+            </div>
+            <div class="col-xs-6 form-group">
+                <label for="acc" class="control-label">Support Exhibit</label>
+                <!--<span class="mandatory"> *</span>-->
+                <select ng-model="newAgreement.APTSMD_Support_Exhibits__c" ng-init="newAgreement.APTSMD_Support_Exhibits__c ='Basic'" class="form-control">
+                    <!--<option value="null" ng-selected="true">Select Support Exhibit</option>-->
+                    <option value="{{record}}" ng-repeat="record in supportExhibit">{{record}}</option>
+                </select>
+            </div>
+            <div class="col-xs-6 form-group">
+                 <label for="acc" class="">Agreement End Date</label>
+                 <input type="date" class="form-control" ng-model="newAgreement.Apttus__Contract_End_Date__c"/>
+            </div>
+            <div class="col-xs-6 form-group">
+                 <label for="acc" class="">SLA</label><br/>
+                 <input type="checkbox" class="" ng-model="newAgreement.APTSMD_SLA__c"/>
+            </div>
+            </div>
+            <div class="slds-col slds-no-flex slds-grid slds-align-top slds-p-bottom--xx-small" >
+              <div class="slds-button-group" role="group" style="margin:auto! important">
+                    <button type="reset" ng-click="cancel()" class="slds-button slds-button--neutral">Cancel</button>
+                    <button type="submit" class="slds-button slds-button--neutral" ng-click="submitted=true">Continue</button>
+              </div><br/><br/><br/><br/> 
+            </div>
+        </form>
+        </div>
+    </body>
+</apex:page>

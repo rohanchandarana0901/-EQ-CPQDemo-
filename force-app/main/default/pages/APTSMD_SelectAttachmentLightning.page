@@ -1,0 +1,139 @@
+<apex:page standardController="Apttus_Proposal__Proposal__c"
+           extensions="APTSMD_SelectAttachmentController"
+           tabStyle="Apttus_Proposal__Proposal__c"
+           action="{!loadAttachments}" lightningStylesheets="true"  cache="false">
+    <!--<html>-->
+        <!--<head>-->
+             <apex:stylesheet value="/resource/lightening/salesforce-lightning-design-system.min.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+            <!-- Import the Design System style sheet -->
+            <apex:slds />
+        <!--</head>-->
+        <!--<body>-->
+            
+            
+            
+            <apex:form >
+                <apex:outputField value="{!Apttus_Proposal__Proposal__c.Apttus_Proposal__Primary_Contact__c}" rendered="false" />
+                <apex:outputField value="{!Apttus_Proposal__Proposal__c.Apttus_Proposal__Proposal_Name__c}" rendered="false" />
+                <!--<apex:sectionHeader title="{!$Label.apttus_echosign__sendforesignature}" />-->
+                 <div class="slds-page-header">
+                            <div class="slds-media">
+                                <div class="slds-media__body" style="text-align:left">
+                                    <h1 class="slds-page-header__title slds-truncate slds-align-left" title="Rohde Corp - 80,000 Widgets">Send for Esignature</h1>
+                                    <p class="slds-text-body_small slds-line-height_reset">{!Apttus_Proposal__Proposal__c.Apttus_Proposal__Proposal_Name__c}</p>
+                                </div>
+                            </div>
+                        </div>
+                 <!--<br />-->
+                <apex:pageBlock rendered="{!NOT(showOrderPage)}">
+                    
+                    <!--<apex:pageBlockButtons location="top" >-->
+                    <!--    <apex:outputPanel id="idButtonsTopPanel" >-->
+                            <!--<button class="slds-button slds-button_brand">Button</button>-->
+                    <!--            <apex:commandButton action="{!doSelect}" value="{!$Label.apttus_config2__select}"-->
+                    <!--                                id="cmdButtonDoSelect" disabled="{!attachments.size = 0}"  styleClass="slds-button slds-button_brand sdls-button-extended"/>-->
+                    <!--            <apex:commandButton action="{!doCancel}" value="{!$Label.apttus_config2__cancel}"-->
+                    <!--                            id="cmdButtonDoCancel" styleClass="slds-button slds-button_brand sdls-button-extended"/>-->
+                    <!--    </apex:outputPanel>-->
+                    <!--</apex:pageBlockButtons>-->
+                    
+                    <apex:pageBlockButtons location="bottom">
+                        <apex:outputPanel id="idButtonsBottomPanel">
+                            <apex:commandButton action="{!doSelect}" value="{!$Label.apttus_config2__select}"
+                                                id="cmdButtonDoSelect" disabled="{!attachments.size = 0}" styleClass="slds-button slds-button_brand sdls-button-extended"/>
+                            <apex:commandButton action="{!doCancel}" value="{!$Label.apttus_config2__cancel}"
+                                                id="cmdButtonDoCancel" styleClass="slds-button slds-button_brand sdls-button-extended" />
+                        </apex:outputPanel>
+                    </apex:pageBlockButtons>
+                    
+                    <apex:pageMessages />
+                    
+                    <apex:outputPanel id="idProposalInfo" style="background-color: white;">
+                        <apex:pageBlockSection >
+                            <apex:outputField value="{!Apttus_Proposal__Proposal__c.Apttus_Proposal__Account__c}" />
+                            <apex:outputField value="{!Apttus_Proposal__Proposal__c.Apttus_Proposal__Payment_Term__c}" />
+                            <apex:outputField value="{!Apttus_Proposal__Proposal__c.Apttus_Proposal__Primary_Contact__c}" />
+                            <apex:outputField value="{!Apttus_Proposal__Proposal__c.Apttus_Proposal__Valid_Until_Date__c}" />
+                            <apex:outputField value="{!Apttus_Proposal__Proposal__c.Apttus_Proposal__ExpectedStartDate__c}" />
+                            <apex:outputField value="{!Apttus_Proposal__Proposal__c.Apttus_Proposal__ExpectedEndDate__c}" />
+                        </apex:pageBlockSection>
+                    </apex:outputPanel>
+                     <br />
+                    <apex:outputPanel id="idAttachments" >
+                         <apex:panelGrid styleClass="list"
+                                            columnClasses="pbTitle,pbButton,pbHelp,slds-truncate" columns="1" border="0"
+                                            cellpadding="0" cellspacing="0">
+                        <!--<apex:pageBlockSection title="{!$Label.apttus__selectattachments}" columns="1"-->
+                        <!--                       collapsible="false" rendered="{!attachments.size > 0}">-->
+                            <apex:pageBlockTable value="{!attachments}" var="attachData" styleClass="slds-table slds-table_bordered slds-table_cell-buffer"
+                                                    rowClasses="dataRow" headerClass="slds-text-title_caps" columnClasses="slds-truncate">
+                                <apex:column styleClass="slds-truncate">
+                                    <apex:facet name="header">{!$Label.apttus_echosign__select}</apex:facet>
+                                    <apex:inputCheckbox selected="{!attachData.selected}" styleClass="slds-checkbox"
+                                                        value="{!attachData.selected}" />
+                                </apex:column>
+                                <apex:column styleClass="slds-truncate" >
+                                    <apex:facet name="header">{!$Label.apttus__filename}</apex:facet>
+                                    <apex:outputLink value="/{!attachData.attachmentSO.Id}">{!attachData.attachmentSO.Name}</apex:outputLink>
+                                </apex:column>
+                                <apex:column styleClass="slds-truncate">
+                                    <apex:facet name="header">{!$Label.apttus__size}</apex:facet>
+                                    <apex:outputText value="{!attachData.attachmentSO.BodyLength}" />
+                                </apex:column>
+                                <apex:column styleClass="slds-truncate">
+                                    <apex:facet name="header">Created Date</apex:facet>
+                                    <apex:outputField value="{!attachData.attachmentSO.CreatedDate}" />
+                                </apex:column>
+                            </apex:pageBlockTable>
+                             </apex:panelGrid>
+                        <!--</apex:pageBlockSection>-->
+                    </apex:outputPanel>
+                </apex:pageBlock>
+                
+                
+                <apex:pageBlock rendered="{!showOrderPage}">
+                    <apex:pageBlockButtons >
+                        <apex:commandButton action="{!doPrevious}" value="{!$Label.apttus_config2__previous}" styleClass="slds-button slds-button_brand sdls-button-extended"/>
+                        <apex:commandButton action="{!doContinue}" value="{!$Label.apttus_config2__next}" styleClass="slds-button slds-button_brand sdls-button-extended"/>
+                        <apex:commandButton action="{!doCancel}" value="{!$Label.apttus_config2__cancel}" styleClass="slds-button slds-button_brand sdls-button-extended"/>
+                    </apex:pageBlockButtons>            
+                    
+                    <apex:pageBlockSection id="idAttachments" title="{!$Label.apttus_echosign__orderattachments}" collapsible="false" columns="1">
+                        <apex:pageBlockTable value="{!selectedAtts}" var="selectedAtt" width="100%" styleClass="slds-table slds-table_bordered slds-table_cell-buffer"
+                                                    rowClasses="dataRow" headerClass="slds-text-title_caps" columnClasses="slds-truncate" >
+                            <apex:column >
+                                <apex:commandLink action="{!doMoveDown}" reRender="idAttachments" styleClass="slds-link" >
+                                    <apex:outputPanel rendered="{!NOT(selectedAtt.Id = lastAttachmentId)}">
+                                        <img src="/img/s.gif" alt="Down"  class="downArrowIcon" title="Down"/>
+                                    </apex:outputPanel>
+                                    <apex:param name="param" assignTo="{!moveDownId}" value="{!selectedAtt.Id}" />
+                                </apex:commandLink>
+                            </apex:column>
+                            <apex:column >
+                                <apex:commandLink action="{!doMoveUp}" reRender="idAttachments">
+                                    <apex:outputPanel rendered="{!NOT(selectedAtt.Id = firstAttachmentId)}">
+                                        <img src="/img/s.gif" alt="Up"  class="upArrowIcon" title="Up"/>
+                                    </apex:outputPanel>
+                                    <apex:param name="param" assignTo="{!moveUpId}" value="{!selectedAtt.Id}" />
+                                </apex:commandLink>
+                            </apex:column>
+                            <apex:column >
+                                <apex:facet name="header">{!$Label.apttus__filename}</apex:facet>
+                                <apex:outputLink value="/{!selectedAtt.Id}">{!selectedAtt.Name}</apex:outputLink>
+                            </apex:column>
+                            <apex:column >
+                                <apex:facet name="header">{!$Label.apttus__size}</apex:facet>
+                                <apex:outputText value="{!selectedAtt.BodyLength}"/>
+                            </apex:column>
+                            <apex:column >
+                                <apex:facet name="header">CreatedDate</apex:facet>
+                                <apex:outputText value="{!selectedAtt.CreatedDate}"/>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>        
+            </apex:form>
+        <!--</body>-->
+    <!--</html>-->
+</apex:page>

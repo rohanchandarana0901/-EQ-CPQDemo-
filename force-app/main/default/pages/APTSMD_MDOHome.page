@@ -1,0 +1,35 @@
+<apex:page lightningStylesheets="true" controller="APTSMD_MDOHomeController">
+
+    <apex:pageBlock >
+        
+        <apex:pageBlockSection columns="1">
+            <apex:pageblocktable value="{!listMDOPostspinSteps}" var="tasks" id="theTable" rowClasses="odd,even"
+                styleClass="tableClass">
+                
+                <apex:column width="5%">
+                    <apex:facet name="header">No</apex:facet>
+                    <apex:outputText value="{!tasks.APTSMD_Sequence__c}" />
+                </apex:column>
+                <apex:column width="25%">
+                    <apex:facet name="header">Name</apex:facet>
+                    <apex:outputLink style="{!if(tasks.APTSMD_Required__c==true,'color:red;', 'color:black')}" value="{!baseURL}{!tasks.id}" target="_blank">{!tasks.name}</apex:outputLink>
+                    
+                </apex:column>
+
+                <apex:column width="60%">
+                    <apex:facet name="header">Description</apex:facet>
+                    <apex:outputText value="{!tasks.APTSMD_Description__c}" />
+                </apex:column>
+                
+                <apex:column width="5%">
+                    <apex:facet name="header">Link</apex:facet>
+                    <apex:outputLink value="{!baseURL}{!tasks.APTSMD_URL__c}" target="_blank">Link</apex:outputLink>
+                </apex:column>
+                
+                
+            </apex:pageblocktable>
+
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+
+</apex:page>

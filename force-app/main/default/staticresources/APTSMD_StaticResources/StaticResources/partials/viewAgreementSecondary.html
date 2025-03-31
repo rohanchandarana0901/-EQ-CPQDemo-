@@ -1,0 +1,49 @@
+<div flex="100" style="margin: 2px;">
+	<div layout="row">
+	  <div flex="60">
+		 <span class="breadcrumbNormal" >{{breadcrumbValues}}{{breadcrumbValue}}</span>
+	  </div>
+	 
+	  <div flex="40"  style="text-align: right;">
+	   <md-menu md-position-mode="target-right target">
+	   <md-button class="md-icon-button" aria-label="More" ng-click="AppCtrl.openMenu($mdOpenMenu, $event)">
+        	<md-icon md-svg-icon="{{envPath}}/img/icons/ic_expand_more_black_24px.svg"></md-icon>
+    	</md-button>
+
+    	<md-menu-content width="4">
+        <md-menu-item>
+          <md-button ng-disabled="disableAction('SendForSignature')">
+            <md-icon md-svg-icon="{{envPath}}/img/icons/ic_assignment_turned_in_black_24px.svg" md-menu-align-target></md-icon>
+            	Send for e-Signature
+          </md-button>
+          </md-menu-item>
+
+           <md-menu-item>
+           <md-button ng-click="showAttachmentForReviewItemDialog()" ng-disabled="disableAction('SendForReview')">
+            <md-icon md-svg-icon="{{envPath}}/img/icons/ic_people_black_24px.svg" md-menu-align-target></md-icon>
+            	Send for Review
+          </md-button>
+          </md-menu-item>
+
+           <md-menu-item>
+         <!--  <md-button id="myBtn" onclick="document.getElementById('myModal').style.display = 'block';">
+            <md-icon md-svg-icon="{{envPath}}/img/icons/ic_check_circle_black_24px.svg" md-menu-align-target></md-icon>
+            	Activate
+          </md-button>  showActivateAgreementDialog-->
+            <md-button ng-click="showActivateAgreementDialog()" ng-disabled="disableAction('Activate')">
+            <md-icon md-svg-icon="{{envPath}}/img/icons/ic_check_circle_black_24px.svg" md-menu-align-target></md-icon>
+              Activate
+          </md-button>
+        </md-menu-item>
+      </md-menu-content>
+    </md-menu>
+
+
+
+	   <md-button class="md-raised md-button-border-blue default-btn" ng-click="editAgreement();">Edit</md-button>
+     <md-button class="md-raised md-button-border-blue default-btn" ng-click="showGenerateAgreementDialog($event);"  ng-disabled="disableAction('Generate')">Generate Document</md-button>
+
+	  </div>
+	</div>
+</div>
+<md-divider></md-divider>

@@ -1,0 +1,11 @@
+<apex:page showheader="false" sidebar="false" controller="APTSMD_MDOHOMECtrl">
+    <title>SDO Enable Sites</title>
+    <!--apex:composition template="APTSMD_SDO_Bootstrap_Template"/>-->
+    <apex:define name="_content">
+        <div class="row-fluid">
+            <div class="span12">
+                <apex:outputText value="{!enableSite}" escape="false"/>
+			</div>
+        </div>
+    </apex:define>
+</apex:page>

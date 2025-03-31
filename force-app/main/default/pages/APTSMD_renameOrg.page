@@ -1,0 +1,45 @@
+<apex:page controller="APTSMD_MDOHOMECtrl" showheader="false" sidebar="false" lightningStylesheets="true">
+    <apex:form >
+        <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <table>
+                                          <tr>
+                                              <td>
+                                                  <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+                                                    <font class="hi">Rename the Org</font>
+                                                  </a>
+                                                </td>
+                                              <td>
+                                                  <!-- <a id="step2"><img src="{!$Resource.Help}"/></a> -->
+                                              </td>
+                                          </tr>
+                                              
+                                      </table>
+                                    </div>
+                                    
+                                    <div id="collapseTwo" class="accordion-body collapse">
+                                          <div class="accordion-inner">
+                                                <apex:pageBlock id="pgBlockPresaleConfigSetting" >
+                                                      <apex:pageBlockSection id="pgBlockSection" collapsible="false" columns="1"> 
+                                                          
+                                                          <apex:pageBlockSectionItem id="idpgInstanceUrl"> 
+                                                             Company Name <apex:inputText value="{!PresaleConfigSetting.APTSMD_Company_Name__c}"/>
+                                                          </apex:pageBlockSectionItem> 
+                                                           
+                                                      </apex:pageBlockSection>
+                                                      
+                                                     <apex:pageBlockButtons location="bottom">
+                                                          <apex:commandButton value="Apply Changes" action="{!UpdateOrgName}"/>
+                                                              <style type="text/css">
+                                                            .dateFormat{
+                                                               visibility:hidden;
+                                                            }
+                                                            </style>
+                                                     </apex:pageBlockButtons> 
+                                                      
+                                             </apex:pageblock>
+                                        </div>
+                                    </div>
+                              </div>
+    </apex:form>
+</apex:page>

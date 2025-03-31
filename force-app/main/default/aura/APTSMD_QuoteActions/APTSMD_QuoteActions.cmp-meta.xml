@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>44.0</apiVersion>
+    <description>Quote Actions Lightning Component which includes Configure, Generate, Preview, Present, Send for eSignature, Accept, Synchronize with Opportunity, Create Agreement, My Approvals etc.</description>
+</AuraDefinitionBundle>

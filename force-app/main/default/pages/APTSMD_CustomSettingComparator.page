@@ -1,0 +1,596 @@
+<apex:page controller="APTSMD_CustomSettingComparatorCtrl" sidebar="false" showHeader="false"
+    standardStylesheets="false">
+    <!--DOCTYPE html-->
+    <html lang="en" ng-app="CustomSettCompareApp">
+
+    <head>
+        <title>Custom Setting Comparator</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!--CSS-->
+        <!--Bootstrap-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"/>
+
+        <!--Angular Material-->
+        <!-- <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.css" rel="stylesheet" /> -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.10/angular-material.min.css" integrity="sha512-lUExuDw/YQOmNO0LN2XplczGTyTxTEUvXBPKOnfBNloscpdzpfrYBiyWtPeyF0guAgihG/6RrOfDpoyywWMk/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+        <!-- <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.css"/> -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/angular-material-data-table/0.10.10/md-data-table.css" rel="stylesheet" />
+
+        <!--Google Fonts-->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic"/>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+
+        <!--Scripts-->
+        <!--jquery-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+        <!--Bootstrap-->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        
+        
+
+        <!--Angular-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-route.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-animate.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-aria.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-messages.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-resource.js"></script>
+
+        <!--Angular Material-->
+        <!-- <script src="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.1/angular-material.js" integrity="sha512-ubrioXp1YyKCrLVzg68ZvLejBz5giN2J1XDmOV+JxN9bkkWbtooESyAtPW1j//3f97oBzCHEIy19eWgHPGXZRg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+       <!--Custom CSS-->
+        <style>
+            .navbar {
+                background-color: #49B64B !important;
+            }
+            
+            footer {
+                background-color: #49B64B !important;
+                height: 50px;
+            }
+            .jumbotron{
+                padding-top : 15px !important;
+                margin-top : 65px !important;
+                background-color: #E9ECEF !important;
+            }
+            
+            .borderClass{
+                border-style: solid;
+                border-width: thin;
+                border-color: #eee;
+                border-top-width: inherit;
+                border-left-width: inherit;
+                border-right-width: inherit;
+             }
+             .col-md-4 {
+                -ms-flex: 0 0 33.333333%;
+                /* flex: 0 0 33.333333%; */
+                max-width: 38.333333% !important;
+            }
+            .highlight {
+                /*background: Red !important;*/
+                color: #ba000d;
+            }
+            .loading-container{
+                padding-top: 10%;
+                position: fixed;
+                left: 0px;
+                top:0px;
+                z-index: 999999999;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(255,255,255,0.75);
+                padding-left: 47%;
+            }
+            .row {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+                margin-right: 0px !important;
+                margin-left: 0px !important;
+            }
+            .custom-select{
+                height: 37px !important;
+            }
+            .alert{
+                width: 50%;
+                margin-left: 1%;
+            }
+            .SearchFixHeader {
+                position: fixed !important;
+                width: 100%;
+                background-color: #FFF;
+                /*top: 15px;*/
+                z-index: 99;
+                /*margin-top: 1%;*/
+                /*box-shadow: #A5A5A5 0px 1px 8px 1px;*/
+            }
+            .container-fluid {
+                width: 100%;
+                padding-right: 0px !important;
+                padding-left: 0px !important; 
+                margin: auto !important;
+            }
+            .container .jumbotron, .container-fluid .jumbotron {
+                padding-right: 60px;
+                padding-left: 60px;
+                margin-left: 15px;
+                margin-right: 15px;
+            }
+            
+            /*Header Classes */
+            .cartTable {
+                padding: 17px 0;
+            }
+            .panel-title {
+                margin-top: 0;
+                margin-bottom: 0;
+                font-size: 20px;
+            }
+        </style>
+        
+        
+
+        <!--Custom JScript -->
+        <script>
+            // Example starter JavaScript for disabling form submissions if there are invalid fields
+            (function() {
+              'use strict';
+              window.addEventListener('load', function() {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                  form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                  }, false);
+                });
+              }, false);
+            })();
+            
+            function showLoadingImage(){
+                document.getElementById('LoadingImg').style.display = 'inline';
+            }
+            function hideLoadingImage(){
+                document.getElementById('LoadingImg').style.display = 'none';
+            }
+
+        
+            
+            var CustomSettCompareApp = angular.module('CustomSettCompareApp', [
+                'ngMaterial', 'ngMessages', 'ngAnimate', 'ngRoute']);
+            CustomSettCompareApp.controller('CustomSettCompareAppCtrl', ['$scope',function($scope, $filter) {
+                    $scope.showLogin = true;
+                    $scope.showComparator = false;
+                    $scope.Org1Username = '';
+                    $scope.Org2Username = '';
+                    $scope.Org1password = '';
+                    $scope.Org2password = '';
+                    $scope.selectedOrg1Type = "Production";
+                    $scope.selectedOrg2Type = "Production";
+                    $scope.OrgsessionParameters = [];
+                    $scope.org1sobjects = '';
+                    $scope.selectedSobjcsOrg;
+                    $scope.showTables = false;
+                    $scope.noRecords = false;
+                    $scope.isShowDiff = false;
+                    $scope.showDifferenceTable = false;
+                    $scope.isSuccess = false;
+                    $scope.isfailure = false;
+                    
+                    
+                    $scope.performLogin = function() {
+                        showLoadingImage();
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.APTSMD_CustomSettingComparatorCtrl.performLogin}',
+                            $scope.Org1Username, $scope.Org1password,
+                            $scope.selectedOrg1Type, $scope.Org2Username,
+                            $scope.Org2password, $scope.selectedOrg2Type,
+                            function(result, event) {
+                                if (result == null || result == undefined || result == "") {
+                                     $scope.isfailure = true;
+                                     hideLoadingImage();
+                                }else{
+                                    $scope.OrgsessionParameters = result;
+                                    $scope.makecalloutsOrg();
+                                }
+                        });
+                    }
+
+                   $scope.makecalloutsOrg = function(){
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.APTSMD_CustomSettingComparatorCtrl.makecalloutsOrg}', $scope.OrgsessionParameters,function(result, event){
+                                if (result != null) {
+                                    $scope.showLogin =  false;
+                                    $scope.org1sobjects = result;
+                                    $scope.getCSobjects();
+                                    $scope.$apply();
+                                    hideLoadingImage();
+                                }
+                                hideLoadingImage();
+                        });
+                    }
+                    
+                    $scope.retrievesobjData = function(){
+                        showLoadingImage();
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.APTSMD_CustomSettingComparatorCtrl.retrievesobjData}',$scope.OrgsessionParameters,angular.toJson($scope.selectedSobjcsOrg),function(result, event){
+                                if (result == null || result == undefined || result == "") {
+                                    $scope.noRecords = true;
+                                    $scope.showTables = false;
+                                    $scope.isShowDiff = false;
+                                    hideLoadingImage();
+                                    $scope.$apply();
+                                    
+                                }else{
+                                    $scope.noRecords = false;
+                                    $scope.showTables = true;
+                                    $scope.isShowDiff = false;
+                                    $scope.showDifferenceTable = false;
+                                    $scope.org1Results = result[0];
+                                    $scope.org2Results = result[1];
+                                    $scope.$apply();
+                                    hideLoadingImage();
+                                }
+                        });
+                    }
+                    
+                    
+                    $scope.backToLogin = function(){
+                        $scope.showLogin = true;
+                        $scope.showTables = false;
+                        $scope.isSuccess = false;
+                        $scope.isfailure = false;
+                        $scope.showDifferenceTable = false;
+                        $scope.isShowDiff = false;
+                    }
+                    
+                    $scope.showDifference = function(){
+                        if($scope.isShowDiff == true){
+                            $scope.showDifferenceTable = true;
+                            $scope.showTables = false;
+                        }else{
+                            $scope.showDifferenceTable = false;
+                            $scope.showTables = true;
+                        }
+                        
+                    }
+                    
+                    //used to find intersection and union of custom setting objects
+                    $scope.getCSobjects = function(){
+                        $scope.orgsobjectList = $scope.org1sobjects;
+                        $scope.sobjList = [];
+                        $scope.sobjList.push($scope.org1sobjects[0]);
+                        var unique = {};
+                        angular.forEach($scope.orgsobjectList,function(item){
+                            if(JSON.stringify($scope.sobjList).indexOf(item.apiname) == -1){
+                                $scope.sobjList.push(item);
+                            }
+                            unique[item.apiname] = 'apiname';
+                        });
+                    }
+
+
+                }
+            ]);
+
+        </script>
+    </head>
+        <!--Body Starts-->
+
+        <body ng-cloak="true">
+            <main ng-controller="CustomSettCompareAppCtrl">
+                <div class="container-fluid" >
+                    <!-- Header Div -->
+                    <div class="SearchFixHeader">
+                        <div class="apt-page-header cartTable clearfix" style="position:relative;background-color:#314250!important;border-bottom: 0px !important;line-height: 50px;box-shadow: none;">
+                            <div class="apt-quote-panel apt-pull-left" style="display: inline-flex;">
+                                <span class="ands-app-bar-title app-bar-title-override toggle-element" style="border-right: 1px solid #fff;padding-right: .7rem;">
+                                    <apex:image value="{!URLFOR($Resource.APTSMD_APTTUSNEW)}" style="width:100px;height:17px;margin-left:20px;"/>
+                                </span>
+                                
+                                <span class="apt-cart-head-label" style="padding-left: 10px;">
+                                 <h4 class="panel-title" style="color:white;">
+                                   Custom Setting Comparator 
+                                 </h4>
+                                </span>  
+                            </div>
+                        </div>
+                        <div class="form-group" ng-show="!showLogin">
+                            <table style="width: 100%;margin-left:1%;margin-top: 1%;">
+                                <thead>
+                                    <th>
+                                        <label for="orgtype1">Select any Custom Setting to compare</label><br/>
+                                    </th>
+                                    <th>
+                                        <label for="orgtype1" style="margin-left: 1%;">Show only differences</label>
+                                    </th>
+                                    <th></th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select class="custom-select d-block"  style="width:84%;float:left;" required="required" id="cspicklist1"  ng-model="selectedSobjcsOrg"  ng-options="cs as cs.label for cs in sobjList | orderBy:'label'" ng-change="retrievesobjData()">
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" ng-model="isShowDiff" ng-click="showDifference()" label = "Show only differences" style="margin-left: 2%;"></input>
+                                            
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-primary" title="Login" type="Submit" id="loginbtn" ng-click="backToLogin()" style="margin-left: 2%;">Back to Login</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Header Div ends here -->
+                    
+                    <!--Login Div-->
+                    <div class="jumbotron" ng-show="showLogin">
+                        <form class="needs-validation" novalidate="novalidate">
+                            <div class="form-row">
+                                <div class="col col-md-6">
+                                    <!--Org 1-->
+                                    <p>Org 1 Details</p>
+                                    <div class="form-group">
+                                        <label for="InputEmail1">Username</label>
+                                        <input type="email" class="form-control" id="InputEmail1" aria-describedby="email1" placeholder="Enter username" required="required" ng-model="Org1Username"/>
+                                        <!--<small id="email1" class="form-text text-muted">We'll never share your email with anyone else.</small>-->
+                                        <div class="invalid-feedback">
+                                            Valid Email ID required.
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputPassword1">Password</label>
+                                        <input type="password" class="form-control" id="InputPassword1" placeholder="Password" required="required" ng-model="Org1password"/>
+                                        <div class="invalid-feedback">
+                                            Valid Password is required.
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="orgtype1">Org Type</label>
+                                        <select class="custom-select d-block w-100" required="required" id="orgtype1" ng-model="selectedOrg1Type">
+                                            <option selected="selected">Production</option>
+                                            <option>Sandbox</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" ng-show="isSuccess">
+                                        <p>Login successful. You can continue now.</p>
+                                    </div>
+                                    <div class="form-group" ng-show="isfailure">
+                                        <p>Error logging in..Please try again</p>
+                                    </div>
+                                </div>
+                                <div class="col col-md-6">
+                                    <!--Org 2-->
+                                    <p>Org 2 Details</p>
+                                    <div class="form-group">
+                                        <label for="InputEmail2">Username</label>
+                                        <input type="email" class="form-control" id="InputEmail2" aria-describedby="email2" placeholder="Enter username" required="required" ng-model="Org2Username"/>
+                                        <!--<small id="email2" class="form-text text-muted">We'll never share your email with anyone else.</small>-->
+                                        <div class="invalid-feedback">
+                                            Valid Email ID required.
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputPassword2">Password</label>
+                                        <input type="password" class="form-control" id="InputPassword2" placeholder="Password" required="required" ng-model="Org2password"/>
+                                        <div class="invalid-feedback">
+                                            Valid Password is required.
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="orgtype2">Org Type</label>
+                                        <select class="custom-select d-block w-100" required="required" id="orgtype2" ng-model="selectedOrg2Type">
+                                            <option selected="selected">Production</option>
+                                            <option>Sandbox</option>
+                                        </select>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-md-center">
+                                <div class="col-md-auto">
+                                    <button class="btn btn-primary" title="Login" type="Submit" id="loginbtn" ng-click="performLogin()">Login</button>
+                                </div>
+                                <div class="col-md-auto">
+                                    <button class="btn btn-primary" title="Retrieve Data" id="retrievebtn" ng-show="isSuccess" ng-click="makecalloutsOrg()">Get Custom Settings</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!--Login Div ends here-->
+                 
+                    
+                    <!-- Custom Settings Object div -->
+                    
+                    
+                    <!-- Data Tables -->
+                    
+                    <div class="row" ng-show="showTables" style="margin-top: 12%;">
+                        <div class="panel panel-primary" style="width: 45%;margin-left: 1%;">
+                            <div class="panel-heading">
+                                <h2 class="panel-title" style="font-size: 17px !important;">
+                                    <span>Org 1 - {{selectedSobjcsOrg.label}}</span> 
+                                </h2>
+                            </div>  
+                             <div>
+                                   <div class="row borderClass" ng-if="org1Results != ''">
+                                       <div class="col-md-6">    
+                                           <label> Field Label</label>
+                                       </div>
+                                       <div class="col-md-4">
+                                           <label>Value</label>
+                                       </div>
+                                   </div>
+                                   <div class="col-md-6" ng-if="org1Results == ''">
+                                           <!--<hr/>-->
+                                           <span><b><i>No records found to compare!</i></b></span>
+                                    </div>
+                                   <div class="row borderClass" ng-repeat="cs1 in org1Results" ng-class = "{'highlight':cs1.isValuesame != 'Yes'}">
+                                       <div class="col-md-6" ng-if="cs1.fieldapiname == 'Id'">
+                                           <!--<hr/>-->
+                                           <span><b><i>{{cs1.fieldlabel}}</i></b></span>
+                                       </div>
+                                       <div class="col-md-6" ng-if="cs1.fieldapiname != 'Id'">
+                                           <span> {{cs1.fieldlabel}} </span>
+                                       </div>
+                                       <div class="col-md-4" style="word-break: break-all;">
+                                           <span> {{cs1.fieldValue}} </span>
+                                       </div>
+                                   </div> 
+                              </div> 
+                          </div>
+                          
+                          
+                          <div class="panel panel-primary" style="width: 45%;margin-left: 6%;">
+                               <div class="panel-heading">
+                                    <h2 class="panel-title" style="font-size: 17px !important;">
+                                        <span>Org 2 - {{selectedSobjcsOrg.label}}</span> 
+                                    </h2>
+                              </div>  
+                              <div>
+                                   <div class="row borderClass" ng-if="org2Results != ''">
+                                       <div class="col-md-6">    
+                                           <label> Field Label</label>
+                                       </div>
+                                       <div class="col-md-4">
+                                           <label>Value</label>
+                                       </div>
+                                   </div>
+                                    <div class="col-md-6" ng-if="org2Results == ''">
+                                           <!--<hr/>-->
+                                           <span><b><i>No records found to compare!</i></b></span>
+                                    </div>
+                                      
+                                   <div class="row borderClass" ng-repeat="cs2 in org2Results" ng-class = "{'highlight':cs2.isValuesame != 'Yes'}">
+                                       <div class="col-md-6" ng-if="cs2.fieldapiname == 'Id'">
+                                           <!--<hr/>-->
+                                           <span><b><i>{{cs2.fieldlabel}}</i></b></span>
+                                       </div>
+                                       <div class="col-md-6" ng-if="cs2.fieldapiname != 'Id'">
+                                           <span> {{cs2.fieldlabel}} </span>
+                                       </div>
+                                       <div class="col-md-4" style="word-break: break-all;">
+                                           <span> {{cs2.fieldValue}} </span>
+                                       </div>
+                                   </div> 
+                              </div> 
+                          </div>
+                    </div>
+                    
+                    
+                    <!-- div showing only differences -->
+                    <div class="row" ng-show="showDifferenceTable" style="margin-top: 12%;">
+                        <div class="panel panel-primary" style="width: 45%;margin-left: 1%;">
+                            <div class="panel-heading">
+                                <h2 class="panel-title" style="font-size: 17px !important;">
+                                    <span>Org 1 - {{selectedSobjcsOrg.label}}</span> 
+                                </h2>
+                            </div>  
+                              <div>
+                                   <div class="row borderClass" ng-if="org1Results != ''">
+                                       <div class="col-md-6">    
+                                           <label> Field Label</label>
+                                       </div>
+                                       <div class="col-md-4">
+                                           <label>Value</label>
+                                       </div>
+                                   </div>
+                                   <div class="col-md-6" ng-if="org1Results == ''">
+                                           <!--<hr/>-->
+                                           <span><b><i>No records found to compare!</i></b></span>
+                                    </div>
+                                   <div class="row borderClass" ng-repeat="cs1 in org1Results"  ng-if="cs1.isValuesame == false" ng-class = "{'highlight':cs1.isValuesame == false}">
+                                       <div class="col-md-6" ng-if="cs1.fieldapiname == 'Id'">
+                                           <!--<hr/>-->
+                                           <span><b><i>{{cs1.fieldlabel}}</i></b></span>
+                                       </div>
+                                       <div class="col-md-6" ng-if="cs1.fieldapiname != 'Id'">
+                                           <span> {{cs1.fieldlabel}} </span>
+                                       </div>
+                                       <div class="col-md-4" style="word-break: break-all;">
+                                           <span> {{cs1.fieldValue}} </span>
+                                       </div>
+                                   </div> 
+                                      
+                              </div> 
+                          </div>
+                          
+                          
+                          <div class="panel panel-primary" style="width: 45%;margin-left: 6%;">
+                                <div class="panel-heading">
+                                    <h2 class="panel-title" style="font-size: 17px !important;">
+                                        <span>Org 2 - {{selectedSobjcsOrg.label}}</span> 
+                                    </h2>
+                              </div>  
+                              <div>
+                                   <div class="row borderClass" ng-if="org2Results != ''">
+                                       <div class="col-md-6">    
+                                           <label> Field Label</label>
+                                       </div>
+                                       <div class="col-md-4">
+                                           <label>Value</label>
+                                       </div>
+                                   </div>
+                                   <div class="col-md-6" ng-if="org2Results == ''">
+                                           <!--<hr/>-->
+                                           <span><b><i>No records found to compare!</i></b></span>
+                                    </div>
+                                   <div class="row borderClass" ng-repeat="cs2 in org2Results" ng-if="cs2.isValuesame == false" ng-class = "{'highlight':cs2.isValuesame == false}">
+                                       <div class="col-md-6" ng-if="cs2.fieldapiname == 'Id'">
+                                           <!--<hr/>-->
+                                           <span><b><i>{{cs2.fieldlabel}}</i></b></span>
+                                       </div>
+                                       <div class="col-md-6" ng-if="cs2.fieldapiname != 'Id'">
+                                           <span> {{cs2.fieldlabel}} </span>
+                                       </div>
+                                       <div class="col-md-4" style="word-break: break-all;">
+                                           <span> {{cs2.fieldValue}} </span>
+                                       </div>
+                                   </div> 
+                                      
+                              </div> 
+                          </div>
+                    </div>
+                    <!-- div showing only differences ends here-->
+                    <!-- Data Tables end here -->
+                    
+                    <!-- loading image div -->
+                    <div id="LoadingImg" class="loading-container" style="display:none;"><!-- so this div containing img will be dislpayed only when the showLoader is equal to true-->
+                        <img src="{!$Resource.APTSMD_Loading}" /><br />
+                    </div>
+                    <!-- loading image div ends here -->
+                    
+                    <!--Warning message div  -->
+                    <div class="alert alert-warning" ng-show="noRecords" style="margin-top: 12%;">
+                      <strong>Warning!</strong> No records found to compare.
+                    </div>
+                    <!-- Warning message div ends -->
+                </div>
+            </main>
+        </body>
+    </html>
+</apex:page>

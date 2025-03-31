@@ -1,0 +1,1293 @@
+<!--************************************************************* -->
+<!--@Name: APTSMD_agreementTreeView -->
+<!--@Author: Akshay Antrolkar (Apttus Developer)-->
+<!--@CreateDate:  26th Jun, 2018-->
+<!--@Description: Custom Agreement Hierarchy Page-->
+<!--@UI/UX: japan Bhavsar/Vivek Parmar (Apttus Developer) on 12/10/2018 
+    Modified by Kaushik Kyada / Japan Bhavsar on 19/02/2019
+    Apttus Lab on 09-08-2019-->
+<!--******************************************************************/ -->
+
+<apex:page title="Agreement Hierarchy" readOnly="true" standardController="Account"
+    extensions="APTSMD_agreementTreeViewController" lightningStyleSheets="true" standardStyleSheets="false"
+    sidebar="false" action="{!init}" showHeader="false">
+    <html ng-controller="angularController" id="mainDiv" ng-app="ngApp">
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/jquery.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular_js.js')}"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.css"
+    />
+    <link rel="stylesheet" href="https://material.angularjs.org/1.1.1/docs.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <script src="http://culmat.github.io/jsTreeTable/treeTable.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"
+    />
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <apex:stylesheet value="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}"
+    />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.css"
+    />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"
+    />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-animate.js')}"
+    />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"
+    />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-material.js')}"
+    />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"
+    />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-messages.js')}"
+    />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-resources.js')}"
+    />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-route.js')}"
+    />
+    <apex:includeScript value="{!$Resource.APTSMD_Nova_Js}" />
+    <apex:includeScript value="{!$Resource.APTSMD_NovaThemeProvider}" />
+    <apex:stylesheet value="{!$Resource.APTSMD_Nova_Css}" />
+    <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.css"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+    />
+    <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+
+    <script type="text/javascript">
+        var saveAs = saveAs ||
+            (typeof navigator !== "undefined" &&
+                navigator.msSaveOrOpenBlob && navigator.msSaveOrOpenBlob.bind(
+                    navigator)) ||
+            (function(view) {
+                "use strict";
+                if (typeof navigator !== "undefined" &&
+                    /MSIE [1-9]\./.test(navigator.userAgent)) {
+                    return;
+                }
+                var
+                    doc = view.document
+                    // only get URL when necessary in case Blob.js hasn't overridden it yet
+                    ,
+                    get_URL = function() {
+                        return view.URL || view.webkitURL || view;
+                    },
+                    save_link = doc.createElementNS(
+                        "http://www.w3.org/1999/xhtml", "a"),
+                    can_use_save_link = !view.externalHost && "download" in
+                    save_link,
+                    click = function(node) {
+                        var event = doc.createEvent("MouseEvents");
+                        event.initMouseEvent(
+                            "click", true, false, view, 0, 0, 0, 0, 0,
+                            false, false, false, false, 0, null
+                        );
+                        node.dispatchEvent(event);
+                    },
+                    webkit_req_fs = view.webkitRequestFileSystem,
+                    req_fs = view.requestFileSystem || webkit_req_fs ||
+                    view.mozRequestFileSystem,
+                    throw_outside = function(ex) {
+                        (view.setImmediate || view.setTimeout)(function() {
+                            throw ex;
+                        }, 0);
+                    },
+                    force_saveable_type = "application/octet-stream",
+                    fs_min_size = 0
+                    // the reasoning behind the timeout and revocation flow
+                    ,
+                    arbitrary_revoke_timeout = 10,
+                    revoke = function(file) {
+                        var revoker = function() {
+                            if (typeof file === "string") { // file is an object URL
+                                get_URL().revokeObjectURL(file);
+                            } else { // file is a File
+                                file.remove();
+                            }
+                        };
+                        if (view.chrome) {
+                            revoker();
+                        } else {
+                            setTimeout(revoker, arbitrary_revoke_timeout);
+                        }
+                    },
+                    dispatch = function(filesaver, event_types, event) {
+                        event_types = [].concat(event_types);
+                        var i = event_types.length;
+                        while (i--) {
+                            var listener = filesaver["on" + event_types[i]];
+                            if (typeof listener === "function") {
+                                try {
+                                    listener.call(filesaver, event ||
+                                        filesaver);
+                                } catch (ex) {
+                                    throw_outside(ex);
+                                }
+                            }
+                        }
+                    },
+                    FileSaver = function(blob, name) {
+                        var
+                            filesaver = this,
+                            type = blob.type,
+                            blob_changed = false,
+                            object_url, target_view, dispatch_all =
+                            function() {
+                                dispatch(filesaver,
+                                    "writestart progress write writeend"
+                                    .split(" "));
+                            }
+                            // on any filesys errors revert to saving with object URLs
+                            ,
+                            fs_error = function() {
+                                // don't create more object URLs than needed
+                                if (blob_changed || !object_url) {
+                                    object_url = get_URL().createObjectURL(
+                                        blob);
+                                }
+                                if (target_view) {
+                                    target_view.location.href = object_url;
+                                } else {
+                                    var new_tab = view.open(object_url,
+                                        "_blank");
+                                    if (new_tab == undefined && typeof safari !==
+                                        "undefined") {
+                                        //Apple do not allow window.open, see http://bit.ly/1kZffRI
+                                        view.location.href = object_url
+                                    }
+                                }
+                                filesaver.readyState = filesaver.DONE;
+                                dispatch_all();
+                                revoke(object_url);
+                            },
+                            abortable = function(func) {
+                                return function() {
+                                    if (filesaver.readyState !==
+                                        filesaver.DONE) {
+                                        return func.apply(this,
+                                            arguments);
+                                    }
+                                };
+                            },
+                            create_if_not_found = {
+                                create: true,
+                                exclusive: false
+                            },
+                            slice;
+                        filesaver.readyState = filesaver.INIT;
+                        if (!name) {
+                            name = "download";
+                        }
+                        if (can_use_save_link) {
+                            object_url = get_URL().createObjectURL(blob);
+                            save_link.href = object_url;
+                            save_link.download = name;
+                            click(save_link);
+                            filesaver.readyState = filesaver.DONE;
+                            dispatch_all();
+                            revoke(object_url);
+                            return;
+                        }
+                        // Object and web filesystem URLs have a problem saving in Google Chrome when
+                        // viewed in a tab, so I force save with application/octet-stream
+                        if (view.chrome && type && type !==
+                            force_saveable_type) {
+                            slice = blob.slice || blob.webkitSlice;
+                            blob = slice.call(blob, 0, blob.size,
+                                force_saveable_type);
+                            blob_changed = true;
+                        }
+                        // Since I can't be sure that the guessed media type will trigger a download
+                        // in WebKit, I append .download to the filename.
+                        // https://bugs.webkit.org/show_bug.cgi?id=65440
+                        if (webkit_req_fs && name !== "download") {
+                            name += ".download";
+                        }
+                        if (type === force_saveable_type || webkit_req_fs) {
+                            target_view = view;
+                        }
+                        if (!req_fs) {
+                            fs_error();
+                            return;
+                        }
+                        fs_min_size += blob.size;
+                        req_fs(view.TEMPORARY, fs_min_size, abortable(
+                            function(fs) {
+                                fs.root.getDirectory("saved",
+                                    create_if_not_found,
+                                    abortable(function(dir) {
+                                        var save = function() {
+                                            dir.getFile(
+                                                name,
+                                                create_if_not_found,
+                                                abortable(
+                                                    function(
+                                                        file
+                                                    ) {
+                                                        file
+                                                            .createWriter(
+                                                                abortable(
+                                                                    function(
+                                                                        writer
+                                                                    ) {
+                                                                        writer
+                                                                            .onwriteend =
+                                                                            function(
+                                                                                event
+                                                                            ) {
+                                                                                target_view
+                                                                                    .location
+                                                                                    .href =
+                                                                                    file
+                                                                                    .toURL();
+                                                                                filesaver
+                                                                                    .readyState =
+                                                                                    filesaver
+                                                                                    .DONE;
+                                                                                dispatch
+                                                                                    (
+                                                                                        filesaver,
+                                                                                        "writeend",
+                                                                                        event
+                                                                                    );
+                                                                                revoke
+                                                                                    (
+                                                                                        file
+                                                                                    );
+                                                                            };
+                                                                        writer
+                                                                            .onerror =
+                                                                            function() {
+                                                                                var
+                                                                                    error =
+                                                                                    writer
+                                                                                    .error;
+                                                                                if (
+                                                                                    error
+                                                                                    .code !==
+                                                                                    error
+                                                                                    .ABORT_ERR
+                                                                                ) {
+                                                                                    fs_error
+                                                                                        ();
+                                                                                }
+                                                                            };
+                                                                        "writestart progress write abort"
+                                                                        .split
+                                                                            (
+                                                                                " "
+                                                                            )
+                                                                            .forEach(
+                                                                                function(
+                                                                                    event
+                                                                                ) {
+                                                                                    writer
+                                                                                        [
+                                                                                            "on" +
+                                                                                            event
+                                                                                        ] =
+                                                                                        filesaver[
+                                                                                            "on" +
+                                                                                            event
+                                                                                        ];
+                                                                                }
+                                                                            );
+                                                                        writer
+                                                                            .write(
+                                                                                blob
+                                                                            );
+                                                                        filesaver
+                                                                            .abort =
+                                                                            function() {
+                                                                                writer
+                                                                                    .abort();
+                                                                                filesaver
+                                                                                    .readyState =
+                                                                                    filesaver
+                                                                                    .DONE;
+                                                                            };
+                                                                        filesaver
+                                                                            .readyState =
+                                                                            filesaver
+                                                                            .WRITING;
+                                                                    }
+                                                                ),
+                                                                fs_error
+                                                            );
+                                                    }
+                                                ),
+                                                fs_error
+                                            );
+                                        };
+                                        dir.getFile(name, {
+                                                create: false
+                                            },
+                                            abortable(
+                                                function(
+                                                    file
+                                                ) {
+                                                    // delete file if it already exists
+                                                    file
+                                                        .remove();
+                                                    save
+                                                        ();
+                                                }),
+                                            abortable(
+                                                function(
+                                                    ex) {
+                                                    if (
+                                                        ex
+                                                        .code ===
+                                                        ex
+                                                        .NOT_FOUND_ERR
+                                                    ) {
+                                                        save
+                                                            ();
+                                                    } else {
+                                                        fs_error
+                                                            ();
+                                                    }
+                                                }));
+                                    }), fs_error);
+                            }), fs_error);
+                    },
+                    FS_proto = FileSaver.prototype,
+                    saveAs = function(blob, name) {
+                        return new FileSaver(blob, name);
+                    };
+                FS_proto.abort = function() {
+                    var filesaver = this;
+                    filesaver.readyState = filesaver.DONE;
+                    dispatch(filesaver, "abort");
+                };
+                FS_proto.readyState = FS_proto.INIT = 0;
+                FS_proto.WRITING = 1;
+                FS_proto.DONE = 2;
+
+                FS_proto.error =
+                    FS_proto.onwritestart =
+                    FS_proto.onprogress =
+                    FS_proto.onwrite =
+                    FS_proto.onabort =
+                    FS_proto.onerror =
+                    FS_proto.onwriteend =
+                    null;
+
+                return saveAs;
+            }(
+                typeof self !== "undefined" && self ||
+                typeof window !== "undefined" && window ||
+                this.content
+            ));
+        // `self` is undefined in Firefox for Android content script context
+        // while `this` is nsIContentFrameMessageManager
+        // with an attribute `content` that corresponds to the window
+
+        if (typeof module !== "undefined" && module !== null) {
+            module.exports = saveAs;
+        } else if ((typeof define !== "undefined" && define !== null) && (
+                define.amd != null)) {
+            define([], function() {
+                return saveAs;
+            });
+        }
+
+    </script>
+    <script>
+        function fnExcelReport(id, name) {
+            var tab_text = '\uFEFF';
+            tab_text = tab_text +
+                '<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">';
+            tab_text = tab_text + '<head>';
+            tab_text = tab_text +
+                '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
+            tab_text = tab_text +
+                '<meta name="ProgId" content="Excel.Sheet" />';
+            tab_text = tab_text +
+                '<meta name="Generator" content="Microsoft Excel 11" />';
+            tab_text = tab_text + '<title>Sample</title>';
+            tab_text = tab_text +
+                '<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>';
+            tab_text = tab_text + '<x:Name>Hierarchy Data</x:Name>';
+            tab_text = tab_text +
+                '<x:WorksheetOptions><x:Panes></x:Panes></x:WorksheetOptions></x:ExcelWorksheet>';
+            tab_text = tab_text + '</x:ExcelWorksheets></x:ExcelWorkbook>';
+            tab_text = tab_text + '</xml><![endif]--></head><body>';
+            tab_text = tab_text + '<table border="1px">';
+            var exportTable = $('#' + id).clone();
+            exportTable.find('input').each(function(index, elem) {
+                $(elem).remove();
+            });
+
+            // Added By Japan Bhavsar for removing first column
+            exportTable.find('#firstTD').each(function(index, elem) {
+                $(elem).remove();
+            });
+
+            tab_text = tab_text + exportTable.html();
+            tab_text = tab_text + '</table></body></html>';
+
+            var fileName = 'Agreement_Hierarchy_Sheet.xls';
+            var blob = new Blob([tab_text], {
+                type: "application/vnd.ms-excel"
+            })
+            window.saveAs(blob, fileName);
+        }
+
+
+
+        function callAngularFunction() {
+            var scroll = document.getElementById('mainDiv');
+            var content = document.getElementsByClassName('container')[0];
+            var total = scroll.scrollTop + scroll.clientHeight;
+            var total2 = content.clientHeight + 50;
+
+            if (total >= total2) {
+                var scope = angular.element(
+                    document.getElementById("tab1")).
+                scope();
+                scope.$apply(function() {
+                    scope.pushItemstodisplay();
+                });
+            }
+        }
+        var app = angular.module("ngApp", ['ngMaterial', 'novaTheme',
+            'ngMessages', 'ngAnimate'
+        ]);
+        var onAccountSelect;
+        var onOppSelect;
+        angularController = app.controller("angularController", function($scope,
+            $filter) {
+            $scope.SelectedHeaders = {!agreementDefaultFieldsJSON
+            };
+            $scope.SelectedHeaders.sort(function(a, b) {
+                var nameA = a.fieldLabel.toLowerCase(),
+                    nameB = b.fieldLabel.toLowerCase()
+                if (nameA < nameB) //sort string ascending
+                    return -1
+                if (nameA > nameB)
+                    return 1
+                return 0 //default return value (no sorting)
+            })
+            $scope.AgreementFieldSet = {!agreementFieldsJSON
+            };
+            $scope.AgreementDateFieldSet = {!agreementDateFieldsJSON
+            };
+            $scope.instanceURL = '{!instanceURL}';
+            $scope.accountTree = {!accountsJSON
+            };
+            $scope.filteredAccountTree2 = angular.copy($scope.accountTree);
+            $scope.filteredAccountTree = [];
+            $scope.selectAccounts = [];
+            $scope.selectedOpps = [];
+            $scope.opps;
+            $scope.prop;
+            $scope.maxLimit1 = false;
+            $scope.expandCollpaseCount = 0;
+            $scope.oldIndex = 0;
+            $scope.increment = 10;
+            $scope.newindex = 15;
+            $scope.columns;
+            $scope.fixcols = 1;
+            $scope.colwidth = 75;
+            $scope.goInside = true;
+            $scope.datesearch;
+
+            function addIsExpandedBit(list) {
+                if (list.length > 0) {
+                    angular.forEach(list, function(i, k) {
+                        i.isExpanded = false;
+                        if (i.childagreements.length > 0) {
+                            addIsExpandedBit(i.childagreements);
+                        }
+                    })
+                }
+            }
+            addIsExpandedBit($scope.filteredAccountTree2);
+            // Variable added by Japan Bhavsar to calculate total agreement count with child agreemend also
+            angular.forEach($scope.filteredAccountTree2, function(i, k) {
+                i.isExpanded = true;
+            });
+
+            // getTotalCounterForAgr() - use for total calculate of all agreement without hidden one
+            $scope.totalAgreementOpen = 0;
+            getTotalCounterForAgr($scope.filteredAccountTree2);
+
+            function getTotalCounterForAgr(list) {
+                if (list.length > 0) {
+                    angular.forEach(list, function(i, k) {
+                        if (i.isExpanded) {
+                            $scope.totalAgreementOpen++;
+                        }
+                        if (i.childagreements && i.childagreements
+                            .length > 0) {
+                            getTotalCounterForAgr(i.childagreements);
+                        }
+                    })
+                }
+            }
+
+
+
+            $scope.pushItemstodisplay = function() {
+                $scope.newindex += $scope.increment;
+                for (var i = $scope.oldIndex; i < $scope.newindex &&
+                    i < $scope.filteredAccountTree2.length; i++) {
+                    $scope.filteredAccountTree.push($scope.filteredAccountTree2[
+                        i]);
+                }
+                $scope.oldIndex = $scope.newindex;
+
+            };
+            $scope.pushItemstodisplay();
+            $scope.columns = 'All Agreements';
+            $scope.backFunction = function() {
+                window.location.href = '{!backlink}';
+            }
+
+            $scope.doFalseChildAgr = function(list) {
+                if (list.length > 0) {
+                    angular.forEach(list, function(i, k) {
+                        i.checkbox = false;
+                        i.isExpanded = false;
+                        if (i.childagreements && i.childagreements
+                            .length > 0) {
+                            $scope.doFalseChildAgr(i.childagreements);
+                        }
+                    })
+                }
+            }
+
+            $scope.expandCollpase = function(allAg, currentAg) {
+                angular.forEach(allAg, function(eachAg, index) {
+                    if (eachAg == currentAg) {
+                        eachAg.checkbox = !eachAg.checkbox;
+                        if (eachAg.childagreements) {
+                            angular.forEach(eachAg.childagreements,
+                                function(i, k) {
+                                    i.isExpanded =
+                                        eachAg.checkbox;
+                                    if (!eachAg.checkbox) {
+                                        $scope.doFalseChildAgr(
+                                            eachAg.childagreements
+                                        );
+                                    }
+                                })
+                        }
+                    }
+                });
+                $scope.totalAgreementOpen = 0;
+                getTotalCounterForAgr($scope.filteredAccountTree2);
+
+            }
+            $scope.getUpdatedAgreements = function() {
+                $scope.columns = 'All Agreements';
+                $scope.clearFilters();
+                var selectedFieldsStr = '';
+                for (var i = 0; i < $scope.SelectedHeaders.length; i++) {
+                    if ($scope.SelectedHeaders[i].fieldAPIName ==
+                        "RecordType") {
+                        selectedFieldsStr = selectedFieldsStr +
+                            $scope.SelectedHeaders[i].fieldAPIName +
+                            'Id#';
+                    } else {
+                        selectedFieldsStr = selectedFieldsStr +
+                            $scope.SelectedHeaders[i].fieldAPIName +
+                            '#';
+                    }
+                }
+
+                // Check if selectedFieldsStr contains __r (__r means relation than we have -
+                // to add Name aftere that because if realtion field is getting calculated back side then -
+                // it will throw an error of null referenece)
+                if (selectedFieldsStr.includes('__r')) {
+                    selectedFieldsStr = selectedFieldsStr.replace(
+                        /__r/g, '__r.Name');
+                }
+
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.APTSMD_agreementTreeViewController.getUpdatedAgreements}',
+                    selectedFieldsStr,
+                    '{!$CurrentPage.parameters.Id}',
+                    function(result, event) {
+
+                        $scope.filteredAccountTree2 = result;
+                        $scope.accountTree = result;
+                        $scope.filteredAccountTree = [];
+                        $scope.oldIndex = 0;
+                        $scope.newindex -= $scope.increment;
+                        $scope.pushItemstodisplay();
+                        //getTotalCountWrapper();
+                        $scope.$apply();
+                        if ($("#ToggleParentHeader").hasClass(
+                                "fa-minus-square")) {
+                            $("#ToggleParentHeader").removeClass(
+                                "fa-minus-square").addClass(
+                                "fa-plus-square");
+                            $scope.expandCollpaseAll($scope.filteredAccountTree2);
+                        }
+                        angular.forEach($scope.filteredAccountTree2,
+                            function(i, k) {
+                                i.isExpanded = true;
+                            });
+                        $scope.totalAgreementOpen = 0;
+                        getTotalCounterForAgr($scope.filteredAccountTree2);
+                    }, {
+                        escape: false
+                    });
+
+
+            }
+
+            $scope.expandCollpaseAll = function(Allagreemnts) {
+
+                angular.forEach(Allagreemnts, function(eachAgreemnt) {
+                    if ($scope.expandCollpaseCount % 2 == 0) {
+                        eachAgreemnt.checkbox = true;
+                        eachAgreemnt.isExpanded = true;
+                    } else if ($scope.expandCollpaseCount %
+                        2 != 0) {
+                        eachAgreemnt.checkbox = false;
+                        if (eachAgreemnt.level != 1) {
+                            eachAgreemnt.isExpanded = false;
+                        }
+                    }
+                    if (angular.isArray(eachAgreemnt.childagreements) &&
+                        eachAgreemnt.childagreements.length >
+                        0) {
+                        $scope.expandCollpaseAll(
+                            eachAgreemnt.childagreements
+                        );
+                    }
+
+
+                });
+
+                if (Allagreemnts[0].level == 1) {
+                    $scope.expandCollpaseCount++;
+                }
+                $scope.totalAgreementOpen = 0;
+                getTotalCounterForAgr(Allagreemnts);
+            }
+
+            $scope.checkForDate = function(search) {
+                if ($scope.AgreementDateFieldSet[$scope.columns] ==
+                    'DATE') {
+                    $scope.datesearch = angular.copy(search);
+                    $scope.inp = search[$scope.columns];
+                    $scope.datesearch[$scope.columns] = $scope.inp.replace (
+                        /\//g,  "-");
+                    if ($scope.inp.length == 10) {
+                        $scope.day = $scope.inp.substr(3, 2);
+                        $scope.mon = $scope.inp.substr(0, 2);
+                        $scope.year = $scope.inp.substr(6, 4);
+                        $scope.newdate = $scope.year + '-' + $scope
+                            .mon + '-' + $scope.day;
+                        $scope.datesearch[$scope.columns] = $scope.newdate;
+                    }
+                }
+            }
+
+            $scope.filterFunction = function(search) {
+                $scope.oldIndex = 0;
+                var filtertedTree = [];
+                if (!angular.isDefined(search) || search == '') {
+                    $scope.filteredAccountTree2 = angular.copy(
+                        $scope.accountTree);
+                    $scope.filteredAccountTree = [];
+                    $scope.newindex -= $scope.increment;
+                    $scope.pushItemstodisplay();
+                    //getTotalCountWrapper();
+                    angular.forEach($scope.filteredAccountTree2,
+                        function(i, k) {
+                            i.isExpanded = true;
+                        });
+                    $scope.totalAgreementOpen = 0;
+                    getTotalCounterForAgr($scope.filteredAccountTree2);
+                    return $scope.filteredAccountTree2;
+                } else {
+                    if ($scope.AgreementDateFieldSet[$scope.columns] ==
+                        'DATE') {
+                        $scope.checkForDate(search);
+                        $scope.filteredAccountTree2 = $scope.traverseChilds(
+                            $scope.accountTree, $scope.datesearch
+                        );
+                        $scope.filteredAccountTree = [];
+                        $scope.newindex -= $scope.increment;
+                        $scope.pushItemstodisplay();
+                        angular.forEach($scope.filteredAccountTree2,
+                            function(i, k) {
+                                i.isExpanded = true;
+                            });
+                        $scope.totalAgreementOpen = 0;
+                        getTotalCounterForAgr($scope.filteredAccountTree2);
+
+                    } else {
+                        $scope.filteredAccountTree2 = $scope.traverseChilds(
+                            $scope.accountTree, search);
+                        $scope.filteredAccountTree = [];
+                        $scope.newindex -= $scope.increment;
+                        $scope.pushItemstodisplay();
+                        angular.forEach($scope.filteredAccountTree2,
+                            function(i, k) {
+                                i.isExpanded = true;
+                            });
+                        $scope.totalAgreementOpen = 0;
+                        getTotalCounterForAgr($scope.filteredAccountTree2);
+                    }
+                }
+            };
+            $scope.traverseChilds = function(treeList, search) {
+                var searchHeaders = Object.keys(search);
+                if (!angular.isDefined(search) || search == '' ||
+                    search[searchHeaders] == undefined || search[
+                        searchHeaders] == '') {
+                    $scope.search = '';
+                    return treeList;
+                } else {
+                    var filteredList = [];
+                    var SearchValue = search[searchHeaders].toLowerCase();
+
+                    angular.forEach(treeList, function(eachAg) {
+                        var newList = {};
+                        var filteredChildList = [];
+                        if (angular.isArray(eachAg.childagreements) &&
+                            eachAg.childagreements.length >
+                            0) {
+                            filteredChildList = $scope.traverseChilds(
+                                eachAg.childagreements,
+                                search);
+                        }
+
+                        if (angular.isArray(eachAg.childagreements) &&
+                            eachAg.childagreements.length >
+                            0 && angular.isArray(
+                                filteredChildList) &&
+                            filteredChildList.length > 0) {
+                            newList.myagreement = eachAg.myagreement;
+                            newList.level = eachAg.level;
+                            newList.color = eachAg.color;
+                            newList.checkbox = eachAg.checkbox;
+                            newList.childagreements =
+                                filteredChildList;
+                            filteredList.push(newList);
+                        } else if (searchHeaders !=
+                            'RecordType' && eachAg.myagreement[
+                                searchHeaders] != undefined &&
+                            eachAg.myagreement[
+                                searchHeaders].toString().toLowerCase()
+                            .indexOf(SearchValue) >= 0) {
+                            newList.myagreement = eachAg.myagreement;
+                            newList.level = eachAg.level;
+                            newList.color = eachAg.color;
+                            newList.checkbox = eachAg.checkbox;
+                            filteredList.push(newList);
+                        } else if (searchHeaders ==
+                            'RecordType' && eachAg.myagreement[
+                                searchHeaders].Name !=
+                            undefined && eachAg.myagreement[
+                                searchHeaders].Name.toLowerCase()
+                            .indexOf(SearchValue) >= 0) {
+                            newList.myagreement = eachAg.myagreement;
+                            newList.level = eachAg.level;
+                            newList.color = eachAg.color;
+                            newList.checkbox = eachAg.checkbox;
+                            filteredList.push(newList);
+                        }
+                    });
+
+                    return filteredList;
+                };
+
+            };
+            $scope.clearFilters = function(search) {
+                if ($scope.columns == 'All Agreements') {
+                    $scope.oldIndex = 0;
+                    $scope.filteredAccountTree2 = angular.copy(
+                        $scope.accountTree);
+                    $scope.filteredAccountTree = [];
+                    $scope.newindex -= $scope.increment;
+                    $scope.pushItemstodisplay();
+                }
+                $scope.search = '';
+            }
+            $scope.clearAll = function() {
+                $scope.columns = null;
+                $scope.search = '';
+            }
+            $scope.showIcons = function(currentAg) {
+                return currentAg ? 'fa fa-minus-square fa-lg' :
+                    'fa fa-plus-square fa-lg';
+            }
+            $scope.addStyleClass = function(level, fieldType) {
+                if (fieldType == 'CURRENCY') {
+                    return currencyData;
+                }
+            }
+            $scope.exportToExcel = function() {
+                window.alert('inside function');
+                var a = document.createElement('a');
+                var data_type =
+                    'data:application/vnd.ms-excel;charset=utf-8';
+                var table_html = $('#mainTable')[0].outerHTML;
+                var css_html =
+                    '<style>td {border: 0.5pt solid #c0c0c0}</style>';
+                table_html = table_html.replace(
+                    /<tfoot[\s\S.]*tfoot>/gmi, '');
+                window.alert('before encoding');
+
+                a.href = data_type + ',' + encodeURIComponent(
+                    '<html><head>' + css_html + '</' +
+                    'head><body>' + table_html +
+                    '</body></html>');
+                a.download = 'Agreement_Hierarchy_Sheet.xls';
+                a.click();
+            }
+
+        });
+
+        //code added for Data Formatting
+        app.filter('dataFormatting', function($filter) {
+            var angularDateFilter = $filter('date');
+            var angularCurrrencyFilter = $filter('currency');
+
+            return function(data, dataType) {
+                if (dataType == 'DATE') {
+                    return angularDateFilter(data, 'MM/dd/yyyy');
+                } else if (dataType == 'CURRENCY') {
+                    return angularCurrrencyFilter(data, "$");
+                } else if (dataType == 'SFDATE') {
+                    return angularDateFilter(data, 'yyyy-mm-dd');
+                } else {
+                    return data;
+                }
+            }
+        });
+
+        //Code Added by Akshay Antrolkar for Column Selection
+        app.directive('multiSelect', function($q) {
+            return {
+                restrict: 'E',
+                require: 'ngModel',
+                scope: {
+                    selectedLabel: "@",
+                    availableLabel: "@",
+                    displayAttr: "@",
+                    available: "=",
+                    model: "=ngModel",
+                    maxLimit: "="
+                },
+                template: '<div class="alert alert-danger" ng-if="maxLimit">' +
+                    '<strong>Error:</strong> You cannot have more than 8 columns.</div>' +
+                    '<div class="multiSelect">' +
+                    '<div class="select">' +
+                    '<label class="control-label" for="multiSelectAvailable">{{ availableLabel }} ' +
+                    '({{ available.length }})</label>' +
+                    '<select id="multiSelectAvailable" ng-model="selected.available" multiple size="17"' +
+                    'ng-options="e as e.fieldLabel for e in available | orderBy:\'fieldLabel\'"></select>' +
+                    '</div>' +
+                    '<div class="select buttons" style="padding-top:16%">' +
+                    '<i ng-click="add()" ng-disabled="selected.available.length == 0" class="material-icons">chevron_right</i>' +
+                    '<i ng-click="remove()" ng-disabled="selected.current.length == 0" class="material-icons">chevron_left</i>' +
+                    '</div>' +
+
+                    '<div class="select">' +
+                    '<label class="control-label" for="selectedFields">{{ selectedLabel }} ' +
+                    '({{ model.length }})</label>' +
+                    '<select id="selectedFields" ng-model="selected.current" multiple size="17"' +
+                    'class="pull-left" ng-options="e as e.fieldLabel disable when e.fieldAPIName == ' +
+                    "'Name'" + ' for e in model">' +
+                    '</select>' +
+                    '</div>' +
+                    '<div class="select buttons" style="padding-top:16%;margin-right: 0px !important;">' +
+                    '<i ng-click="moveUp()" ng-disabled="selected.current.length == 0" class="material-icons">expand_less</i>' +
+                    '<i ng-click="moveDown()" ng-disabled="selected.current.length == 0" class="material-icons">expand_more</i>' +
+                    '</div>' +
+                    '</div>',
+                link: function(scope, elm, attrs) {
+                    scope.selected = {
+                        available: [],
+                        current: []
+                    };
+                    /* Handles cases where scope data hasn't been initialized yet */
+                    var dataLoading = function(scopeAttr) {
+                        var loading = $q.defer();
+                        if (scope[scopeAttr]) {
+                            loading.resolve(scope[scopeAttr]);
+                        } else {
+                            scope.$watch(scopeAttr, function(
+                                newValue, oldValue) {
+                                if (newValue !==
+                                    undefined)
+                                    loading.resolve(
+                                        newValue);
+                            });
+                        }
+                        return loading.promise;
+                    };
+
+                    /* Filters out items in original that are also in toFilter. Compares by reference. */
+                    var filterOut = function(original, toFilter) {
+                        var filtered = [];
+                        angular.forEach(original, function(
+                            entity) {
+                            var match = false;
+                            for (var i = 0; i <
+                                toFilter.length; i++) {
+                                if (toFilter[i][attrs.displayAttr] ==
+                                    entity[attrs.displayAttr]
+                                ) {
+                                    match = true;
+                                    break;
+                                }
+                            }
+                            if (!match) {
+                                filtered.push(entity);
+                            }
+                        });
+                        return filtered;
+                    };
+
+                    scope.refreshAvailable = function() {
+                        scope.available = filterOut(scope.available,
+                            scope.model);
+                        scope.selected.available = [];
+                        scope.selected.current = [];
+                    };
+
+                    scope.add = function() {
+                        if (scope.model.length + scope.selected
+                            .available.length <= 8) {
+                            scope.model = scope.model.concat(
+                                scope.selected.available);
+                            scope.refreshAvailable();
+                        } else {
+                            scope.maxLimit = true;
+                        }
+                    };
+                    scope.remove = function() {
+                        //scope.maxLimit=false;
+                        scope.available = scope.available.concat(
+                            scope.selected.current);
+                        scope.model = filterOut(scope.model,
+                            scope.selected.current);
+                        scope.refreshAvailable();
+                    };
+
+                    $q.all([dataLoading("model"), dataLoading(
+                        "available")]).then(function(results) {
+                        scope.refreshAvailable();
+                    });
+
+                    //Code added for Up Down
+                    scope.moveUp = function() {
+                        var prevIdx = -1;
+                        var person = scope.selected.current.concat();
+                        for (var i = 0; i < scope.selected.current
+                            .length; i++) {
+                            var idx = scope.model.indexOf(scope
+                                .selected.current[i])
+                            if (idx - 1 === prevIdx) {
+                                prevIdx = idx
+                            } else if (idx > 0) {
+                                var itemToMove = scope.model.splice(
+                                    idx, 1)
+                                scope.model.splice(idx - 1, 0,
+                                    itemToMove[0]);
+                            }
+                        }
+                    };
+                    scope.moveDown = function() {
+                        var prevIdx = scope.model.length;
+                        var revValue = scope.selected.current.concat();
+                        revValue.reverse();
+                        for (var i = 0; i < revValue.length; i++) {
+                            var idx = scope.model.indexOf(
+                                revValue[i])
+                            if (idx + 1 === prevIdx) {
+                                prevIdx = idx
+                            } else if (idx < scope.model.length -
+                                1) {
+                                var itemToMove = scope.model.splice(
+                                    idx, 1)
+                                scope.model.splice(idx + 1, 0,
+                                    itemToMove[0]);
+                            }
+                        }
+                    };
+                }
+            };
+        })
+        angular.element(document).ready(function() {
+            $('.allToggles').toggle();
+        });
+
+    </script>
+    <style>
+        section.stage.panelSlide {
+            height: calc(100% - 100px) !important;
+        }
+        
+        .multiSelect {
+            overflow: auto;
+            display: inline-flex;
+        }
+        
+        .multiSelect .select {
+            float: left;
+        }
+        
+        .multiSelect .select {
+            margin-right: 15px;
+            float: left;
+        }
+        
+        #multiSelectAvailable,
+        #selectedFields {
+            min-width: 320px !important;
+        }
+        
+        .multiSelect .text {
+            clear: both;
+            font-size: 11px;
+        }
+        
+        .multiSelect label::after {
+            content: ":";
+        }
+        
+        .btn.mover {
+            display: block;
+            margin-top: 25px;
+            vertical-align: top;
+        }
+        
+        .btn.mover.left {
+            padding: 3px 7px 2px;
+        }
+        
+        .btn.mover.right {
+            padding: 3px 7px 2px;
+        }
+        
+        .btn.mover i {
+            margin: 0;
+        }
+        
+        .modal-dialog {
+            width: 768px;
+        }
+        
+        .glyphicon-none:before {
+            content: "\212212222";
+            color: transparent !important;
+        }
+        
+        .agreementsId {
+            table-layout: fixed !important;
+        }
+        
+        ul li {
+            display: inline-block;
+        }
+        
+        td,
+        th {
+            white-space: inherit !important;
+        }
+        
+        .divScroll {
+            max-height: 80vh;
+            background-color: #fff;
+        }
+        
+        .moved {
+            margin-top: 71px;
+        }
+        
+        .ands-row {
+            margin-top: -7px;
+        }
+
+    </style>
+
+    <body>
+        <c:APTSMD_CommonHeader pageName1="Agreement Hierarchy" objectName="{!accountName}"
+            iconName="account" type="standard" />
+        <div ng-cloak='True' onscroll="callAngularFunction();" class="apttusContainer moved tab-content slds">
+            <div class="tab-pane active" id="tab1">
+                <div>
+                    <script type="text/ng-template" id="agreementHierarchy.html">
+                        <table id="456" class="slds-table slds-table_resizable-cols slds-table_fixed-layout slds-no-row-hover agreementsId"
+                            role="grid">
+                            <tr ng-repeat-start="eachChildAg in ChildAgs" class="useForCount">
+                                <td class="width5P textAlignCenter labelFont paddingLeftRight0" id="firstTD" ng-style="{'background-color' : eachChildAg.color, 'color' : 'black'}">
+                                    <i style="font:  normal normal normal 14px/1 FontAwesome !important;" ng-if="eachChildAg.childagreements.length"
+                                        onclick="$(this).toggleClass('fa-minus-square fa-plus-square');"
+                                        ng-click="expandCollpase(ChildAgs,eachChildAg);"
+                                        ng-class="showIcons(eachChildAg.checkbox)"></i>
+                                    <i ng-if="!eachChildAg.childagreements.length" class="glyphicon glyphicon-none"></i>
+                                </td>
+                                <td class="labelFont" ng-repeat="col in SelectedHeaders" ng-if="col.fieldAPIName == 'Name'"
+                                    style="width:20%" ng-style="{'background-color' : eachChildAg.color, 'color' : 'black','padding-left': eachChildAg.level > 1 ? (eachChildAg.level -1)*2+'%' : ''}">
+                                    <a ng-if="col.getType != 'REFERENCE' && col.fieldAPIName == 'Name'" ng-href="{{instanceURL}}/{{eachChildAg.myagreement.Id}}"
+                                        target="_blank" ng-class="'TableContent'" ng-style="{'display' : 'block'}">{{eachChildAg.myagreement[col.fieldAPIName]}}</a>
+                                </td>
+                                <td class="labelFont" ng-repeat="col in SelectedHeaders" ng-if="col.fieldAPIName != 'Name' && col.fieldAPIName != 'Apttus__Agreement_Number__c'"
+                                    ng-style="{'background-color' : eachChildAg.color, 'color' : 'black','width' : (colwidth / (SelectedHeaders.length - fixcols))+'%'}"
+                                    ng-class="col.getType == 'CURRENCY' ? 'currencyTextAlign' : ''">
+                                    <span ng-if="col.getType != 'REFERENCE' && col.fieldAPIName != 'Name' && col.isNameField != true"
+                                        ng-class="'TableContent'">{{eachChildAg.myagreement[col.fieldAPIName] | dataFormatting : col.getType}}</span>
+                                    <a ng-if="col.getType != 'REFERENCE' && col.isNameField == true" ng-href="{{instanceURL}}/{{eachChildAg.myagreement.Id}}"
+                                        target="_blank" ng-class="'TableContent'">{{eachChildAg.myagreement[col.fieldAPIName]}}</a>
+                                    <span ng-if="col.getType == 'REFERENCE'" ng-class="'TableContent'">{{eachChildAg.myagreement[col.fieldAPIName].Name}}</span>
+                                </td>
+                            </tr>
+                            <tr class="allToggles" ng-class="eachChildAg.myagreement.Id" ng-repeat-end="true"
+                                ng-if="eachChildAg.childagreements.length" ng-show="eachChildAg.checkbox">
+                                <td class="childRows padding0 labelFont" colspan="9" class="childRows" ng-include="'agreementHierarchy.html'"
+                                    onload="ChildAgs = eachChildAg.childagreements"></td>
+                            </tr>
+                        </table>
+                    </script>
+                    <div class="textAlignRight marginBottom12">
+                        <button type="button" class="slds-button slds-button--brand apttusBtn" onclick="javascript:fnExcelReport('mainTable', 'myExcel');">Export to Excel</button>
+                        <button type="button" class="slds-button slds-button--brand apttusBtnWhite" ng-click="backFunction();">Back To Account</button>
+                    </div>
+                    <div class="ands-row">
+                        <div class="apttusPanel">
+                            <!--search panel-->
+                            <div class="" ng-show="!isClick && !isEnd">
+                                <div>
+                                    <p class="blackBold">
+                                        <i ng-init="showFilter = false;" ng-click="showFilter = !showFilter" class="material-icons verticalMiddle">{{showFilter ? 'expand_more' : 'chevron_right'}}</i>
+                                        <span
+                                            class="outLineNone" ng-click="showFilter = !showFilter">&nbsp;Search Filters&nbsp;&nbsp;</span>
+                                            <a href="#" class="mymodal outLineNone blackBold" data-toggle="modal" data-target="#fieldModal">
+                                                <i class="material-icons verticalMiddle" title="Customize Columns">menu</i>
+                                            </a>
+                                    </p>
+                                </div>
+                                <div class="row margin0 padding0 marginBottom5" ng-show="showFilter">
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <md-input-container class="md-block ands-input-container marginTop10">
+                                            <md-select ng-model="columns" ng-change="clearFilters(columns)">
+                                                <md-option ng-value="header.fieldAPIName" ng-repeat="header in SelectedHeaders" ng-if="header.fieldAPIName != 'Apttus__Agreement_Number__c'">
+                                                    {{header.fieldLabel}}
+                                                </md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4  col-xs-12">
+                                        <md-input-container class="md-block ands-input-container marginTop10" md-no-float='true'>
+                                            <input class="ands-input apttusInput" type="text" style="" ng-model="search[columns]"
+                                                placeholder="Enter some text to search"
+                                            />
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-xs-12 textAlignCenter verticalMiddle">
+                                        <button type="button" class="slds-button slds-button--brand apttusBtn" ng-click="filterFunction(search)"
+                                            ng-disabled="columns == 'All Agreements'">Search</button>
+                                        <button type="button" class="slds-button slds-button--brand apttusBtnWhite" ng-click="clearAll()"
+                                            ng-disabled="columns == 'All Agreements'">Clear</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-has-flexi-truncate">
+                                <!-- Modal -->
+                                <div class="modal fade" id="fieldModal" tabindex="-1" role="dialog" aria-labelledby="fieldModalLabel"
+                                    aria-hidden="true" style="padding-right: 170px !important;">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Select Fields To Display</h5>
+                                            </div>
+                                            <div class="modal-body" id="fieldsSets">
+                                                <multi-select ng-model="SelectedHeaders" available="AgreementFieldSet" selected-label="Selected Fields (Max 8 Fields)"
+                                                    available-label="Available Fields"
+                                                    display-attr="fieldLabel" maxLimit="maxLimit1"></multi-select>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="apttusBtn" ng-click="getUpdatedAgreements();" data-dismiss="modal">Save Changes</button>
+                                                <button type="button" class="slds-button slds-button--brand apttusBtnWhite" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="divScroll">
+                        <table id="mainTable" style="table-layout: fixed;" class="slds-table slds-table_resizable-cols slds-table_fixed-layout slds-no-row-hover"
+                            role="grid">
+                            <thead>
+                                <tr class="slds-cell-shrink">
+                                    <th class="width5P padding0 textAlignCenter tableHeaderFont blackBold tableHeader"
+                                        id="firstTD">
+                                        <i data-toggle="tooltip" data-placement="top" id='ToggleParentHeader' title="Expand All/Collapse All"
+                                            onclick="$(this).toggleClass('fa-minus-square fa-plus-square');"
+                                            ng-click="expandCollpaseAll(filteredAccountTree);"
+                                            style="font: normal normal normal 14px/1 FontAwesome !important;"
+                                            class="fa fa-plus-square fa-2x"></i>
+                                    </th>
+                                    <th class="slds-is-sortable slds-is-resizable slds-text-title_caps tableHeaderFont blackBold tableHeader"
+                                        ng-repeat="col in SelectedHeaders" ng-if="col.fieldAPIName == 'Name'"
+                                        style="width:20%;">{{col.fieldLabel}}</th>
+                                    <th class="slds-is-sortable slds-is-resizable slds-text-title_caps tableHeaderFont blackBold tableHeader"
+                                        ng-repeat="col in SelectedHeaders" ng-if="col.fieldAPIName != 'Name' && col.fieldAPIName != 'Apttus__Agreement_Number__c'"
+                                        ng-style="{'font-size':'14px','width' : (colwidth / (SelectedHeaders.length - fixcols))+'%'}">{{col.fieldLabel == 'Record Type ID' ? 'Record
+                                        Type' : col.fieldLabel}}</th>
+                                </tr>
+                            </thead>
+                            <tr class="slds-hint-parent useForCount" ng-repeat-start="eachAg in filteredAccountTree">
+                                <td ng-style="{'padding-left' : (eachAg.level -1)*1.5+'%', 'background-color' : eachAg.color, 'color' : 'black'}"
+                                    class="width5P textAlignCenter labelFont paddingLeftRight0"
+                                    id="firstTD">
+                                    <i style="font:  normal normal normal 14px/1 FontAwesome !important;" ng-if="eachAg.childagreements.length"
+                                        onclick="$(this).toggleClass('fa-minus-square fa-plus-square');"
+                                        ng-click="expandCollpase(filteredAccountTree,eachAg);"
+                                        ng-class="showIcons(eachAg.checkbox)" class="outLineNone"></i>
+                                    <i ng-if="!eachAg.childagreements.length" class="glyphicon glyphicon-none"></i>
+                                </td>
+                                <td ng-repeat="col in SelectedHeaders" ng-if="col.fieldAPIName == 'Name'" ng-style="{'background-color' : eachAg.color, 'color' : 'black','padding-left': eachAg.level > 1 ? (eachAg.level -1)*3+'%' : ''}"
+                                    class="labelFont">
+                                    <a ng-if="col.getType != 'REFERENCE' && col.fieldAPIName == 'Name'" ng-href="{{instanceURL}}/{{eachAg.myagreement.Id}}"
+                                        target="_blank" ng-class="'TableContent'" ng-style="{'display' : 'block'}">{{eachAg.myagreement[col.fieldAPIName]}}</a>
+                                </td>
+                                <td class="labelFont" ng-repeat="col in SelectedHeaders" ng-if="col.fieldAPIName != 'Name' && col.fieldAPIName != 'Apttus__Agreement_Number__c'"
+                                    ng-style="{'background-color' : eachAg.color, 'color' : 'black'}"
+                                    ng-class="col.getType == 'CURRENCY' ? 'currencyTextAlign' : ''">
+                                    <span ng-if="col.getType != 'REFERENCE' && col.fieldAPIName != 'Name' && col.isNameField != true"
+                                        ng-class="'TableContent'">{{eachAg.myagreement[col.fieldAPIName] | dataFormatting : col.getType}}</span>
+                                    <a ng-if="col.getType != 'REFERENCE' && col.isNameField == true" ng-href="{{instanceURL}}/{{eachAg.myagreement.Id}}"
+                                        target="_blank" ng-class="'TableContent'">{{eachAg.myagreement[col.fieldAPIName]}}</a>
+                                    <span ng-if="col.getType == 'REFERENCE'" ng-class="'TableContent'">{{eachAg.myagreement[col.fieldAPIName].Name}}</span>
+                                </td>
+                            </tr>
+                            <tr class="allToggles" ng-class="eachAg.myagreement.Id" ng-repeat-end="true" ng-if="eachAg.childagreements.length"
+                                ng-show="eachAg.checkbox">
+                                <td colspan="9" ng-style="{'width' : (colwidth / (SelectedHeaders.length - fixcols))+'%'}"
+                                    style="padding-left:0px !important;" class="childRows padding0 labelFont"
+                                    ng-include="'agreementHierarchy.html'" onload="ChildAgs = eachAg.childagreements"></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="smallMsgText textAlignRight marginTop5">
+                        Total Agreements: {{totalAgreementOpen}}
+                    </div>
+                    <br />
+                </div>
+            </div>
+        </div>
+    </body>
+
+    </html>
+
+</apex:page>

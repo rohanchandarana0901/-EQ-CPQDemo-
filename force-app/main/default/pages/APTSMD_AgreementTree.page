@@ -1,0 +1,228 @@
+<!-- UI/UX done by Japan Bhavsar on 12/24/2018 -->
+<apex:page standardController="Apttus__APTS_Agreement__c"
+    extensions="APTSMD_AgreementTreeController" showHeader="true" sidebar="true"
+    tabStyle="Apttus__APTS_Agreement__c" action="{!doLoad}">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        .progress{
+                margin-bottom:0px !important;
+                border-radius: 0 !important;
+        }
+        
+        .modal.in .modal-dialog, .modal-content {
+            width: fit-content;
+        }
+    </style>
+    <link rel="stylesheet" href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}" 
+        type="text/css" />
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/jquery.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular_js.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-animate.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-material.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-messages.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-resources.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-route.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/assets_cache.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/materialize.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/bootstrap_js.js')}"/>
+    <apex:includeScript value="{!$Resource.APTSMD_Nova_Js}"/>
+    <apex:includeScript value="{!$Resource.APTSMD_NovaThemeProvider}"/>
+    <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/angular-material-data-table/0.10.10/md-data-table.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="https://rawgit.com/alalonde/angular-scrollable-table/master/scrollable-table.css" />
+
+    <!-- stylesheets for CPQ like formatting -->
+    <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQCommon.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQOptions.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources, 'CPQDelight.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap.min.css')}" />
+
+    <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap-theme.min.css')}"/>
+    <!-- Heart of this page (new css file) -->    
+    <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+    <script>
+    
+        jQuery(document).ready(function() {
+            $('.overflowX a').attr('target', '_blank');
+        });
+    
+        // doClear() - Do clear function made by japan bhavsar on 12/27/2018
+        function doClear(){
+            var filterField = document.getElementById('{!$Component.form1.pgBlk.idFilterSection.filterFieldID}');
+            var filterValue =  document.getElementById('{!$Component.form1.pgBlk.idFilterSection.filterValueID}');
+            filterField.value = 'none';
+            filterValue.value = 'none'; 
+        }
+        
+        // closeModal() - close modal
+        function closeModal(){
+            $('#fieldModal').modal('hide');
+        }
+    
+        // Create simple angular application
+        var app = angular.module('app',['ngMaterial', 'novaTheme', 'ngMessages', 'ngAnimate', 'ngRoute', 'material.svgAssetsCache']);
+        app.config(function (novaThemeProvider) {
+                novaThemeProvider.setTheme('default');
+        });
+        app.controller('controller',function($scope){
+            
+            
+            
+            
+        });
+    </script>
+    <!-- Add Custom Header -->
+    <c:APTSMD_CommonHeader pageName1="Agreement Hierarchy" objectName="" />
+    
+    <!-- Apttus Container -->
+    <div class="slds apttusContainer" ng-app="app" ng-controller="controller" ng-cloak="true">
+        <apex:form id="form1">
+            
+            <!-- Button Area -->
+            <div class="textAlignRight marginBottom15">
+                <apex:outputPanel >
+                        <apex:commandButton action="{!doDone}" value="Back To Agreement" styleClass="apttusBtn"/>
+                </apex:outputPanel>
+            </div>
+            
+            <!-- Filter Area -->
+            <div class="apttusPanel" ng-init="showFilter = false;">
+                <div class="outLineNone">
+                    <i class="material-icons verticalMiddle" ng-click="showFilter = !showFilter">{{showFilter ? 'expand_more' : 'chevron_right'}}</i>
+                    <p class="blackBold sectionHeaderFont margin0 displayIB" ng-click="showFilter = !showFilter">&nbsp;Search Filters</p>
+                    &nbsp;&nbsp;<a href="#" class="mymodal outLineNone blackBold" data-toggle="modal" data-target="#fieldModal"><i class="material-icons verticalMiddle">menu</i></a>
+                </div>
+                <div ng-show="showFilter">
+                
+                <!-- Filter section -->
+                 <apex:pageBlock id="pgBlk">
+                    <apex:outputPanel >
+                        <apex:pageBlockSection columns="1" id="idFilterSection">    
+                            <apex:panelGrid columns="1" styleClass="width100P">
+                                <apex:panelGroup >
+                                    <apex:selectList value="{!filterField}" id="filterFieldID" styleClass="slds-input apttusInput width30P" size="1" onchange="doUpdateFilter();">
+                                        <apex:selectOptions value="{!filterFields}" />
+                                    </apex:selectList>&nbsp;&nbsp;
+                                    <apex:selectList value="{!filterValue}" id="filterValueID" styleClass="slds-input apttusInput width30P" size="1">
+                                        <apex:selectOptions value="{!filterValues}" />
+                                    </apex:selectList>
+                                    <button type="button" class="apttusBtn" onclick="filterAgreementList();">Search</button>&nbsp;&nbsp;
+                                    <button type="button" class="apttusBtnWhite" onclick="doClearFilter();">Clear</button>
+                                </apex:panelGroup>
+                            </apex:panelGrid>
+                        </apex:pageBlockSection>
+                    </apex:outputPanel>
+                 </apex:pageBlock>
+                </div>
+            </div>
+             
+            <!-- Tree View -->
+            <div class="apttusPanel">
+                <apex:outputPanel id="panel1">
+                    <div class="overflowX">
+                        <apex:pageBlock id="filterPanel">
+                            <apex:dataTable value="{!agmtList}" var="wrapper" id="treeView" styleClass="slds-table width100P">                     
+                            <apex:column headerValue="Name" rendered="{!NOT(wrapper.relationship = '')}" headerClass="blackBold tableHeaderFont verticalMiddle tableHeader marginLeft20"
+                                style="{!if(CurrentAgreement.Id == wrapper.agreement.Id,'background-color: #abffe3','')}">
+                                <apex:outputText escape="false" value="{!wrapper.indent}"  styleClass=" verticalMiddle simpleTextAlign" />
+                                <apex:commandLink action="{!viewAgmt}" value="{!wrapper.agreement.Name}" style="font-style:italic" 
+                                styleClass=" verticalMiddle simpleTextAlign" target="_blank">
+                                    <apex:param assignTo="{!gotoAgmtId}" value="{!wrapper.agreement.Id}" name="param1"/>
+                                </apex:commandLink>
+                            </apex:column>                  
+                            <apex:column headerValue="Name" rendered="{!wrapper.relationship = ''}" headerClass="blackBold tableHeaderFont verticalMiddle tableHeader"
+                                style="{!if(CurrentAgreement.Id == wrapper.agreement.Id,'background-color: #abffe3','')}">
+                                <apex:outputText escape="false" value="{!wrapper.indent}"  styleClass=" verticalMiddle simpleTextAlign" />
+                                <apex:commandLink action="{!viewAgmt}" value="{!wrapper.agreement.Name}"  styleClass=" verticalMiddle simpleTextAlign" target="_blank">
+                                    <apex:param assignTo="{!gotoAgmtId}" value="{!wrapper.agreement.Id}" name="param1"/>
+                                </apex:commandLink>
+                            </apex:column>
+                            <apex:column headerValue="Relationship" headerClass="blackBold tableHeaderFont verticalMiddle tableHeader" 
+                                style="{!if(CurrentAgreement.Id == wrapper.agreement.Id,'background-color: #abffe3','')}">
+                                <apex:outputText value="{!wrapper.relationship}" style="font-style:italic"  styleClass=" verticalMiddle simpleTextAlign" />
+                            </apex:column>
+                            <apex:column headerValue="Agreement Number" headerClass="blackBold tableHeaderFont verticalMiddle tableHeader" 
+                                style="{!if(CurrentAgreement.Id == wrapper.agreement.Id,'background-color: #abffe3','')}">
+                                <apex:outputText value="{!wrapper.agreement.Apttus__FF_Agreement_Number__c}"  styleClass=" verticalMiddle simpleTextAlign" />
+                            </apex:column>
+                            
+                            <apex:column headerValue="Status Category" headerClass="blackBold tableHeaderFont verticalMiddle tableHeader" 
+                                style="{!if(CurrentAgreement.Id == wrapper.agreement.Id,'background-color: #abffe3','')}">
+                                <apex:outputField value="{!wrapper.agreement.Apttus__Status_Category__c}"  styleClass=" verticalMiddle simpleTextAlign" />
+                            </apex:column>
+                            <apex:column headerValue="Account" headerClass="blackBold tableHeaderFont verticalMiddle tableHeader" 
+                                style="{!if(CurrentAgreement.Id == wrapper.agreement.Id,'background-color: #abffe3','')}">
+                                <apex:outputField value="{!wrapper.agreement.Apttus__Account__c}"  styleClass=" verticalMiddle simpleTextAlign" />
+                            </apex:column>
+                            <apex:column headerValue="Record Type" headerClass="blackBold tableHeaderFont verticalMiddle tableHeader" 
+                                style="{!if(CurrentAgreement.Id == wrapper.agreement.Id,'background-color: #abffe3','')}">
+                                <apex:outputText value="{!wrapper.agmtType}"  styleClass=" verticalMiddle simpleTextAlign" />
+                            </apex:column>
+                            <apex:column headerValue="Agreement Value" headerClass="blackBold tableHeaderFont verticalMiddle tableHeader" 
+                                style="{!if(CurrentAgreement.Id == wrapper.agreement.Id,'background-color: #abffe3','')}">
+                                <apex:outputField value="{!wrapper.agreement.Apttus__Total_Contract_Value__c}" styleClass="{!if(CurrentAgreement.Id == wrapper.agreement.Id,'background-color: #abffe3','')} verticalMiddle simpleTextAlign" />
+                            </apex:column>
+                            <apex:repeat value="{!selectedSearchFields}" var="searchField">
+                                <apex:column headerValue="{!searchField.Label}" headerClass="blackBold tableHeaderFont verticalMiddle tableHeader" 
+                                    style="{!if(CurrentAgreement.Id == wrapper.agreement.Id,'background-color: #abffe3','')}"
+                                    rendered="{!(searchField.Value != 'Name' && searchField.Value != 'Relationship' && searchField.Value != 'AgreementNumber'
+                                        && searchField.Value != 'StatusCategory' && searchField.Value != 'Account' && searchField.Value != 'Type' && searchField.Value != 'AgreementValue')}">
+                                    <apex:outputField value="{!wrapper.agreement[searchField.Value]}" styleClass="{!if(CurrentAgreement.Id == wrapper.agreement.Id,'background-color: #abffe3','')} verticalMiddle simpleTextAlign"  />
+                                </apex:column>
+                            </apex:repeat>
+            </apex:dataTable>
+                            <p class="textAlignCenter smallMsgText {!IF(agmtList.size > 0,'displayNone','')} marginTop10">
+                                No Agreements Founds.
+                            </p>
+                        </apex:pageBlock>
+                    </div>
+                </apex:outputPanel>
+                <br/>
+                <!-- Notation area for current agreement -->
+                <div class="indicator displayIB verticalMiddle"></div><label class="verticalMiddle blackBold margin0">&nbsp;&nbsp;Selected Agreement</label>
+                <span style="display:block; overflow:hidden; padding-left:.8em;color:red; font-weight:bold;font-size:20px;">
+                    {!if(isError,'Please assign related opportunity to the agreement!', '')}
+                </span>
+            </div>
+            
+            <!-- Modal for select fields -->
+            <apex:pageblock >
+            <div class="modal fade" id="fieldModal" tabindex="-1" role="dialog" aria-labelledby="fieldModalLabel" aria-hidden="true" 
+                        style="padding-right: 170px !important;">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Select Fields To Display</h5>
+                        </div>
+                        <div class="modal-body" id="fieldsSets">
+                             <c:APTSMD_MultiselectPicklist leftLabel="Available Fields"
+                                    leftOption="{!allSearchFields}"
+                                    rightLabel="Selected Fields"
+                                    rightOption="{!selectedSearchFields}"
+                                    size="14"
+                                    width="350px"/>
+                        </div>
+                        <div class="modal-footer">
+                            <apex:commandButton value="Save" rerender="treeView" styleClass="slds-button slds-button--brand slds-not-selected bold_w apttusBtn" onclick="closeModal();"/>
+                            <button type="button" class="slds-button slds-button--brand apttusBtnWhite" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </apex:pageblock>
+    
+            <!-- Action function -->
+            <apex:actionFunction name="doUpdateFilter" action="{!doSetFilterValues}" rerender="idFilterSection"/>
+            <apex:actionFunction name="filterAgreementList" action="{!doFilterAgreementList}" rerender="filterPanel" />
+            <apex:actionFunction name="doClearFilter" action="{!doClearFilter}" rerender="idFilterSection,filterPanel" />
+        </apex:form>
+        </div>    
+    </apex:page>

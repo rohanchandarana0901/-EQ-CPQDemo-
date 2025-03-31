@@ -1,0 +1,1684 @@
+<apex:page extensions="APTSMD_MassAmendmentController" docType="html-5.0" standardController="Apttus__APTS_Agreement__c"
+    standardStylesheets="false" sidebar="false" lightningStyleSheets="true">
+    <apex:form id="frm">
+        <html lang="en" ng-app="ngApp" ng-cloak='True' xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink">
+        <link rel="stylesheet" href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}"
+            type="text/css" />
+
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.css"
+        />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/jquery.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular_js.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-animate.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-material.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-messages.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-resources.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-route.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/assets_cache.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/materialize.js')}"
+        />
+        <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/bootstrap_js.js')}"
+        />
+        <apex:includeScript value="{!$Resource.APTSMD_Nova_Js}" />
+        <apex:includeScript value="{!$Resource.APTSMD_NovaThemeProvider}" />
+        <!-- <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.1/angular-material.css"
+            rel="stylesheet" /> -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.10/angular-material.min.css" integrity="sha512-lUExuDw/YQOmNO0LN2XplczGTyTxTEUvXBPKOnfBNloscpdzpfrYBiyWtPeyF0guAgihG/6RrOfDpoyywWMk/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/angular-material-data-table/0.10.10/md-data-table.css"
+            rel="stylesheet" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        />
+        <link rel="https://rawgit.com/alalonde/angular-scrollable-table/master/scrollable-table.css"
+        />
+
+        <!-- stylesheets for CPQ like formatting -->
+        <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQCommon.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQOptions.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources, 'CPQDelight.css')}"
+        />
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap.min.css')}"
+        />
+
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap-theme.min.css')}"
+        />
+        <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+
+        <script>
+            function showLoadingImage() {
+                document.getElementById('LoadingImg').style.display = 'inline';
+            }
+
+            function hideLoadingImage() {
+                document.getElementById('LoadingImg').style.display = 'none';
+                document.getElementById('message').style.display = 'block';
+            }
+
+            var app = angular.module('ngApp', ['ngMaterial', 'novaTheme',
+                'ngMessages', 'ngAnimate', 'ngRoute',
+                'material.svgAssetsCache'
+            ]);
+            app.config(function(novaThemeProvider) {
+                novaThemeProvider.setTheme('default');
+            });
+            var controller = app.controller('AgreementController', function(
+                $scope) {
+                $scope.agreements = {!AgreementString
+                };
+                $scope.global_agreements_dataset = $scope.agreements;
+                $scope.amendedagreements = '';
+                $scope.searchText = '';
+                $scope.expressioncrt = {!expressioncrtJSON
+                };
+                $scope.operatorTypes = {!operatorTypes
+                };
+                $scope.lstOfAgmtIds = '{!agreementIds}';
+                $scope.selectedAll = {
+                    value: false
+                };
+
+                // Currency and date variables
+                $scope.defaultCurrancy = '{!defaultCurrancy}';
+                $scope.isMultiCurrancyOn = {!isMultiCurrancyOn
+                };
+                $scope.dateFormat = '{!dateFormat}';
+
+
+                //add dynamically options to column picklist # this will be used in column wise searching 
+                $scope.viewdata = {
+
+                    availableOptions: [{
+                        id: 'Apttus__FF_Agreement_Number__c',
+                        name: 'Agreement Number'
+                    }, {
+                        id: 'Name',
+                        name: 'Agreement Name'
+                    }, {
+                        id: 'RecordType',
+                        name: 'Record Type'
+                    }, {
+                        id: 'Apttus__Status_Category__c',
+                        name: 'Status'
+                    }, {
+                        id: 'Apttus__Contract_Start_Date__c',
+                        name: 'Agreement Start Date'
+                    }, {
+                        id: 'Apttus__Contract_End_Date__c',
+                        name: 'Agreement End Date'
+                    }, {
+                        id: 'Apttus__Total_Contract_Value__c',
+                        name: 'Total Agreement Value'
+                    }, {
+                        id: 'Payment_Terms__c',
+                        name: 'Payment Terms'
+                    }, {
+                        id: 'Apttus__Primary_Contact__r',
+                        name: 'Primary Contact'
+                    }, {
+                        id: 'Apttus__Related_Opportunity__r',
+                        name: 'Related Opportunity'
+                    }],
+                    selectedOption: {
+                        id: 'Name',
+                        name: 'Agreement Name'
+                    } //This sets the default value of the select in the ui
+                };
+                $scope.viewoperator = {
+
+                    availableOptions: [{
+                            id: '0',
+                            name: 'Contains'
+                        }, {
+                            id: '1',
+                            name: 'Equal to'
+                        }, {
+                            id: '2',
+                            name: 'Not equal to'
+                        }, {
+                            id: '3',
+                            name: 'greater than or equal to'
+                        }, {
+                            id: '4',
+                            name: 'less than or equal to'
+                        }
+
+                    ],
+                    selectedOption: {
+                        id: '0',
+                        name: 'Contains'
+                    } //This sets the default value of the select in the ui
+                };
+                //new method added as on 1-8-2016 by vivek
+                //added by vivek as on 22/06/2016 search agreement column wise 
+                $scope.searchAgreement = function() {
+                    var colname = $scope.viewdata.selectedOption; //get column name
+                    var value = $scope.searchText; // get search string 
+                    var operator = $scope.viewoperator.selectedOption; // get search operator
+                    if (colname != null && operator != null &&
+                        value.length > 0) {
+                        if (colname.id.indexOf('Date') > -1 &&
+                            value.length < 10) {
+
+                        } else {
+                            /*************************************Main Start**************************************************/
+                            //string contains sub string
+                            if (operator.name == 'Contains') {
+                                $scope.sortedobj = $scope.global_agreements_dataset
+                                    .filter(function(obj1) {
+                                        var somestep = obj1;
+                                        if (!(obj1[colname.id] ==
+                                                undefined)) {
+                                            if (typeof obj1[
+                                                    colname.id] ==
+                                                "object") {
+                                                if (obj1[
+                                                        colname
+                                                        .id].Name
+                                                    .toLowerCase()
+                                                    .indexOf(
+                                                        value.toLowerCase()
+                                                    ) > -1) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else {
+                                                if (obj1[
+                                                        colname
+                                                        .id].toLowerCase()
+                                                    .indexOf(
+                                                        value.toLowerCase()
+                                                    ) > -1) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            }
+                                        }
+                                    });
+                            } else if (operator.name == 'Equal to') { //string equal to provided value
+
+                                $scope.sortedobj = $scope.global_agreements_dataset
+                                    .filter(function(obj1) {
+                                        if (!(obj1[colname.id] ==
+                                                undefined)) {
+                                            if (typeof obj1[
+                                                    colname.id] ==
+                                                "object") {
+                                                if (obj1[
+                                                        colname
+                                                        .id].Name
+                                                    .toLowerCase() ===
+                                                    (value.toLowerCase())
+                                                ) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else {
+                                                if (colname.id.toLowerCase()
+                                                    .indexOf(
+                                                        "date") >
+                                                    -1) { //for date
+                                                    var
+                                                        Datevalue =
+                                                        new Date(
+                                                            obj1[
+                                                                colname
+                                                                .id
+                                                            ]);
+                                                    var compDate =
+                                                        new Date(
+                                                            value
+                                                        );
+                                                    if (
+                                                        Datevalue
+                                                        .toDateString() ===
+                                                        compDate
+                                                        .toDateString()
+                                                    ) {
+                                                        return (
+                                                            obj1
+                                                        );
+                                                    }
+                                                } else {
+                                                    if (obj1[
+                                                            colname
+                                                            .id
+                                                        ].toLowerCase() ===
+                                                        (value.toLowerCase())
+                                                    ) {
+                                                        return (
+                                                            obj1
+                                                        );
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                    });
+                            } else if (operator.name ==
+                                'Not equal to') { //string not equal to provided value
+                                $scope.sortedobj = $scope.global_agreements_dataset
+                                    .filter(function(obj1) {
+
+                                        if (!(obj1[colname.id] ==
+                                                undefined)) {
+                                            if (typeof obj1[
+                                                    colname.id] ==
+                                                "object") {
+                                                if (obj1[
+                                                        colname
+                                                        .id].Name
+                                                    .toLowerCase() !==
+                                                    (value.toLowerCase())
+                                                ) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else {
+                                                if (colname.id.toLowerCase()
+                                                    .indexOf(
+                                                        "date") >
+                                                    -1) { //for date
+                                                    var
+                                                        Datevalue =
+                                                        new Date(
+                                                            obj1[
+                                                                colname
+                                                                .id
+                                                            ]);
+                                                    var compDate =
+                                                        new Date(
+                                                            value
+                                                        );
+                                                    if (
+                                                        Datevalue
+                                                        .toDateString() !=
+                                                        compDate
+                                                        .toDateString()
+                                                    ) {
+                                                        return (
+                                                            obj1
+                                                        );
+                                                    }
+                                                } else {
+                                                    if (obj1[
+                                                            colname
+                                                            .id
+                                                        ].toLowerCase() !==
+                                                        (value.toLowerCase())
+                                                    ) {
+                                                        return (
+                                                            obj1
+                                                        );
+                                                    }
+                                                }
+                                            }
+                                        }
+
+
+                                    });
+                            } else if (operator.name ==
+                                'greater than or equal to') { //all value greater than provided val  #MAINLY FOR NUMBERS AND DATE
+                                $scope.sortedobj = $scope.global_agreements_dataset
+                                    .filter(function(obj1) {
+
+                                        if (!(obj1[colname.id] ==
+                                                undefined)) {
+                                            if (typeof obj1[
+                                                    colname.id] ==
+                                                "object") {
+                                                if (obj1[
+                                                        colname
+                                                        .id].Name
+                                                    .toLowerCase() >=
+                                                    (value.toLowerCase())
+                                                ) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else if (typeof obj1[
+                                                    colname.id] ==
+                                                "number") {
+                                                //number
+                                                if (obj1[
+                                                        colname
+                                                        .id] >=
+                                                    (value)) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            }
+                                            //string (might be date in string or number or text)
+                                            else {
+                                                if (colname.id.toLowerCase()
+                                                    .indexOf(
+                                                        "date") >
+                                                    -1) {
+                                                    var
+                                                        Datevalue =
+                                                        new Date(
+                                                            obj1[
+                                                                colname
+                                                                .id
+                                                            ]);
+                                                    var compDate =
+                                                        new Date(
+                                                            value
+                                                        );
+                                                    if (
+                                                        Datevalue
+                                                        .getTime() >
+                                                        compDate
+                                                        .getTime()
+                                                    ) {
+                                                        return (
+                                                            obj1
+                                                        );
+                                                    }
+                                                } else {
+                                                    if (obj1[
+                                                            colname
+                                                            .id
+                                                        ] >= (
+                                                            value
+                                                        )) {
+                                                        return (
+                                                            obj1
+                                                        );
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                            } else if (operator.name ==
+                                'less than or equal to') { // all value less than provided val
+                                $scope.sortedobj = $scope.global_agreements_dataset
+                                    .filter(function(obj1) {
+
+                                        if (!(obj1[colname.id] ==
+                                                undefined)) {
+                                            if (typeof obj1[
+                                                    colname.id] ==
+                                                "object") {
+                                                if (obj1[
+                                                        colname
+                                                        .id].Name
+                                                    .toLowerCase() <=
+                                                    (value.toLowerCase())
+                                                ) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else if (typeof obj1[
+                                                    colname.id] ==
+                                                "number") {
+                                                //number
+                                                if (obj1[
+                                                        colname
+                                                        .id] <=
+                                                    (value)) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else {
+                                                if (colname.id.toLowerCase()
+                                                    .indexOf(
+                                                        "date") >
+                                                    -1) {
+                                                    var
+                                                        Datevalue =
+                                                        new Date(
+                                                            obj1[
+                                                                colname
+                                                                .id
+                                                            ]);
+                                                    var compDate =
+                                                        new Date(
+                                                            value
+                                                        );
+                                                    if (
+                                                        Datevalue
+                                                        .getTime() <=
+                                                        compDate
+                                                        .getTime()
+                                                    ) {
+                                                        return (
+                                                            obj1
+                                                        );
+                                                    }
+                                                } else {
+                                                    if (obj1[
+                                                            colname
+                                                            .id
+                                                        ] <= (
+                                                            value
+                                                        )) {
+                                                        return (
+                                                            obj1
+                                                        );
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                            }
+                            $scope.agreements = $scope.sortedobj; //assign it to binding source 
+                            /****************************************Main End***********************************************/
+                        }
+                    } else {
+                        //by default all agreements to bind
+                        $scope.agreements = $scope.global_agreements_dataset;
+                    }
+                };
+                //added by vivek as on 22/06/2016 search agreement column wise  
+
+                $scope.searchAgreement_old = function() {
+                    var colname = $scope.viewdata.selectedOption; //get column name
+                    var value = $scope.searchText; // get search string 
+                    var operator = $scope.viewoperator.selectedOption; // get search operator
+                    if (colname != null && operator != null &&
+                        value.length > 0) {
+                        if (colname.id.indexOf('Date') > -1 &&
+                            value.length < 10) {
+
+                        } else {
+                            /*************************************Main Start**************************************************/
+                            //string contains sub string
+                            if (operator.name == 'Contains') {
+                                $scope.sortedobj = $scope.global_agreements_dataset
+                                    .filter(function(obj1) {
+                                        var somestep = obj1;
+                                        if (!(obj1[colname.id] ==
+                                                undefined)) {
+                                            if (typeof obj1[
+                                                    colname.id] ==
+                                                "object") {
+                                                if (obj1[
+                                                        colname
+                                                        .id].Name
+                                                    .toLowerCase()
+                                                    .indexOf(
+                                                        value.toLowerCase()
+                                                    ) > -1) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else {
+                                                if (obj1[
+                                                        colname
+                                                        .id].toLowerCase()
+                                                    .indexOf(
+                                                        value.toLowerCase()
+                                                    ) > -1) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            }
+                                        }
+                                    });
+                            } else if (operator.name == 'Equal to') { //string equal to provided value
+
+                                $scope.sortedobj = $scope.global_agreements_dataset
+                                    .filter(function(obj1) {
+                                        if (!(obj1[colname.id] ==
+                                                undefined)) {
+                                            if (typeof obj1[
+                                                    colname.id] ==
+                                                "object") {
+                                                if (obj1[
+                                                        colname
+                                                        .id].Name
+                                                    .toLowerCase() ===
+                                                    (value.toLowerCase())
+                                                ) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else {
+                                                if (obj1[
+                                                        colname
+                                                        .id].toLowerCase() ===
+                                                    (value.toLowerCase())
+                                                ) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            }
+                                        }
+
+                                    });
+                            } else if (operator.name ==
+                                'Not equal to') { //string not equal to provided value
+                                $scope.sortedobj = $scope.global_agreements_dataset
+                                    .filter(function(obj1) {
+
+                                        if (!(obj1[colname.id] ==
+                                                undefined)) {
+                                            if (typeof obj1[
+                                                    colname.id] ==
+                                                "object") {
+                                                if (obj1[
+                                                        colname
+                                                        .id].Name
+                                                    .toLowerCase() !==
+                                                    (value.toLowerCase())
+                                                ) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else {
+                                                if (obj1[
+                                                        colname
+                                                        .id].toLowerCase() !==
+                                                    (value.toLowerCase())
+                                                ) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            }
+                                        }
+
+
+                                    });
+                            } else if (operator.name ==
+                                'greater than or equal to') { //all value greater than provided val  #MAINLY FOR NUMBERS AND DATE
+                                $scope.sortedobj = $scope.global_agreements_dataset
+                                    .filter(function(obj1) {
+
+                                        if (!(obj1[colname.id] ==
+                                                undefined)) {
+                                            if (typeof obj1[
+                                                    colname.id] ==
+                                                "object") {
+                                                if (obj1[
+                                                        colname
+                                                        .id].Name
+                                                    .toLowerCase() >=
+                                                    (value.toLowerCase())
+                                                ) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else if (typeof obj1[
+                                                    colname.id] ==
+                                                "number") {
+                                                //number
+                                                if (obj1[
+                                                        colname
+                                                        .id] >=
+                                                    (value)) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else {
+                                                var Datevalue =
+                                                    new Date(
+                                                        obj1[
+                                                            colname
+                                                            .id
+                                                        ]);
+                                                var compDate =
+                                                    new Date(
+                                                        value);
+                                                if (Datevalue.getTime() >
+                                                    compDate.getTime()
+                                                ) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            }
+                                        }
+                                    });
+                            } else if (operator.name ==
+                                'less than or equal to') { // all value less than provided val
+                                $scope.sortedobj = $scope.global_agreements_dataset
+                                    .filter(function(obj1) {
+
+                                        if (!(obj1[colname.id] ==
+                                                undefined)) {
+                                            if (typeof obj1[
+                                                    colname.id] ==
+                                                "object") {
+                                                if (obj1[
+                                                        colname
+                                                        .id].Name
+                                                    .toLowerCase() <=
+                                                    (value.toLowerCase())
+                                                ) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else if (typeof obj1[
+                                                    colname.id] ==
+                                                "number") {
+                                                //number
+                                                if (obj1[
+                                                        colname
+                                                        .id] <=
+                                                    (value)) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            } else {
+                                                var Datevalue =
+                                                    new Date(
+                                                        obj1[
+                                                            colname
+                                                            .id
+                                                        ]);
+                                                var compDate =
+                                                    new Date(
+                                                        value);
+                                                if (Datevalue.getTime() <=
+                                                    compDate.getTime()
+                                                ) {
+                                                    return (
+                                                        obj1
+                                                    );
+                                                }
+                                            }
+                                        }
+                                    });
+                            }
+                            $scope.agreements = $scope.sortedobj; //assign it to binding source 
+                            /****************************************Main End***********************************************/
+                        }
+                    } else {
+                        //by default all agreements to bind
+                        $scope.agreements = $scope.global_agreements_dataset;
+                    }
+                };
+
+                $scope.isClick = false;
+                $scope.showSearchBar = false;
+                $scope.showDetails = true;
+                $scope.isEnd = false;
+                $scope.finalAgreemtnDisplay;
+
+                $scope.sortType = 'Name'; // set the default sort type
+                $scope.sortReverse = false; // set the default sort order
+
+                //Button to mass amend
+                $scope.submitData = function() {
+                    $scope.isClick = false;
+                    $scope.showDetails = false;
+                    $scope.isEnd = true;
+                    showLoadingImage()
+                    doMassAmendNew(JSON.stringify($scope.agreements));
+
+                }
+
+
+                $scope.hideHeader = function() {
+
+                    // Added By Japan Bhavsar on 12/6/2018
+                    var selectedAgmts = 0;
+                    angular.forEach($scope.agreements, function(i,
+                        k) {
+                        if (i.APTSMD_Selected__c) {
+                            selectedAgmts = selectedAgmts +
+                                1;
+                        }
+                    });
+                    if (selectedAgmts == 0) {
+                        window.alert(
+                            "Please select at least one agreement to amend."
+                        );
+                        return;
+                    } else {
+                        $scope.filterAgreements = {
+                            APTSMD_Selected__c: true
+                        };
+                        $scope.isClick = true;
+                        $scope.showSearchBar = true;
+                    }
+                }
+                $scope.delete = function() {
+
+                    // Added By Japan Bhavsar on 12/6/2018
+                    // Check if any agreeemnt is selected
+                    var selectedAgmts = 0;
+                    angular.forEach($scope.agreements, function(i,
+                        k) {
+                        if (i.APTSMD_Selected__c) {
+                            selectedAgmts = selectedAgmts +
+                                1;
+                        }
+                    });
+                    if (selectedAgmts == 0) {
+                        window.alert(
+                            "Please select at least one agreement to delete."
+                        );
+                        return;
+                    } else {
+                        deleteAgreement(JSON.stringify($scope.agreements));
+                    }
+                }
+                $scope.showFinalList = function() {
+
+
+                }
+
+                $scope.checkAll = function() {
+                    if ($scope.selectedAll.value) {
+                        $scope.selectedAll.value = false;
+                    } else {
+                        $scope.selectedAll.value = true;
+                    };
+                    angular.forEach($scope.agreements, function(
+                        agmt) {
+                        agmt.APTSMD_Selected__c = $scope.selectedAll
+                            .value;
+                    });
+                };
+
+                // Added by Chintan - @7th July,2017
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.APTSMD_MassAmendmentController.getObjectFields}',
+                    'Apttus__APTS_Agreement__c',
+                    function(result, event) {
+                        $scope.allFieldsprop = result[0];
+
+                        // Sorting Logic added by japan bhavsar
+                        var ordered = {};
+                        Object.keys($scope.allFieldsprop).sort().forEach(
+                            function(key) {
+                                ordered[key] = $scope.allFieldsprop[
+                                    key];
+                            });
+
+                        $scope.allFieldsprop = angular.copy(ordered);
+
+                        $scope.fieldTypeMapprop = result[1];
+                        $scope.allFieldsDisplayprop = new Object();
+                        angular.forEach($scope.allFieldsprop,
+                            function(value, key) {
+                                $scope.allFieldsDisplayprop[
+                                    value] = key;
+                            });
+                        $scope.lookUptargetObjAPINameprop = result[
+                            2];
+                        $scope.$apply();
+                    });
+
+                $scope.finalAndOrCondition = '';
+                $scope.counterCondition = 0;
+                $scope.keyValuemap = {};
+                //  Add header data
+                $scope.addToMap = function() {
+                    $scope.keyValuemap[$scope.key] = $scope.value;
+                    $scope.key = "";
+                    $scope.value = "";
+                };
+                $scope.addNewRow = function(item, number) {
+
+                    if ($scope.finalAndOrCondition == '') {
+                        $scope.finalAndOrCondition = '1';
+                        $scope.counterCondition = $scope.counterCondition +
+                            1;
+                    }
+                    $scope.counterCondition = $scope.counterCondition +
+                        1;
+                    if ($scope.counterCondition == 1) {
+                        $scope.finalAndOrCondition = $scope.counterCondition;
+                    } else {
+                        $scope.finalAndOrCondition += ' AND ' +
+                            $scope.counterCondition;
+                    }
+
+
+
+                    if (number == 1) {
+                        item.andor = 'And';
+                        item.colorand = 'rgb(63,81,181)';
+                        item.fontcolorand = 'White';
+                        var itemToAdd = new Object();
+                        itemToAdd.fieldname = '';
+                        itemToAdd.operator = '';
+                        itemToAdd.value = '';
+                        itemToAdd.andor = '';
+                        itemToAdd.fontcolorand = 'Black';
+                        itemToAdd.colorand = 'White';
+                        itemToAdd.coloror = 'White';
+                        itemToAdd.fontcoloror = 'Black';
+
+                    } else {
+                        item.andor = 'OR';
+                        item.coloror = 'rgb(63,81,181)';
+                        item.fontcoloror = 'White';
+                        var itemToAdd = new Object();
+                        itemToAdd.fieldname = '';
+                        itemToAdd.operator = '';
+                        itemToAdd.value = '';
+                        itemToAdd.andor = '';
+                        itemToAdd.fontcolorand = 'Black';
+                        itemToAdd.colorand = 'White';
+                        itemToAdd.coloror = 'White';
+                        itemToAdd.fontcoloror = 'Black';
+                    }
+                    itemToAdd.sequence = $scope.counterCondition;
+                    $scope.expressioncrt.push(itemToAdd);
+                }
+
+
+
+                $scope.removeCurrnetRowOnTop = function(index) {
+
+                    if ($scope.expressioncrt.length == 1) {
+
+                        $scope.expressioncrt[0].fieldname = '';
+                        $scope.expressioncrt[0].operator = '';
+                        $scope.expressioncrt[0].value = '';
+                        return;
+                    }
+
+                    $scope.expressioncrt.splice(index, 1);
+                    $scope.counterCondition = $scope.counterCondition -
+                        1;
+                    $scope.finalAndOrCondition = '';
+                    for (var counter = 1; counter <= $scope.counterCondition; counter++) {
+                        if (counter == $scope.counterCondition) {
+                            $scope.finalAndOrCondition += counter;
+                        } else {
+                            $scope.finalAndOrCondition += counter +
+                                ' AND ';
+                        }
+                    }
+
+                }
+
+                $scope.populateValue = function(expression) {
+                    //set the value of expression(object) a blank
+                    expression.value = '';
+                    if ($scope.fieldTypeMapprop[expression.fieldname] ==
+                        'PICKLIST') {
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.APTSMD_MassAmendmentController.getPicklistValues}',
+                            'Apttus__APTS_Agreement__c',
+                            expression.fieldname,
+                            function(result, event) {
+                                expression['pickListValues'] =
+                                    result;
+                                $scope.showSpinIcon = false;
+                                $scope.$evalAsync();
+                                $scope.$apply();
+
+                            });
+
+                    } else if ($scope.fieldTypeMapprop[expression.fieldname] ==
+                        'REFERENCE') {
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.APTSMD_MassAmendmentController.getReferenceRecords}',
+                            $scope.lookUptargetObjAPINameprop[
+                                expression.fieldname],
+                            function(result, event) {
+                                expression['referncevalue'] =
+                                    result;
+                                $scope.showSpinIcon = false;
+                                $scope.$evalAsync();
+                                $scope.$apply();
+
+                            });
+                    } else if ($scope.fieldTypeMapprop[expression.fieldname] ==
+                        'BOOLEAN') {
+                        expression.pickListValues = ['True',
+                            'False'
+                        ];
+                        $scope.showSpinIcon = false;
+                    } else {
+                        $scope.showSpinIcon = false;
+                    }
+
+                    if ($scope.counterCondition == 0) {
+                        $scope.counterCondition = $scope.counterCondition +
+                            1;
+                        $scope.finalAndOrCondition = $scope.counterCondition;
+                    }
+                }
+
+                $scope.makecondi = function() {
+
+                    $scope.condition = '';
+
+                    // check for expression list length
+                    if ($scope.expressioncrt.length == 0 ||
+                        ($scope.expressioncrt[0].fieldname == '' ||
+                            $scope.expressioncrt[0].operator == '' ||
+                            $scope.expressioncrt[0].value == '')) {
+                        window.alert(
+                            "Please fill all details for filter"
+                        );
+                        return;
+                    }
+
+
+                    angular.forEach($scope.expressioncrt, function(
+                        item) {
+                        $scope.condition = '';
+
+                        if ($scope.condition == '' ||
+                            $scope.condition == undefined) {
+                            if ($scope.fieldTypeMapprop[
+                                    item.fieldname] ==
+                                'BOOLEAN' || $scope.fieldTypeMapprop[
+                                    item.fieldname] ==
+                                'DOUBLE' || $scope.fieldTypeMapprop[
+                                    item.fieldname] ==
+                                'CURRENCY' || $scope.fieldTypeMapprop[
+                                    item.fieldname] ==
+                                'DATE') {
+                                if (item.operator ==
+                                    'Contains') {
+                                    $scope.condition = item
+                                        .fieldname +
+                                        ' Like \'%' + item.value +
+                                        '%\'';
+                                } else {
+                                    $scope.condition = item
+                                        .fieldname + ' ' +
+                                        item.operator + ' ' +
+                                        item.value;
+                                }
+                            } else {
+                                if (item.operator ==
+                                    'Contains') {
+                                    $scope.condition = item
+                                        .fieldname +
+                                        ' Like \'%' + item.value +
+                                        '%\'';
+                                } else {
+                                    $scope.condition = item
+                                        .fieldname + ' ' +
+                                        item.operator +
+                                        ' \'' + item.value +
+                                        '\'';
+                                }
+                            }
+                        } else {
+                            if ($scope.fieldTypeMapprop[
+                                    item.fieldname] ==
+                                'BOOLEAN' || $scope.fieldTypeMapprop[
+                                    item.fieldname] ==
+                                'DOUBLE' || $scope.fieldTypeMapprop[
+                                    item.fieldname] ==
+                                'CURRENCY' || $scope.fieldTypeMapprop[
+                                    item.fieldname] ==
+                                'DATE') {
+                                if (item.operator ==
+                                    'Contains') {
+                                    $scope.condition =
+                                        $scope.condition +
+                                        ' ' + item.fieldname +
+                                        ' Like \'%' + item.value +
+                                        '%\'';
+                                } else {
+                                    $scope.condition =
+                                        $scope.condition +
+                                        ' ' + item.fieldname +
+                                        ' ' + item.operator +
+                                        ' ' + item.value;
+                                }
+                            } else {
+                                if (item.operator ==
+                                    'Contains') {
+                                    $scope.condition =
+                                        $scope.condition +
+                                        ' ' + item.fieldname +
+                                        ' Like \'%' + item.value +
+                                        '%\'';
+                                } else {
+                                    $scope.condition =
+                                        $scope.condition +
+                                        ' ' + item.fieldname +
+                                        ' ' + item.operator +
+                                        ' \'' + item.value +
+                                        '\'';
+                                }
+                            }
+                        }
+                        if (item.fieldname != null && item.fieldname !=
+                            '') {
+                            $scope.keyValuemap[item.sequence] =
+                                $scope.condition;
+                        }
+                    });
+
+                    $scope.passingCondition = '';
+                    $scope.passingCondition = $scope.finalAndOrCondition;
+                    angular.forEach($scope.keyValuemap, function(
+                        value, key) {
+                        if (key == 1) {
+                            $scope.passingCondition =
+                                $scope.passingCondition.toString()
+                                .replace(key, value);
+                        } else if ($scope.passingCondition.toString()
+                            .indexOf('AND ' + key) > 0) {
+                            $scope.passingCondition =
+                                $scope.passingCondition.replace(
+                                    'AND ' + key, 'AND ' +
+                                    value);
+                        } else if ($scope.passingCondition.toString()
+                            .indexOf('OR ' + key) > -1) {
+                            $scope.passingCondition =
+                                $scope.passingCondition.replace(
+                                    'OR ' + key, 'OR ' +
+                                    value);
+                        }
+                    });
+
+
+                    $scope.isLoading = true;
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.APTSMD_MassAmendmentController.getAgmtsAsPerCondition}',
+                        $scope.passingCondition, $scope.lstOfAgmtIds,
+                        function(result, event) {
+                            $scope.agreements = angular.fromJson(
+                                result);
+                            $scope.isLoading = false;
+                            $scope.isInformationActive = true;
+                            $scope.showFilter = false;
+                            $scope.$apply();
+                        }, {
+                            escape: false
+                        });
+                };
+
+
+                $scope.openModalPopup = function() {
+                    $("#myModal").modal("show");
+                }
+
+                $scope.$watch('selectedAll.value', function(value) {
+                    angular.forEach($scope.agreements, function(
+                        agmt) {
+                        agmt.APTSMD_Selected__c = value;
+                    });
+                });
+
+                $scope.selectedCount = function() {
+                    var count = 0;
+                    for (let i = 0; i < $scope.agreements.length; i++) {
+                        if ($scope.agreements[i].APTSMD_Selected__c)
+                            count++;
+                    }
+                    return count;
+                }
+
+                $scope.cancel = function() {
+                    window.top.location = '/home/home.jsp';
+                    return;
+                }
+
+            });
+
+        </script>
+        <style>
+            .moved {
+                margin-top: 79px! important;
+            }
+            
+            .slds-scope .slds-card__body {
+                margin-top: 0.75rem;
+            }
+            
+            .slds-scope table {
+                width: auto;
+            }
+            
+            .md-calendar-scroll-mask {
+                width: ;
+            }
+            
+            md-calendar > div {
+                width: min-content;
+            }
+            
+            .md-calendar-date-selection-indicator {
+                text-align: center;
+            }
+            
+            .md-icon-button {
+                float: Top;
+                margin-bottom: 10px;
+            }
+
+        </style>
+        <apex:slds />
+        <div id="LoadingImg" class="loading-container" style="display:none;">
+            <img src="{!$Resource.APTSMD_Loading}" style="margin-left: 45%; height:50px; width:50px;"
+            /><br />
+        </div>
+        <c:APTSMD_CommonHeader pageName1="Mass Amendment" objectName="" iconName="account"
+            type="standard" />
+
+        <body id="AgreementBody" ng-controller="AgreementController">
+
+
+            <div class="slds width100P marginTop15">
+                <div class="slds-card">
+
+
+                    <!-- Added by JB on 12/5/2018 -->
+                    <div class="apttusContainer moved">
+                        <div class="slds-no-flex apttusPanel floatRight marginBottom15 buttonCls">
+                            <div class="slds-button-group floatRight">
+                                <div ng-hide="showSearchBar">
+                                    <a class="slds-button slds-button--brand apttusBtnWhite" href="#" ng-click="hideHeader()">Amend</a>                                    &nbsp;
+
+                                    <a class="slds-button slds-button--brand apttusBtn" href="#" ng-click="cancel()">Cancel</a>
+                                </div>
+                                <div ng-if="isClick">
+                                    <div class="textAlignCenter" ng-hide="!showSearchBar">
+                                        <a class="slds-button slds-button--brand apttusBtnWhite" href="#" ng-click="submitData()">Amend</a>                                        &nbsp;
+                                        <a class="slds-button slds-button--brand apttusBtn" href="/apex/aptsmd_massamendment">Cancel</a>
+                                    </div>
+                                </div>
+                                <div ng-hide="showDetails">
+                                    <a class="slds-button slds-button--brand apttusBtn" href="/apex/aptsmd_massamendment">Back</a>
+                                </div>
+                            </div>
+                        </div><br/><br/><br/>
+
+
+
+                        <!-- TAB Design By Japan -->
+                        <div class="apttusPanel marginTopm9" ng-show="!isClick && !isEnd">
+                            <div>
+                                <p class="blackBold" ng-click="showFilter = !showFilter"><i ng-init="showFilter = false;" class="material-icons verticalMiddle">{{showFilter ? 'expand_more' : 'chevron_right'}}</i>&nbsp;Search
+                                    Filters</p>
+                            </div>
+                            <md-tabs md-dynamic-height="true" md-border-bottom="true" ng-show="showFilter">
+                                <md-tab label="Standard Search" class="capitalize">
+                                    <md-content class="md-padding">
+                                        <div class="row margin0 padding0">
+                                            <div class="col-md-4 col-sm-12 padding0">
+                                                <md-input-container md-no-float="true" class="md-block">
+                                                    <input type="text" class="marginTop15 apttusInput" placeholder="Click here to search for agreements"
+                                                        ng-model="search" />
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                    </md-content>
+                                </md-tab>
+                                <md-tab label="Advanced Search" class="capitalize">
+                                    <md-content class="md-padding">
+                                        <table class="table apttusTable">
+                                            <tr>
+                                                <td class="blackBold width20P">
+                                                    Field Name
+                                                </td>
+                                                <td class="blackBold width20P">
+                                                    Operator
+                                                </td>
+                                                <td class="blackBold width30P">
+                                                    Value
+                                                </td>
+                                                <td class="width5P">
+                                                </td>
+                                                <td class="width5P">
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat="item in expressioncrt">
+                                                <td>
+                                                    <md-input-container class="md-block ands-input-container">
+                                                        <md-select ng-model="item.fieldname" id="{{expression.expressionId}}" ng-change='populateValue(item)'>
+                                                            <md-option ng-repeat="(key, value) in allFieldsprop" ng-value="value">
+                                                                {{key}}
+                                                            </md-option>
+                                                        </md-select>
+                                                    </md-input-container>
+                                                </td>
+                                                <td>
+                                                    <md-input-container class="md-block ands-input-container">
+                                                        <md-select ng-model="item.operator" id="{{expression.expressionId}}">
+                                                            <md-option ng-repeat="opr in operatorTypes" ng-value="opr" class="optionmd">
+                                                                {{opr}}
+                                                            </md-option>
+                                                        </md-select>
+                                                    </md-input-container>
+                                                </td>
+                                                <td ng-show="fieldTypeMapprop[item.fieldname] =='PICKLIST'">
+                                                    <md-input-container class="md-block ands-input-container">
+                                                        <md-select id="{{expression.expressionId}}" ng-model='item.value'>
+                                                            <md-option ng-repeat="field in item.pickListValues" value="{{field}}">
+                                                                {{field}}
+                                                            </md-option>
+                                                        </md-select>
+                                                    </md-input-container>
+                                                </td>
+                                                <td ng-show="fieldTypeMapprop[item.fieldname] =='REFERENCE'">
+                                                    <md-input-container class="md-block ands-input-container">
+                                                        <md-select id="{{expression.expressionId}}" ng-model='item.value'>
+                                                            <md-option ng-repeat="(key, value) in item.referncevalue" ng-value="key">
+                                                                {{value}}
+                                                            </md-option>
+                                                        </md-select>
+                                                    </md-input-container>
+                                                </td>
+                                                <td ng-show="fieldTypeMapprop[item.fieldname] =='BOOLEAN'">
+                                                    <md-input-container class="md-block ands-input-container">
+                                                        <md-select id="{{expression.expressionId}}" ng-model='item.value'>
+                                                            <md-option ng-repeat="field in item.pickListValues" value="{{field}}">
+                                                                {{field}}
+                                                            </md-option>
+                                                        </md-select>
+                                                    </md-input-container>
+                                                </td>
+                                                <td ng-if="fieldTypeMapprop[item.fieldname] =='DATE'">
+                                                    <md-input-container class="md-block ands-datepicker-container" flex-gt-sm="true">
+                                                        <md-datepicker md-open-on-focus="false" class="ands-datepicker" ng-model="item.value">
+                                                        </md-datepicker>
+                                                    </md-input-container>
+                                                </td>
+                                                <td ng-show="fieldTypeMapprop[item.fieldname] !='REFERENCE' && fieldTypeMapprop[item.fieldname] !='PICKLIST' && fieldTypeMapprop[item.fieldname] !='BOOLEAN' && fieldTypeMapprop[item.fieldname] !='DATE'">
+                                                    <md-input-container class="md-block ands-input-container">
+                                                        <input class="ands-input apttusInput " type="text" name="fieldValue" ng-model="item.value"
+                                                            value="{{item.value}}" />
+                                                    </md-input-container>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <i class="material-icons" title="Add" ng-click="addNewRow(item, 1)">add</i>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <i class="material-icons" ng-click="removeCurrnetRowOnTop($index)" title="Delete"
+                                                            ng-hide="(expressioncrt.length == 1 && $first && item.fieldname == '')">delete</i>
+                                                    </center>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <div class="row margin0 padding0">
+                                            <div class="col-md-4 col-sm-12 padding0">
+                                                <md-input-container md-no-float="true" class="md-block">
+                                                    <input type="text" class="marginTop15 apttusInput " placeholder="Type Condition"
+                                                        ng-model="finalAndOrCondition"
+                                                    />
+                                                </md-input-container>
+                                            </div>
+                                            <div class="col-md-4 col-sm-12">
+                                                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+                                                    <a class="slds-button slds-button--brand apttusBtnWhite marginTop15" href="#" ng-click="makecondi()">
+                                                Apply
+                                            </a>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </md-content>
+                                </md-tab>
+                            </md-tabs>
+                        </div>
+
+                        <div class="slds-card__body apttusPanel">
+
+                            <!-- showSearchBar moved to upper div # vivek #22-06-2016-->
+
+                            <div class="textAlignCenter" ng-hide="showDetails">
+                                <br/><br/>
+                                <span id="message" style="display:none">The agreements that you selected have successfully been amended. Notifications have been sent to the primary contacts.
+                            </span>
+                                <br/><br/>
+                            </div>
+
+                            <div ng-if="isClick" class="marginBottom30">
+                                <apex:actionFunction name="doMassAmend" action="{!doMassAmend}" rerender="ThePage"
+                                    oncomplete="hideLoadingImage()">
+                                    <apex:param name="myParam" value="" />
+                                </apex:actionFunction>
+                                <apex:actionFunction name="doMassAmendNew" action="{!doMassAmendNew}" rerender="ThePage"
+                                    oncomplete="hideLoadingImage()">
+                                    <apex:param name="myParam" value="" />
+                                </apex:actionFunction>
+                                <apex:actionFunction name="deleteAgreement" action="{!deleteAgreement}" rerender="none">
+                                    <apex:param name="myParam" value="" />
+                                </apex:actionFunction>
+
+
+                                <!-- New Input FORM -->
+                                <div class="row margin0 marginBottom50 formContainer">
+                                    <div class="col-md-5 col-sm-12">
+                                        <div class="slds-form-element marginBottom20">
+                                            <label class="slds-form-element__label blackBold width180 capitalize">Agreement Start Date:</label>
+                                            <div class="slds-form-element__control displayInline">
+                                                <apex:inputField styleClass="myinput apttusInput form-control" showDatePicker="false"
+                                                    type="date" id="startDate" value="{!agreementToChange.Apttus__Contract_Start_Date__c}"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div class="slds-form-element marginBottom20">
+                                            <label class="slds-form-element__label blackBold width180 capitalize">Agreement End Date:</label>
+                                            <div class="slds-form-element__control displayInline">
+                                                <apex:inputField styleClass="myinput apttusInput form-control" showDatePicker="false"
+                                                    type="date" id="endDate" value="{!agreementToChange.Apttus__Contract_End_Date__c}"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div class="slds-form-element marginBottom20">
+                                            <label class="slds-form-element__label blackBold width180 capitalize">Amendment Effective Date:</label>
+                                            <div class="slds-form-element__control displayInline">
+                                                <apex:inputField styleClass="myinput apttusInput form-control" showDatePicker="false"
+                                                    type="date" id="amendedDate" value="{!agreementToChange.Apttus__Amendment_Effective_Date__c}"
+                                                />
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-7 col-sm-12">
+
+                                        <div class="slds-form-element marginTop5">
+                                            <label class="slds-form-element__label blackBold width180 capitalize marginTop5 inputLabelVAlign">Amended Terms</label>
+                                            <div class="slds-form-element__control displayInline">
+                                                <apex:inputTextarea id="amendedTerms" value="{!agreementToChange.APTSMD_Amended_Terms__c}"
+                                                    styleClass="apttusInput displayInline form-control stopResizeTextArea textAreaHW"
+                                                    html-placeholder="Add Amended Terms Here"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div class="slds-form-element marginTop10">
+                                            <label class="slds-form-element__label blackBold marginBottom10 width180">Send For</label>
+                                            <div class="slds-form-element__control radioFieldSetClass">
+                                                <apex:selectRadio layout="pageDirection" value="{!selectedtype}" styleClass="displayInline normalTextFont">
+                                                    <apex:selectOption itemLabel="None" itemValue=""></apex:selectOption>
+                                                    <apex:selectOption itemLabel="E-Signature" itemValue="Sign"></apex:selectOption>
+                                                    <apex:selectOption itemLabel="Review" itemValue="Review"></apex:selectOption>
+                                                </apex:selectRadio>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div ng-hide="!showDetails" id="collapseThree" class="divScroll">
+                                <table id="AgreementTable" class="slds-table slds-max-medium-table--stacked-horizontal">
+                                    <thead class="">
+                                        <tr class="slds-cell-shrink">
+                                            <th class="slds-cell-shrink width2P">
+                                                <md-checkbox class="ands-checkbox margin0" ng-hide="showSearchBar" ng-model="selectedAll.value"></md-checkbox>
+                                            </th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P"
+                                                scope="col">
+                                                <div ng-click="sortType = 'Apttus__Agreement_Number__c'; sortReverse = !sortReverse"
+                                                    class="slds-truncate blackBold capitalize tableHeader">Agreement Number
+                                                    <button class="slds-button slds-button--icon-bare">
+                                                    <svg ng-show="!sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}" />
+                                                    </svg>
+                                                    <svg ng-show="sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}" />
+                                                    </svg>
+                                                    <span class="slds-assistive-text">Sort</span>
+                                                </button>
+                                                </div>
+                                            </th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P"
+                                                scope="col">
+                                                <div ng-click="sortType = 'Name'; sortReverse = !sortReverse" class="slds-truncate blackBold capitalize tableHeader">Agreement Name
+                                                    <button class="slds-button slds-button--icon-bare">
+                                                    <svg ng-show="!sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}" />
+                                                    </svg>
+                                                    <svg ng-show="sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}" />
+                                                    </svg>
+                                                    <span class="slds-assistive-text">Sort</span>
+                                                </button>
+                                                </div>
+                                            </th>
+                                            <!--added by vivek as on 1-8-2016-->
+                                            <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P"
+                                                scope="col">
+                                                <div ng-click="sortType = 'RecordType.Name'; sortReverse = !sortReverse" class="slds-truncate blackBold capitalize tableHeader"
+                                                    style="font-weight: bold;">Record Type
+                                                    <button class="slds-button slds-button--icon-bare">
+                                                    <svg ng-show="!sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}" />
+                                                    </svg>
+                                                    <svg ng-show="sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}" />
+                                                    </svg>
+                                                    <span class="slds-assistive-text">Sort</span>
+                                                </button>
+                                                </div>
+                                            </th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P"
+                                                scope="col">
+                                                <div ng-click="sortType = 'Apttus__Status_Category__c'; sortReverse = !sortReverse"
+                                                    class="slds-truncate blackBold capitalize tableHeader"
+                                                    style="font-weight: bold;">Status Category
+                                                    <button class="slds-button slds-button--icon-bare">
+                                                    <svg ng-show="!sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}" />
+                                                    </svg>
+                                                    <svg ng-show="sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}" />
+                                                    </svg>
+                                                    <span class="slds-assistive-text">Sort</span>
+                                                </button>
+                                                </div>
+                                            </th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P"
+                                                scope="col">
+                                                <div ng-click="sortType = 'Apttus__Contract_Start_Date__c'; sortReverse = !sortReverse"
+                                                    class="slds-truncate blackBold capitalize tableHeader"
+                                                    style="font-weight: bold;">Agreement Start Date
+                                                    <button class="slds-button slds-button--icon-bare">
+                                                    <svg ng-show="!sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}" />
+                                                    </svg>
+                                                    <svg ng-show="sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}" />
+                                                    </svg>
+                                                    <span class="slds-assistive-text">Sort</span>
+                                                </button>
+                                                </div>
+                                            </th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P"
+                                                scope="col">
+                                                <div ng-click="sortType = 'Apttus__Contract_End_Date__c'; sortReverse = !sortReverse"
+                                                    class="slds-truncate blackBold capitalize tableHeader"
+                                                    style="font-weight: bold;">Agreement End Date
+                                                    <button class="slds-button slds-button--icon-bare">
+                                                    <svg ng-show="!sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}" />
+                                                    </svg>
+                                                    <svg ng-show="sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}" />
+                                                    </svg>
+                                                    <span class="slds-assistive-text">Sort</span>
+                                                </button>
+                                                </div>
+                                            </th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P"
+                                                scope="col">
+                                                <div ng-click="sortType = 'Apttus__Total_Contract_Value__c'; sortReverse = !sortReverse"
+                                                    class="slds-truncate blackBold capitalize tableHeader"
+                                                    style="font-weight: bold;">Total Agreement Value
+                                                    <button class="slds-button slds-button--icon-bare">
+                                                    <svg ng-show="!sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}" />
+                                                    </svg>
+                                                    <svg ng-show="sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}" />
+                                                    </svg>
+                                                    <span class="slds-assistive-text">Sort</span>
+                                                </button>
+                                                </div>
+                                            </th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P"
+                                                scope="col">
+                                                <div ng-click="sortType = 'Payment_Terms__c'; sortReverse = !sortReverse" class="slds-truncate blackBold capitalize tableHeader"
+                                                    style="font-weight: bold;">Payment Terms
+                                                    <button class="slds-button slds-button--icon-bare">
+                                                    <svg ng-show="!sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}" />
+                                                    </svg>
+                                                    <svg ng-show="sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}" />
+                                                    </svg>
+                                                    <span class="slds-assistive-text">Sort</span>
+                                                </button>
+                                                </div>
+                                            </th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P"
+                                                scope="col">
+                                                <div ng-click="sortType = 'Apttus__Primary_Contact__r.Name'; sortReverse = !sortReverse"
+                                                    class="slds-truncate blackBold capitalize tableHeader"
+                                                    style="font-weight: bold;">Primary Contact
+                                                    <button class="slds-button slds-button--icon-bare">
+                                                    <svg ng-show="!sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}" />
+                                                    </svg>
+                                                    <svg ng-show="sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}" />
+                                                    </svg>
+                                                    <span class="slds-assistive-text">Sort</span>
+                                                </button>
+                                                </div>
+                                            </th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P"
+                                                scope="col">
+                                                <div ng-click="sortType = 'Apttus__Related_Opportunity__r.Name'; sortReverse = !sortReverse"
+                                                    class="slds-truncate blackBold capitalize tableHeader"
+                                                    style="font-weight: bold;">Related Opportunity
+                                                    <button class="slds-button slds-button--icon-bare">
+                                                    <svg ng-show="!sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}" />
+                                                    </svg>
+                                                    <svg ng-show="sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                        <use xlink:href="{!URLFOR($Resource.APTSMD_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}" />
+                                                    </svg>
+                                                    <span class="slds-assistive-text">Sort</span>
+                                                </button>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tr class="slds-hint-parent" ng-repeat="agmt in agreements | filter: search | filter: filterAgreements | orderBy:sortType:sortReverse | limitTo: 50">
+                                        <td class="slds-cell-shrink" data-label="Select Row">
+                                            <md-checkbox class="ands-checkbox margin0" ng-hide="showSearchBar" ng-model="agmt.APTSMD_Selected__c"></md-checkbox>
+                                        </td>
+
+                                        <td class="slds-truncate normalTextFont">{{agmt.Apttus__FF_Agreement_Number__c}}</td>
+                                        <td class="slds-truncate normalTextFont"><a ng-href="/{{agmt.Id}}" class="anchor"
+                                                target="_blank">{{agmt.Name}}</a></td>
+                                        <td class="slds-truncate normalTextFont">{{agmt.RecordType.Name}}</td>
+                                        <td class="slds-truncate normalTextFont">{{agmt.Apttus__Status_Category__c}}</td>
+                                        <td class="slds-truncate normalTextFont">{{agmt.Apttus__Contract_Start_Date__c | date:'{!dateFormat}'}}</td>
+                                        <td class="slds-truncate normalTextFont">{{agmt.Apttus__Contract_End_Date__c | date:'{!dateFormat}'}}</td>
+                                        <td class="slds-truncate normalTextFont currencyTextAlign">{{agmt.Apttus__Total_Contract_Value__c |
+                                            currency : value = '{!defaultCurrancy}'
+                                            }}</td>
+                                        <td class="slds-truncate normalTextFont numberTextAlign">{{agmt.Payment_Terms__c}}</td>
+                                        <td class="slds-truncate normalTextFont"><a class="anchor" ng-href="/{{agmt.Apttus__Primary_Contact__c}}"
+                                                target="_blank">{{agmt.Apttus__Primary_Contact__r.Name}}</a></td>
+                                        <td class="slds-truncate normalTextFont"><a class="anchor" ng-href="/{{agmt.Apttus__Related_Opportunity__c}}"
+                                                target="_blank">{{agmt.Apttus__Related_Opportunity__r.Name}}</a></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <!-- end ng-hide show details -->
+
+                            <div ng-if="isEnd">
+                                <apex:outputPanel id="ThePage">
+                                    <apex:dataTable value="{!newAgreementList}" var="obj" styleClass="slds-table slds-max-medium-table--stacked-horizontal slds-no-row-hover">
+                                        <apex:column styleClass="slds-truncate normalTextFont" style="{!IF(CONTAINS(idString, obj.id), 'background-color: #abffe3', '')}"
+                                            HeaderValue="Amended Agreements" headerClass="slds-text-heading--label slds-size--1-of-4 blackBold capitalize">
+                                            <apex:outputLink value="/{!obj.id}" target="_blank">
+                                                {!obj.Name}
+                                            </apex:outputLink>
+                                        </apex:column>
+                                        <apex:column styleClass="slds-truncate capitalize normalTextFont" style="{!IF(CONTAINS(idString, obj.id), 'background-color: #abffe3', '')}"
+                                            value="{!obj.Apttus__Agreement_Number__c}.{!obj.Apttus__Version_Number__c} "
+                                            HeaderValue="Agreement Number" headerClass="slds-text-heading--label slds-size--1-of-4 blackBold capitalize"
+                                        />
+                                        <apex:column styleClass="slds-truncate capitalize normalTextFont" style="{!IF(CONTAINS(idString, obj.id), 'background-color: #abffe3', '')}"
+                                            value="{!obj.Apttus__Contract_Start_Date__c} "
+                                            HeaderValue="Agreement Start Date" headerClass="slds-text-heading--label slds-size--1-of-4 blackBold capitalize"
+                                        />
+                                        <apex:column styleClass="slds-truncate capitalize normalTextFont" style="{!IF(CONTAINS(idString, obj.id), 'background-color: #abffe3', '')}"
+                                            value="{!obj.Apttus__Contract_End_Date__c}"
+                                            HeaderValue="Agreement End Date" headerClass="slds-text-heading--label slds-size--1-of-4 blackBold capitalize normalTextFont"
+                                        />
+                                        <apex:column styleClass="slds-truncate capitalize normalTextFont" style="{!IF(CONTAINS(idString, obj.id), 'background-color: #abffe3', '')}"
+                                            value="{!obj.Apttus__Amendment_Effective_Date__c} "
+                                            HeaderValue="Amendment Effective Date" headerClass="slds-text-heading--label slds-size--1-of-4 blackBold capitalize"
+                                        />
+                                    </apex:dataTable>
+                                    <br />&nbsp;
+                                    <div class="padding10">
+                                        <table>
+                                            <tr>
+                                                <td class="indicator"></td>
+                                                <td><label class="margin0 normalTextFont">&nbsp;&nbsp;Amended</label></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                </apex:outputPanel>
+                            </div>
+                            <!-- end ng-if isEnd -->
+
+                        </div>
+                        <!-- end slds card body-->
+
+                        <p align="right" ng-hide="!showDetails" class="smallMsgText marginTop5 marginBottom5">
+                            {{selectedCount() == agreements.length ? 'All' : selectedCount()}} Agreements selected.
+                        </p>
+
+                    </div>
+
+                </div>
+                <!-- end slds card -->
+            </div>
+            <!-- end slds -->
+
+        </body>
+
+        </html>
+    </apex:form>
+
+</apex:page>

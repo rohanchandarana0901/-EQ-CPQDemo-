@@ -1,0 +1,2 @@
+<apex:page extensions="APTSMD_CommunityConfigureQuote" standardController="Apttus_Proposal__Proposal__c" action="{!createConfigAndRedirect}">
+</apex:page>

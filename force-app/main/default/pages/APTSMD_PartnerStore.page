@@ -1,0 +1,38 @@
+<apex:page standardStylesheets="false" controller="Apttus_WebStore.RemoteDispatcher" showHeader="false" sidebar="false" docType="html-5.0" applyHtmlTag="false" applyBodyTag="false">
+    <html lang="en">
+
+    <head>
+        <meta charset="utf-8" />
+        <title>PartnerCommerce</title>
+        <base href="/pcomm" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" type="image/x-icon" href="{!URLFOR($Resource.APTSMD_PartnerStore, '/favicon.ico')}" />
+        <link rel="manifest" href="{!URLFOR($Resource.APTSMD_PartnerStore, '/manifest.webmanifest')}" />
+        <meta name="theme-color" content="#1976d2" />
+        <link rel="stylesheet" href="{!URLFOR($Resource.APTSMD_PartnerStore, '/styles.c4c4f873Hs000000lLBG.css')}" />
+        <script>
+            window.sv = {
+                accessToken: '{!$Api.Session_ID}',
+                params: window.location.search,
+                user: '{!$User.Id}',
+                resource: '{!URLFOR($Resource.APTSMD_PartnerStore)}',
+                organizationId: '{!$Organization.Id}',
+                salesforceEndpoint: '{!$Site.Domain}',
+                baseURL: '{!$Site.BaseCustomUrl}'
+            }
+        </script>
+    </head>
+
+    <body>
+        <app-root></app-root>
+        <noscript>Please enable JavaScript to continue using this application.</noscript>
+        <script src="{!URLFOR($Resource.APTSMD_PartnerStore, 'runtime.eba16Hs00000C3d2Ib5a.js')}" defer="true"></script>
+        <script src="{!URLFOR($Resource.APTSMD_PartnerStore, 'polyfills-es5.ee6ba28fe2af74b71f86.js')}" nomodule="true" defer="true"></script>
+        <script src="{!URLFOR($Resource.APTSMD_PartnerStore, 'polyfills.08cf76fd900c7f036fa8.js')}" defer="true"></script>
+        <script src="{!URLFOR($Resource.APTSMD_PartnerStore, 'scripts.ea9a7b51b5073e2a08c5.js')}" defer="true"></script>
+        <script src="{!URLFOR($Resource.APTSMD_PartnerStore, 'main.0077f2ad954c08fd7700.js')}" defer="true"></script>
+    </body>
+
+    </html>
+</apex:page>

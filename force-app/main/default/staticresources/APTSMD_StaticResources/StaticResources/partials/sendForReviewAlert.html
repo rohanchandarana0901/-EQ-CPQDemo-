@@ -1,0 +1,77 @@
+<md-dialog aria-label="Select Attachments">
+  
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h3>Select Attachments</h3>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancelAttachmentForReview()">
+          <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="min-width:1000px;max-height:1000px; ">
+     <md-content class="md-padding" id="reviewContent">
+
+      <div class="container" id="attachmentReviewAttachmentContent">
+        <h3>Attachment</h3>    
+
+        Data {{reviewAttachments}}  
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th width="10%">Select</th>
+              <th width="50%">File Name</th>
+              <th width="10%">Description</th>
+              <th width="10%">Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="reviewAttachment in reviewAttachments">
+              <td> <md-checkbox ng-model="reviewAttachment.isSelected"></md-checkbox></td>
+              <td>{{reviewAttachment.name}}</td>
+              <td>{{reviewAttachment.description}}</td>
+              <td>{{reviewAttachment.size}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+        
+    </md-content>
+    <md-content id="reviewContentAnother">
+      Another
+    </md-content>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+     <md-button ng-click="answerAttachmentForReview('Cancel')" >
+        Cancel
+      </md-button>
+      <md-button ng-click="answerAttachmentForReview('Save')" >
+        Next
+      </md-button>
+    </md-dialog-actions>
+ 
+</md-dialog> 
+
+
+
+
+<!-- 
+
+            <div class="modal fade" id="Attachmentwindow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                      <div class="modal-dialog modal-lg" style="margin-top:150px;width:600px !important">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                           Header
+                           <h4 class="modal-title"> <div style="display:inline-flex;" class="modalHeader">Price Matrix</div></h4>
+                          </div>
+                <div class="modal-body" style="height: 397px;padding: 0px">
+                Body
+              </div>
+                        
+                          <div class="modal-footer" style="padding:1rem">
+                            <button type="button " class="slds-button slds-button--neutral newStyleBtn" style="" data-dismiss="modal">Done</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div> -->

@@ -1,0 +1,47 @@
+<!--@UI/UX: japan Bhavsar(Apttus Developer) on 12/7/2018, modified by Sharanya Nair (09-08-2019) 
+    Used Bootstrap classes for this component. If developer is planning to use this component 
+    in any custom pages, kindly include bootstrap classes in that page.
+-->
+<apex:component controller="APTSMD_CommonHeaderCtrl">
+    <!-- Include Google Tags Script -->
+    <!--<apex:outputText rendered="{!IF(isEnableGA == true,true,false)}">-->
+    <!--    <script async="true" src="https://www.googletagmanager.com/gtag/js?id=UA-131485697-1"></script>-->
+    <!--    <apex:includeScript value="{!$Resource.APTSMD_GA}"/>-->
+    <!--</apex:outputText>-->
+    <c:APTSMD_GoogleAnalytics />
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        class="htmlCls">
+    <apex:slds />
+    <apex:attribute name="pageName1" description="This is the value for parent page name."
+        type="String" required="true" />
+    <apex:attribute name="objectName" description="This is the value for particular object's name."
+        type="String" required="true" />
+    <apex:attribute name="iconName" description="This is the value for icon name." type="String"
+        required="true" />
+    <apex:attribute name="type" description="This is the value for icon name." type="String"
+        required="true" />
+
+    <div class="headerContainer apttusContainer">
+        <nav class="apttusPanel">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">
+                        <apex:image style="display:{!IF(isShowLogoOnHeaderBar == true,'inline-block','none')}"
+                            url="{!myimageurl}" styleClass="headerIMG" />
+                    </a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li style="display:{!IF(isShowLogoOnHeaderBar == true,'inline-block','none')};">&nbsp;|&nbsp;</li>
+                    <li>
+                        <span class="slds-icon_container slds-icon-{!type}-{!iconName} slds-icon_large">
+                      <svg class="slds-icon slds-icon_large" aria-hidden="true" id="headerIcon">
+                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/'+type+'-sprite/svg/symbols.svg#' + iconName)}"></use>
+                      </svg>
+                    </span> &nbsp;{!pageName1} <span style="display:{!IF(objectName != '' ,'inline','none')};">&nbsp;-&nbsp;&nbsp;{!objectName}</span>                        </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    </html>
+</apex:component>

@@ -1,0 +1,66 @@
+<div layout="column">
+  <div flex class="section-tittle">
+      <font class="section-subheader">&nbsp;&nbsp; Key Terms</font>
+      <md-divider></md-divider>
+      <br/>
+  </div>
+  <div>
+    <div layout="row">
+      <div flex ="5"></div>
+      <div flex ="30">
+        <div class="form-group">
+            <label for="usr"><b>Region </b></label><br/>
+            <label for="usr" class="labelClass">{{agreement.APTPS_Region__c}}</label>
+        </div>
+		<div class="form-group">
+            <label for="usr"><b>Payment Terms </b></label><br/>
+            <label for="usr" class="labelClass">{{agreement.Payment_Terms__c}}</label>
+        </div>
+		<div class="form-group">
+            <label for="usr"><b>Special Terms </b></label><br/>
+            <label for="usr" class="labelClass"> {{agreement.Apttus__Special_Terms__c}}</label>
+        </div>
+		<div class="form-group">
+            <label for="usr"><b>Suppport Exhibits</b></label><br/>
+            <label for="usr" class="labelClass">{{agreement.Support_Exhibits__c}}</label>
+        </div>
+      </div>
+      <div flex ="5"></div>
+      <div flex ="30">
+        <div class="form-group">
+            <label for="usr"><b>Annual Uplift </b></label><br/>
+            <label for="usr" class="labelClass">{{agreement.Annual_Uplift__c}}</label>
+        </div>
+		<div class="form-group">
+            <label for="usr"><b>Organizational Unit </b></label><br/>
+            <label for="usr" class="labelClass"> {{agreement.Organization_Unit__c}}</label>
+        </div>
+		<div class="form-group">
+            <label for="usr"><input type="checkbox" ng-model="agreement.Apttus__Auto_Renewal__c" disabled="disabled"/> <b>Auto Renew </b> </label> &nbsp;
+           <label for="usr"><input type="checkbox" ng-model="agreement.SLA__c" disabled="disabled"/> <b>SLA</b></label></label><br/>
+        </div>
+		<div class="form-group">
+            <label for="usr"><b>Deal Owner</b></label><br/>
+            <label for="usr" class="labelClass">{{agreement.Owner.Name}}</label>
+        </div> 
+      </div>
+      <div flex ="5"></div>
+      <div flex ="30">
+        <div class="form-group">
+            <label for="usr"><b>Signature Type </b></label><br/>
+            <label for="usr" class="labelClass">{{agreement.Signature_Type__c}}</label>
+        </div>
+		<div class="form-group">
+            <label for="usr"><b>Language </b></label><br/>
+            <label for="usr" class="labelClass">{{agreement.Contract_Language__c}}</label>
+        </div>
+		<div class="form-group">
+            <label for="usr"><b>Contract Faciliator </b></label><br/>
+            <label for="usr" class="labelClass">{{agreement.Contract_Faciliator__c }}</label>
+        </div> 
+      </div>
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,538 @@
+<!--
+* ─────────────────────────────────────────────────────────────────────────────────────────────────┐
+* Visualforce page designed to manage KIRA projects from salesforce for CLM Intelligent Import
+*
+* This page should be used as an override page for IDE Map Project Record Type object edit and new view
+* Provies UI to create/update KIRA projects and add/remove provisions from it and create/update
+* correspondning mapping records in salesforce for intelligent import  
+* ──────────────────────────────────────────────────────────────────────────────────────────────────
+* @author         Chetan Patel   <cpatel@apttus.com>
+* @modifiedBy     Chetan Patel   <cpatel@apttus.com>
+* @maintainedBy   Chetan Patel   <cpatel@apttus.com>
+* @lastestVersion 1.9
+* @created        12/16/2019
+* @lastModified   03/27/2020
+* ──────────────────────────────────────────────────────────────────────────────────────────────────
+* @changes
+* v1.9            cpatel@apttus.com
+* 03/27/2020      Updated UI elements to match with lightning look and feel in salesforce.
+* 03/27/2020      Removed logic for obligation reference.
+* 03/30/2020      Added new delete action button to delete project. 
+*                 It deletes project in kira as well as all related entires in salesforce
+* 03/31/2020      vparmar@apttus.com
+*                 Added nice scrolbar css, Fixed header icon, marked save button as button--brand
+* ─────────────────────────────────────────────────────────────────────────────────────────────────┘
+-->
+
+<apex:page standardController="Apttus__IDEMapProjectRecordType__c" extensions="APTS_AgreementTypeAIMLModelController" standardStylesheets="false" sidebar="false" showHeader="false" lightningStyleSheets="true" docType="html-5.0" >
+
+    <html lang="en" ng-app="ngApp" ng-cloak='True' xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        
+        <link rel="stylesheet" href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}" type="text/css" />
+        <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/jquery.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular_js.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-animate.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-aria.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-material.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-aria.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-messages.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-resources.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/angular-route.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.APTS_Script, '/assets_cache.js')}" />
+        <apex:includeScript value="{!$Resource.APTS_Nova_Js}" />
+        <apex:includeScript value="{!$Resource.APTS_NovaThemeProvider}" />
+        <apex:stylesheet value="{!URLFOR($Resource.APTS_ngResource, 'bootstrap/css/bootstrap.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.APTS_ngResource, 'bootstrap/css/bootstrap-theme.min.css')}" />
+        <apex:stylesheet value="{!$Resource.APTS_ApttusCustomCss}" />
+        
+        <script>
+            
+            var app = angular.module('ngApp', ['ngMaterial', 'novaTheme',
+                'ngMessages', 'ngAnimate', 'ngRoute',
+                'material.svgAssetsCache'
+            ]);
+            app.config(function(novaThemeProvider) {
+                novaThemeProvider.setTheme('default');
+            });
+            var controller = app.controller('AgreementTypeAIMLModelController',
+            function($scope) {
+
+                $scope.isimportSettingExists = {!isimportSettingExists};
+                
+                if($scope.isimportSettingExists){
+                    $scope.agreementFields = {!agreementFieldsJSON};
+                    $scope.provisionType = {!provisionTypeJSON};
+                    $scope.templates = {!templatesJSON};
+                    $scope.enableDelete = {!enableDelete};
+                    $scope.availableRecordType = {!selectedRecordTypeJSON};
+                    $scope.allProvisions = {!lstProvisonWrapperJSON};
+                    $scope.LstIDEMapProjectRecordType = {!LstIDEMapProjectRecordTypeJSON};
+                    $scope.keyPrefix = '{!keyPrefix}';
+                    $scope.provisions = [];
+                    $scope.removedProvisions = [];
+                    $scope.selectedProvisions = [];
+                    $scope.search = '';
+                    $scope.IDEMapProjectRecordType = {!IDEMapProjectRecordTypeJSON};
+                    $scope.selectedAll = {
+                        value: false
+                    };
+                    $scope.showSuccessMessage = false;
+                    $scope.showErrorMessage = false;
+                    $scope.showProjectExistMessage = false;
+                    $scope.successMessage='';
+                    $scope.errorMessage='Error occured while saving project with selected clauses/fields saved.';
+                    $scope.currentRecordType = $scope.IDEMapProjectRecordType.Apttus__RecordTypeName__c;
+                    angular.forEach($scope.allProvisions, function(i) {
+                        if (i.isSelected) {
+                            $scope.selectedProvisions.push(i);
+                        } else {
+                            $scope.provisions.push(i);
+                        }
+                    });
+                }
+                $scope.removeSelected = function(item) {
+                    item.isSelected = false;
+                    $scope.provisions.push(item);
+                    $scope.removedProvisions.push(item);
+                    $scope.selectedProvisions.splice($scope.selectedProvisions.indexOf(item), 1);
+                };
+                $scope.addSelected = function(item) {
+                    $scope.selectedProvisions.push(item);
+                    $scope.provisions.splice($scope.provisions.indexOf(
+                        item), 1);
+                };
+                $scope.cancel = function(recordId) {
+                    
+                    $scope.redirect(recordId);
+                };
+                
+                $scope.setProjectName = function(IDEMapProjectRecordType){
+                    
+                    var splitStr = IDEMapProjectRecordType.Name.split("_");
+                    var latStr = splitStr.length-1;
+                    IDEMapProjectRecordType.Name = splitStr[0] +'_' + splitStr[1] + '_' + IDEMapProjectRecordType.Apttus__RecordTypeName__c + '_' + splitStr[latStr];
+
+                };
+                
+                $scope.markAsChanged = function(record){
+                    $scope.selectedProvisions[record.Id] = record;
+                    if(record.APTS_Provision_Type__c == "Field"){
+                        $scope.selectedProvisions[record.Id].APTS_BaseObject__c = "Apttus__APTS_Agreement__c";
+                        $scope.selectedProvisions[record.Id].APTS_MetaDataFieldId__c = record.APTS_MetaDataFieldId__c;
+                        $scope.selectedProvisions[record.Id].APTS_TemplateReferenceId__c = "";
+                    }
+                    else if(record.APTS_Provision_Type__c == "Clause"){
+                        $scope.selectedProvisions[record.Id].APTS_BaseObject__c = "";
+                        $scope.selectedProvisions[record.Id].APTS_MetaDataFieldId__c = "";
+                        $scope.selectedProvisions[record.Id].APTS_TemplateReferenceId__c = record.APTS_TemplateReferenceId__c;
+                    }
+                    console.log(JSON.stringify($scope.selectedProvisions));
+                };
+                $scope.redirect = function(recordId){
+                    console.log(recordId);
+                    var url = 'https://' + window.location.host;
+                    if (document.referrer.indexOf(".lightning.force.com") > 0) {
+                        if (recordId !=null)
+                            sforce.one.navigateToSObject(recordId);
+                        else{
+                            url = url + '/lightning/o/Apttus__IDEMapProjectRecordType__c/list?filterName=Recent&0.source=alohaHeader';
+                            window.location.href = url;
+                        }
+                        
+                    } else {
+                        if (recordId !=null)
+                            url = url + '/' + recordId;
+                        else
+                            url = url + '/' + $scope.keyPrefix + '/o';
+                        window.location.href = url;
+                    }
+                };
+                $scope.isProjectExists = function() {
+
+                    $scope.showProjectExistMessage = false;
+                    console.log($scope.IDEMapProjectRecordType);
+                    angular.forEach($scope.LstIDEMapProjectRecordType,
+                        function(i) {
+                            //$scope.IDEMapProjectRecordType.Apttus__ProjectId__c ==i.Apttus__ProjectId__c
+                            if ($scope.IDEMapProjectRecordType.Apttus__RecordTypeName__c ==i.Apttus__RecordTypeName__c &&
+                                $scope.IDEMapProjectRecordType.Apttus__RecordTypeName__c !=$scope.currentRecordType) {
+                                $scope.showProjectExistMessage =true;
+                            }
+
+                        });
+                }
+                $scope.save = function() {
+                    
+                    $scope.showErrorMessage = false;
+                    $scope.showSuccessMessage = false;
+                    $scope.errorMessage='Error occured while saving project with selected clauses/fields saved.';
+                    $scope.successMessage='Project with selected clauses/fields saved successfully.';
+                    angular.forEach($scope.selectedProvisions, function(i) {
+                        
+                        if ((i.IDEProvisionWrapper.APTS_TemplateReferenceId__c==null || i.IDEProvisionWrapper.APTS_TemplateReferenceId__c=='')) {
+                            if(i.IDEProvisionWrapper.APTS_BaseObject__c==null || i.IDEProvisionWrapper.APTS_BaseObject__c=='' || i.IDEProvisionWrapper.APTS_MetaDataFieldId__c==null || i.IDEProvisionWrapper.APTS_MetaDataFieldId__c==''){
+                                console.log(i.IDEProvisionWrapper);
+                                $scope.showErrorMessage = true;
+                                $scope.errorMessage='Please enter either template reference or base object and meta data field for all selected provisions.';
+                                $scope.$apply();
+                                return false;
+                            }
+                        }
+                    });
+                    
+                    console.log('>>> IDEMapProjectRecordType >>>>>');
+                    console.log($scope.IDEMapProjectRecordType);
+                    //$scope.IDEMapProjectRecordType.Name = $scope.IDEMapProjectRecordType.Name + '_' + $scope.IDEMapProjectRecordType.Apttus__RecordTypeName__c;
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.APTS_AgreementTypeAIMLModelController.save}',
+                        JSON.stringify($scope.IDEMapProjectRecordType),
+                        JSON.stringify($scope.selectedProvisions),
+                        JSON.stringify($scope.provisions),
+                        JSON.stringify($scope.removedProvisions),
+                        function(result, event) {
+                            console.log('>>>>>>>>>>>>>> 1st call response >>>>>>>>>');
+                            console.log(result);
+                            if (!result.includes("failed")) {
+                                $scope.IDEMapProjectRecordType.Apttus__ProjectId__c=result;
+                                console.log('>>>>>>>>>>>>>> performDMLOps >>>>>>>>>');
+                                $scope.performDMLOps();
+                                
+                            }else {
+                                $scope.showErrorMessage = true;
+                                $scope.errorMessage=result;
+                                $scope.$apply();
+                            }
+                            
+                    });
+                    
+                }
+                
+                $scope.deleteProject = function(){
+                    
+                    $scope.showErrorMessage = false;
+                    $scope.showSuccessMessage = false;
+                    $scope.errorMessage='Error occured while deleting project.';
+                    $scope.successMessage='Project deleted successfully.';
+                    console.log('>>>> deleting project :' + $scope.IDEMapProjectRecordType.Name);
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.APTS_AgreementTypeAIMLModelController.deleteProject}',
+                        JSON.stringify($scope.IDEMapProjectRecordType),
+                        function(result, event) {
+                            console.log('>>>>>>>>>>>>>>delete project response >>>>>>>>>');
+                            console.log(result);
+                            if (result==null || !result.includes("failed")) {
+                                $scope.showSuccessMessage =true;
+                                $scope.$apply();
+                                setTimeout(function() {
+                                    $scope.redirect(result);
+                                }, 2000);
+                            } else {
+                                $scope.showErrorMessage = true;
+                                $scope.errorMessage=result;
+                                $scope.$apply();
+                            }
+                            
+                        });
+                    
+                }
+                $scope.performDMLOps = function() {
+                    
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.APTS_AgreementTypeAIMLModelController.performDMLOps}',
+                        JSON.stringify($scope.IDEMapProjectRecordType),
+                        JSON.stringify($scope.selectedProvisions),
+                        JSON.stringify($scope.provisions),
+                        function(result, event) {
+                            console.log('>>>>>>>>>>>>>> 2nd call response >>>>>>>>>');
+                            console.log(result);
+                            if (!result.includes("failed")) {
+                                $scope.showSuccessMessage =true;
+                                $scope.$apply();
+                                setTimeout(function() {
+                                    $scope.redirect(result);
+                                }, 2000);
+                            } else {
+                                $scope.showErrorMessage = true;
+                                $scope.errorMessage=result;
+                                $scope.$apply();
+                            }
+                            
+                        });
+                }
+                    
+                $scope.sortType ='IDEMapProvisionRecordTypeWrapper.Name';
+                $scope.sortReverse = false;
+                $scope.sortTypeSeleted ='IDEMapProvisionRecordTypeWrapper.Name';
+                $scope.sortReverseSeleted = false;
+                $scope.IDEMapProjectRecordTypeId = $scope.IDEMapProjectRecordType.Id; 
+                $scope.PageName = null;
+                if($scope.IDEMapProjectRecordTypeId != null){
+                    $scope.PageName = 'Edit IDE Map Project Record Types';
+                }else{
+                    $scope.PageName = 'New IDE Map Project Record Types';
+                }
+            });
+
+        </script>
+        <script async="true" src="https://www.googletagmanager.com/gtag/js?id=UA-131485697-1"></script>
+        <script value="{!$Resource.APTS_GA}"></script>
+        <style>
+             .marginTop101{
+                margin-top: 101px !important;
+            }
+            /*
+            *  scrollbar style
+            */
+    
+            ::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+                border-radius: 10px;
+                background-color: #F5F5F5;
+            }
+    
+            ::-webkit-scrollbar {
+                width: 10px;
+                height: 10px;
+                background-color: #F5F5F5;
+            }
+    
+            ::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+                background-color: gray;
+            }
+        </style>
+        <apex:slds />
+        <div class="headerContainer apttusContainer">
+            <nav class="apttusPanel">
+                <div class="container-fluid">
+                    <ul class="nav navbar-nav" style="margin-left: 1.5%;margin-top: 0% !important;">
+                        
+                        <li>
+                            <span class="slds-icon_container slds-icon-standard-account slds-icon_large">
+                          <svg class="slds-icon slds-icon_large" aria-hidden="true" id="headerIcon">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/standard-sprite/svg/symbols.svg#account')}"></use>
+                          </svg>
+                        </span>
+                        <span>Manage IDE Map Project Record Type</span>
+                        </li>
+                    </ul>
+                    
+                </div>
+            </nav>
+        </div>
+       
+        <body id="AiiBody" ng-controller="AgreementTypeAIMLModelController">
+            <div class="slds positionAbsolute width100P marginTop101">
+                
+                <div class="slds-card">
+                    <!--<nav class="navbar navbar-inverse navbar-fixed-top"> -->
+                    <!--  <div class="container-fluid">-->
+                    <!--    <ul class="nav navbar-nav">-->
+                    <!--      <li ng-if="IDEMapProjectRecordType.Id ==null">New IDE Map Project Record Types</li>-->
+                    <!--      <li ng-if="IDEMapProjectRecordType.Id !=null"> Edit IDE Map Project Record Types</li>-->
+                    <!--    </ul>-->
+                    <!--  </div>-->
+                    <!--</nav>                                      -->
+                    
+                    <div class="apttusContainer" ng-if="!isimportSettingExists">
+                        <br/><br/><br/>
+                        <span style="color:red;">Please create record with name KIRA in intelligent import settings custom setings. </span>
+                    </div>
+                    <div class="apttusContainer" ng-if="isimportSettingExists">
+                        
+                        <div class="slds-no-flex floatRight marginBottom15">
+                            <div class="slds-button-group " role="group">
+                                
+                                <span ng-if="!showProjectExistMessage"><a class="slds-button slds-button--brand" href="#" ng-click="save();">Save</a>&nbsp;&nbsp;</span>
+                                <span ng-if="IDEMapProjectRecordType.Apttus__ProjectId__c != null && enableDelete"><a class="slds-button slds-button--neutral" style="margin-left: -7px;" href="#" ng-click="deleteProject();">Delete</a>&nbsp;&nbsp;</span>
+                                <a class="slds-button slds-button--neutral" style="margin-left: -7px;" href="#" ng-click="cancel(IDEMapProjectRecordType.Id);">Back</a>
+                                
+                            </div>
+                        </div>
+                        <div class="apttusPanel" ng-if="showSuccessMessage || showErrorMessage">
+                            <span style="color:green;" ng-if="showSuccessMessage">{{successMessage}}</span>
+                            <span style="color:red;" ng-if="showErrorMessage">{{errorMessage}}</span>
+                        </div>
+                        <div class="apttusPanel">
+                            <div class="slds-form-element" style="width: 24%;">
+                                <div class="slds-form-element__control ">
+                                    <label class="slds-form-element__label" for="text-input-id-1">Project Name</label>
+                                    <div class="slds-form-element__control">
+                                        <input type="text" id="text-input-id-1" class="slds-input"
+                                            ng-model="IDEMapProjectRecordType.Name" disabled="true" />
+                                    </div>
+                                    
+                                </div>
+                                <div class="slds-form-element__control " ng-if="IDEMapProjectRecordType.Id !=null">
+                                    <label class="slds-form-element__label" for="text-input-id-2">Project ID</label>
+                                    <input type="text" id="text-input-id-2" class="slds-input" 
+                                        ng-model="IDEMapProjectRecordType.Apttus__ProjectId__c" disabled="true"/>
+                                    
+                                </div>
+                                <div class="slds-form-element__control ">
+                                    <label class="slds-form-element__label" for="text-input-id-3">Record Type </label>
+                                    <select class="slds-select" id="text-input-id-3" required="required" ng-model="IDEMapProjectRecordType.Apttus__RecordTypeName__c"
+                                        ng-change="isProjectExists();setProjectName(IDEMapProjectRecordType);" ng-if="IDEMapProjectRecordType.Id ==null">
+                                        <option value="{{type.Name}}" ng-repeat="type in availableRecordType" ng-selected="IDEMapProjectRecordType.Apttus__RecordTypeName__c==type.Name" >{{type.Name}} </option>
+                                    </select>
+                                    <span style="color:red;" ng-if="showProjectExistMessage">Project with selected record type already exist.</span>
+                                </div>
+                                <input type="text" id="text-input-id-3" class="slds-input" ng-if="IDEMapProjectRecordType.Id !=null" 
+                                        ng-model="IDEMapProjectRecordType.Apttus__RecordTypeName__c" disabled="true"/>
+                            </div>
+                        </div>
+                        <div class="apttusPanel">
+                            <div class="slds-form-element" style="width: 24%;">
+                                <input type="text" id="text-input-id-4" placeholder="Search available provisions"
+                                    class="slds-input" ng-model="search" />
+                            </div>
+                        </div>
+                        <div class="slds-card__body apttusPanel">
+                            <div id="collapseThree">
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-12" style="overflow-y:auto;overflow-x:hidden;min-height: 150px;max-height: 340px;min-width: 25%;max-width: 25%;">
+
+                                        <table id="ClauseTable slds-table slds-table_bordered slds-table--header-fixed">
+                                            <thead class="slds-table slds-max-medium-table--stacked-horizontal">
+                                                <tr class="slds-cell-shrink">
+                                                    <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P"
+                                                        scope="col">
+                                                        <div ng-click="sortType = 'IDEMapProvisionRecordTypeWrapper.Name'; sortReverse = !sortReverse"
+                                                            class="slds-truncate blackBold capitalize tableHeader">Available Provisions
+                                                            <button class="slds-button slds-button--icon-bare">
+                                                                <svg ng-show="sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                                    <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}" />
+                                                                </svg>
+                                                                <svg ng-show="!sortReverse" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                                    <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}" />
+                                                                </svg>
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                            </button>
+                                                        </div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tr class="slds-hint-parent" style="background: #fdfdfd;" ng-repeat="prov in provisions | filter: {name : search} | orderBy:sortType:sortReverse">
+                                                <td class="slds-truncate normalTextFont" style="padding-left: 2%;padding-bottom:1.5%;padding-top:1%;">
+                                                    <span ng-click="addSelected(prov);">
+                                                        <span class="slds-icon_container slds-icon-utility-announcement" title="{{prov.description}}">
+                                                          <svg  class="slds-icon_small slds-icon-text-default" aria-hidden="true">
+                                                            <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"  ></use>
+                                                          </svg>
+                                                          <span class="slds-assistive-text">Add</span>
+                                                        </span>
+                                                        {{prov.IDEMapProvisionRecordTypeWrapper.Name}}
+                                                        &nbsp;&nbsp;
+                                                        <span class="slds-icon_container slds-icon-utility-announcement" title="Add Provision">
+                                                          <svg  class="slds-icon_small slds-icon-text-default" aria-hidden="true">
+                                                            <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#chevronright')}"  ></use>
+                                                          </svg>
+                                                          <span class="slds-assistive-text">Add</span>
+                                                    </span>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <div class="slds-col slds-size_9-of-12 divScroll">
+                                        <table id="ClauseTable slds-table slds-table_bordered slds-table--header-fixed">
+                                            <thead class="slds-table slds-max-medium-table--stacked-horizontal">
+                                                <tr class="slds-cell-shrink">
+                                                    <th class="slds-text-heading--label slds-size--1-of-4 slds-is-sortable width10P"
+                                                        scope="col">
+                                                        <div ng-click="sortTypeSeleted = 'IDEMapProvisionRecordTypeWrapper.Name'; sortReverseSeleted = !sortReverseSeleted"
+                                                            class="slds-truncate blackBold capitalize tableHeader">Selected Provisions
+                                                            <button class="slds-button slds-button--icon-bare">
+                                                                <svg ng-show="sortReverseSeleted" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                                    <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowdown')}" />
+                                                                </svg>
+                                                                <svg ng-show="!sortReverseSeleted" aria-hidden="true" class="slds-button__icon slds-button__icon--small" disabled="true">
+                                                                    <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#arrowup')}" />
+                                                                </svg>
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                            </button>
+                                                        </div>
+                                                    </th>
+                                                    <th class="slds-text-heading--label slds-size--1-of-4 " scope="col" style="padding-left: 10px;width:2%">
+                                                        <div class="slds-truncate blackBold capitalize tableHeader">Type</div>
+                                                    </th>
+                                                    <th class="slds-text-heading--label slds-size--1-of-4  width10P" scope="col">
+                                                        <div class="slds-truncate blackBold capitalize tableHeader">Template Reference</div>
+                                                    </th>
+                                                    <th class="slds-text-heading--label slds-size--1-of-4  width10P" scope="col">
+                                                        <div class="slds-truncate blackBold capitalize tableHeader">Base Object</div>
+                                                    </th>
+                                                    <th class="slds-text-heading--label slds-size--1-of-4  width10P" scope="col">
+                                                        <div class="slds-truncate blackBold capitalize tableHeader">Meta Data Field</div>
+                                                    </th>
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tr class="slds-hint-parent margin1" style="background: #fdfdfd;" ng-repeat="prov in selectedProvisions | orderBy:sortTypeSeleted:sortReverseSeleted">
+                                                <td class="slds-truncate normalTextFont" style="padding-left: 2%;max-width:150px;">
+                                                    <span ng-click="removeSelected(prov);">
+                                                    <span class="slds-icon_container slds-icon-utility-announcement" title="Remove Provision">
+                                                        <svg class="slds-icon_small slds-icon-text-default" aria-hidden="true">
+                                                            <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#close')}"  ></use>
+                                                        </svg>
+                                                    <span class="slds-assistive-text">Remove</span>
+                                                    </span>
+                                                    <span class="slds-icon_container slds-icon-utility-announcement" title="{{prov.description}}">
+                                                          <svg class="slds-icon_small slds-icon-text-default" aria-hidden="true">
+                                                            <use xlink:href="{!URLFOR($Resource.APTS_SalesforceLightningDesign, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"  ></use>
+                                                          </svg>
+                                                          <span class="slds-assistive-text">Add</span>
+                                                    </span>
+                                                    &nbsp;&nbsp; {{prov.IDEMapProvisionRecordTypeWrapper.Name}}
+                                                    
+                                                    </span>
+                                                </td>
+                                                <td class="slds-truncate normalTextFont" style="padding-left: 10px;width:4%">
+                                                    
+                                                    <select ng-model="prov.IDEProvisionWrapper.APTS_Provision_Type__c" class="slds-input" ng-change="markAsChanged(prov.IDEProvisionWrapper)">
+                                                        <option ng-repeat="obj in provisionType" Value="{{obj}}">{{obj}}</option>
+                                                    </select>
+                                                </td>
+                                                <td class="slds-truncate normalTextFont" style="padding-left: 10px;" >
+                                                    <select ng-disabled="prov.IDEProvisionWrapper.APTS_Provision_Type__c != 'Clause'" ng-change="markAsChanged(prov.IDEProvisionWrapper)" ng-model="prov.IDEProvisionWrapper.APTS_TemplateReferenceId__c" class="slds-input" id="text-input-id-1">
+                                                        <option ng-repeat="obj in templates" Value="{{obj.Apttus__ReferenceId__c}}">{{obj.Name}}</option>
+                                                    </select>
+                                                    <!--<input ng-if="prov.IDEProvisionWrapper.APTS_Provision_Type__c=='Clause'" type="text" id="text-input-id-1" class="slds-input" ng-model="prov.IDEProvisionWrapper.APTS_TemplateReferenceId__c"/>-->
+                                                    <!--<input ng-if="prov.IDEProvisionWrapper.APTS_Provision_Type__c!='Clause'" type="text" id="text-input-id-1" class="slds-input" ng-model="prov.IDEProvisionWrapper.APTS_TemplateReferenceId__c" disabled="true"/>-->
+                                                </td>
+                                                <td class="slds-truncate normalTextFont" style="padding-left: 10px;">
+                                                    <!--<input ng-if="prov.IDEProvisionWrapper.APTS_Provision_Type__c=='Field'" type="text" id="text-input-id-2" class="slds-input" ng-model="prov.IDEProvisionWrapper.APTS_BaseObject__c" />-->
+                                                    <!--<input ng-if="prov.IDEProvisionWrapper.APTS_Provision_Type__c!='Field'" type="text" id="text-input-id-2" class="slds-input" ng-model="prov.IDEProvisionWrapper.APTS_BaseObject__c" disabled="true"/>-->
+                                                    <div class="slds-truncate">
+                                                            <input ng-disabled="prov.IDEProvisionWrapper.APTS_Provision_Type__c != 'Field'" type="text"  
+                                                            placeholder="{{prov.IDEProvisionWrapper.APTS_Provision_Type__c != 'Field' ? ' ' : 'Apttus__APTS_Agreement__c' }}" 
+                                                            ng-model="prov.IDEProvisionWrapper.APTS_BaseObject__c" 
+                                                            required="{{prov.IDEProvisionWrapper.APTS_Provision_Type__c != 'Field' ? true : false }}"
+                                                            class="slds-input" 
+                                                            ng-change="markAsChanged(prov.IDEProvisionWrapper)" />
+                                                    </div>
+                                                </td>
+                                                <td class="slds-truncate normalTextFont" style="padding-left: 10px;">
+                                                    
+                                                    <select ng-change="markAsChanged(prov.IDEProvisionWrapper)" ng-disabled="prov.IDEProvisionWrapper.APTS_Provision_Type__c != 'Field'" ng-model="prov.IDEProvisionWrapper.APTS_MetaDataFieldId__c" class="slds-input"  id="text-input-id-3">
+                                                        <option ng-repeat="obj in agreementFields" Value="{{obj}}">{{obj}}</option>
+                                                    </select>
+                                                    <!--<input ng-if="prov.IDEProvisionWrapper.APTS_Provision_Type__c=='Field'" type="text" id="text-input-id-3" class="slds-input" ng-model="prov.IDEProvisionWrapper.APTS_MetaDataFieldId__c" />-->
+                                                    <!--<input ng-if="prov.IDEProvisionWrapper.APTS_Provision_Type__c!='Field'" type="text" id="text-input-id-3" class="slds-input" ng-model="prov.IDEProvisionWrapper.APTS_MetaDataFieldId__c" disabled="true"/>-->
+                                                </td>
+                                                
+
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </html>
+</apex:page>

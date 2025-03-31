@@ -1,0 +1,147 @@
+<apex:page controller="APTSMD_SDO_Tools" docType="html-5.0" applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" showHeader="false" lightningStylesheets="true">
+   <apex:composition template="APTSMD_MDO_ToolsLayout">
+        <apex:define name="_content">
+
+
+            <div class="page-content" style="min-height:100% !important;" data-tab="home">
+                <div class="main welcomeWrapper">
+                <div class=""> <!-- container -->
+                     <!-- BEGIN SIDEBAR & CONTENT -->
+                    <div class="row margin-bottom-40">
+                      <!-- BEGIN CONTENT -->
+                      <div class="col-md-12 col-sm-12">
+                        
+                        <div class="content-page">
+
+                        <div class="row">
+                          <div class="col-md-12 col-sm-12 blog-posts">
+                                  <div class="row fixedwidthwrapper">
+                                    <div class="col-md-4 col-sm-4 welcomeImgWrapper">
+                                        <apex:image styleClass="img-responsive welcomeImg" value="{!$Resource.APTSMD_MDOlogo}"/>
+                                    </div>
+                                    <div class="col-md-8 col-sm-8">
+                                      <div class="bigText">
+                                          Welcome to the Apttus HTM Org <font color="red">{!mdoVersion}</font> 
+                                      </div>
+                                      <div class="welcomeText">
+                                        <div>
+                                       Congratulations, your Apttus demo org is now ready! Your instance is a copy of the HTM MDO with Apttus packages installed and configured. Please check our release notes in the Resources tab on the sidebar. 
+                                              
+                                        </div><br/>
+                                          Your Org will expire on <font color="red">{!orgExpirationDate}</font>. <br/> 
+                                          Your Salesforce license will expire on <font color="red">{!salesforceLicenseExpirationDate}</font>. <br/>
+                                          Your Apttus license will expire on <font color="red">{!apttusLicenseExpirationDate}</font>. <br/>
+                                          <div>
+                                        <!--Suggestions/Feedback: Please submit all of your feedback <!--<a href="https://apttustest-my.sharepoint.com/personal/laditiarama_apttus_com/_layouts/15/WopiFrame.aspx?sourcedoc={41B1D1FA-3045-4FA8-A7C2-FD6D6F5CD4D9}&file=HTM%20MDO%20-%20release%20schedule,%20bugs,%20new%20features.xlsx&action=default">-->
+                                        <!--<a target="_blank" href="https://docs.google.com/spreadsheets/d/1eGKoUBbUaYS7TWoF9LhLT35AHs000000oM68vVanP5I/edit?ts=5b03a8f5#gid=0">here</a>. -->
+                                        <br/> Click "Start Here" to set up your Org!
+                                        </div>
+                                      </div>
+                                      <div onclick="welcomeButton('walkthrough');toggleActive('startHereNav');" class="welcomeBtn btn btn-primary blue">Start here</div>
+                                      <!--<div onclick="welcomeButton('tools');" class="welcomeBtn btn ">Demo Tools</div>-->
+                                      <div onclick="welcomeButton('news');" class="welcomeBtn btn ">What's new at Apttus</div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+                <i id="lastTool" class="fa fa-arrow-circle-left" onclick="showTool();"></i>
+                <div id="startHere" class="myWalkthrough">
+                    <ul class="nav nav-wizard">
+                            <apex:repeat value="{!toolsWizard.Wizard_Steps__r}" var="ws">
+                                <li class="cloudLi">
+                                    <a href="#{!ws.id}-tab" data-toggle="tab" >{!ws.APTSMD_Step_Order__c} - {!ws.name}</a>
+                                </li>
+                            </apex:repeat>
+                            
+                    </ul>
+                    <div class="tab-content">
+                        <apex:repeat value="{!toolsWizard.Wizard_Steps__r}" var="ws">
+                            <div class="tab-pane fade" id="{!ws.id}-tab">
+                                <div class="note note-bordered note-info">
+                                    <p>
+                                        <apex:outputText style="font-size: 20pt;font-weight:700;" value="{!ws.APTSMD_Description__c}" escape="false"/>
+                                        <span style="display:{!IF(ws.APTSMD_Step_Order__c==1,"inline","none")}">
+                                        <apex:outputText style="font-size: 20pt;font-weight:700;" value=" Highlighted in " escape="false"/>
+                                        <apex:outputText style="font-size: 20pt;font-weight:700;color:red;" value="red" escape="false"/>
+                                        <apex:outputText style="font-size: 20pt;font-weight:700;" value=" are the steps that " escape="false"/>
+                                        <apex:outputText style="font-size: 20pt;font-weight:700;color:red;" value="MUST" escape="false"/>
+                                        <apex:outputText style="font-size: 20pt;font-weight:700;" value=" be configured before you start; the rest are optional. Thank you!" escape="false"/>
+                                        </span >
+                                    </p>
+                                </div>
+                                <div style="color:Red;font-weight:400;font-size:18pt;display:{!IF(ws.APTSMD_Step_Order__c==1,"inline","none")}">
+                                    <center>Steps 5-8 are completed for you!</center>
+                                </div>
+                                
+                                <div class="panel-group accordion" id="accordion{!ws.APTSMD_Step_Order__c}">
+                                    <apex:repeat value="{!wizardStepId_ToolsList_Map[ws.id]}" var="tool">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                <a aria-expanded="false" class="accordion-toggle {!tool.APTSMD_tool_order__c}accordionHeader" data-toggle="collapse" data-parent="#accordion{!ws.APTSMD_Step_Order__c}" href="#collapse_{!ws.APTSMD_Step_Order__c}_{!tool.APTSMD_tool_order__c}" >
+                                                <span style="{!IF((tool.APTSMD_tool_order__c>4),"color:Red; font-weight:700;","color:Black;")}">{!tool.APTSMD_tool_order__c}. {!tool.name}</span> </a>
+                                                </h4>
+                                            </div>
+                                            <div aria-expanded="false" id="collapse_{!ws.APTSMD_Step_Order__c}_{!tool.APTSMD_tool_order__c}" class="panel-collapse collapse {!tool.APTSMD_tool_order__c}accordionBody">
+                                                <div class="panel-body">
+                                                    <apex:outputPanel rendered="{!tool.APTSMD_sdo_tool__c != null}">
+                                                        <p>
+                                                            {!tool.APTSMD_sdo_tool__r.APTSMD_description__c} 
+                                                        </p>
+                                                        <p> 
+                                                            <apex:outputText Value="{!tool.APTSMD_sdo_tool__r.APTSMD_instructions__c}" escape="false"/>
+                                                        </p>
+                                                        <p>
+                                                            <div class="btn blue wizardButton" data-name="{!tool.APTSMD_sdo_tool__r.name}"  onclick="showToolById('{!tool.APTSMD_sdo_tool__c}');">
+                                                                {!tool.APTSMD_sdo_tool__r.name}
+                                                            </div> 
+                                                        </p>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!tool.APTSMD_sdo_tool__c == null}">
+                                                        <p>
+                                                            <apex:outputText value="{!tool.APTSMD_instructions__c}" escape="false"/>
+                                                        </p>
+                                                        <p> 
+                                                            <apex:outputText Value="{!tool.APTSMD_sdo_tool__r.APTSMD_instructions__c}" escape="false"/>
+                                                        </p>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!tool.APTSMD_Advanced_Information__c != null && tool.APTSMD_sdo_tool__r.APTSMD_Advanced_Information__c == null}">
+                                                        <p>
+                                                            <a href="#" data-toggle="modal" data-target="#learnMoreModal" class="learnMore" onclick="showModal('{!tool.name} Information','{!JSENCODE(tool.APTSMD_Advanced_information__c)}')">Advanced Information</a>
+                                                        </p>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!tool.APTSMD_sdo_tool__r.APTSMD_Advanced_Information__c != null}">
+                                                        <p>
+                                                            <a href="#" data-toggle="modal" data-target="#learnMoreModal" class="learnMore" onclick="showModal('{!tool.name} Information','{!JSENCODE(tool.APTSMD_sdo_tool__r.APTSMD_Advanced_information__c)}')">Advanced Information</a>
+                                                        </p>
+                                                    </apex:outputPanel>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </apex:repeat>
+                                </div>
+                            </div>
+                            <apex:outputPanel rendered="{!ws.APTSMD_Step_Order__c} == 1}">
+                                <iframe class="news-iframe" width="100%" height="100%" src="https://showcase.secure.force.com/apex/APTSMD_SDOToolsHomepageNews"/>
+                            </apex:outputPanel>
+                        </apex:repeat>
+
+                    </div><!-- end tab Content -->
+                </div>
+            </div><!--/.page-content-->
+
+
+            <script type="text/javascript">
+            // Page scripts go here
+
+            
+
+            </script>
+        </apex:define>
+    </apex:composition>
+</apex:page>

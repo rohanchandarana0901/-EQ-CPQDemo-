@@ -1,0 +1,6 @@
+<aura:component implements="lightning:availableForFlowScreens,force:appHostable">
+	<aura:attribute name="urlToRedirect" type="string"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doRedirect}" />
+    <div>
+    </div>
+</aura:component>

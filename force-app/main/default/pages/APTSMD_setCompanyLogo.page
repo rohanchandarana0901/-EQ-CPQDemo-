@@ -1,0 +1,43 @@
+<apex:page controller="APTSMD_MDOHOMECtrl" showheader="false" sidebar="false" lightningStylesheets="true">
+    <apex:form >
+        <div class="accordion-group">
+                                    
+                                    <div  class="accordion-heading">
+                                      <table>
+                                          <tr>
+                                              <td>
+                                                  <a  class="accordion-toggle"    data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                                                       <font class="hi">Company Logo, Portal / Community Logo </font>
+                                                      </a>
+                                              </td>
+                                              <td>
+                                                 <!-- <a id="step1"> <img src="{!$Resource.Help}"/></a> -->
+                                              </td>
+                                          </tr>
+                                              
+                                      </table>
+                                    </div>
+                                    <div id="collapseOne" class="accordion-body collapse">
+                                          <div class="accordion-inner">
+                                                <apex:pageBlock id="pgBlockCompanyLogo" >
+                                                      <apex:pageBlockSection collapsible="false" columns="1"> 
+                                                          
+                                                          <apex:pageBlockSectionItem > 
+                                                             Company Logo <apex:outputPanel > <apex:inputFile value="{!LogoT.body}" filename="{!Logo.name}"/><apex:outputLink rendered="{!if(Logo.id==null,false,true)}" value="/{!Logo.id}" target="blank" > Link </apex:outputLink> </apex:outputPanel>
+                                                          </apex:pageBlockSectionItem> 
+                                                          <apex:pageBlockSectionItem > 
+                                                             Portal/Community Logo <apex:outputPanel >  <apex:inputFile value="{!PortalLogoT.body}" filename="{!PortalLogo.name}"/>  <apex:outputLink rendered="{!if(Logo.id==null,false,true)}" value="/{!PortalLogo.id}" target="blank" > Link </apex:outputLink> </apex:outputPanel>
+                                                          </apex:pageBlockSectionItem> 
+                                                      </apex:pageBlockSection>
+                                                      
+                                                     <apex:pageBlockButtons location="bottom">
+                                                          <apex:commandButton value="Apply Changes" action="{!SaveDocuments}"/>
+                                                          
+                                                     </apex:pageBlockButtons> 
+                                                      
+                                             </apex:pageblock>
+                                        </div>
+                                    </div>
+                              </div>
+    </apex:form>
+</apex:page>

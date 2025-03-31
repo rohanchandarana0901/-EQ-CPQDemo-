@@ -1,0 +1,911 @@
+<!--@UI/UX: japan/Sharnya (Apttus Developer) on 12/10/2018 -->
+<apex:page controller="APTSMD_ContractSearchController" cache="true" sidebar="false" showHeader="false" standardStylesheets="false" applyBodyTag="false" applyHtmlTag="false">
+    <head>
+        <title>Search Contract</title>
+        <apex:variable var="envPath" value="{!URLFOR($Resource.APTSMD_StaticResources,'/StaticResources')}" /> 
+        <apex:variable var="envPathCDN" value="{!URLFOR($Resource.APTSMD_StaticResourcesCDN,'/StaticResourcesCDN')}" />
+        <script type="text/javascript" src="{!envPathCDN}/lib/jquery-1.12.3.min.js"></script>
+        <script type="text/javascript" src="{!envPath}/js/angular.js"></script>
+        <script type="text/javascript" src="{!envPath}/js/pdf.js"></script>
+        <script type="text/javascript" src="{!envPath}/js/textlayerbuilder.js"></script>
+        <link rel="stylesheet" href="{!envPathCDN}/lib/Font-Awesome-master/css/font-awesome.css" />
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_SLDS,'assets/styles/salesforce-lightning-design-system.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.APTSMD_SLDS,'assets/styles/salesforce-lightning-design-system-vf.css')}"/>
+    
+    <!--Added By Sharanya start-->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/jquery.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular_js.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-animate.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-material.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-aria.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-messages.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-resources.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/angular-route.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/assets_cache.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/materialize.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.APTSMD_script, '/bootstrap_js.js')}"/>
+    <apex:includeScript value="{!$Resource.APTSMD_Nova_Js}"/>
+    <apex:includeScript value="{!$Resource.APTSMD_NovaThemeProvider}"/>
+    
+    <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQCommon.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources,'CPQOptions.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.Apttus_Config2__CPQPageResources, 'CPQDelight.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.APTSMD_ngResource, 'bootstrap/css/bootstrap-theme.min.css')}"/>
+    <apex:stylesheet value="{!$Resource.APTSMD_ApttusCustomCss}" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    
+    <style>
+        .fa {
+         display: inline-block; 
+         font: normal normal normal 14px/1 FontAwesome; 
+         font-size: inherit; 
+         text-rendering: auto; 
+         -webkit-font-smoothing: antialiased; 
+        -moz-osx-font-smoothing: grayscale;
+        }
+        
+         /* Let's get this party started */
+    .prettyScroll::-webkit-scrollbar {
+        width: 11px;
+    }
+     
+    /* Track */
+    .prettyScroll::-webkit-scrollbar-track {
+        -webkit-border-radius: 8px;
+        border-radius: 8px;
+        background: #f7f9fb;
+    }
+     
+    /* Handle */
+    .prettyScroll::-webkit-scrollbar-thumb {
+        -webkit-border-radius: 8px;
+        border-radius: 8px;
+        background: #b1b1b4; 
+    }
+    
+    .animated-background {
+        border-radius:4px;
+        margin-bottom: 9px;
+        animation-duration: 1s;
+        animation-fill-mode: forwards;
+        animation-iteration-count: infinite;
+        animation-name: placeHolderShimmer;
+        animation-timing-function: linear;
+        background: #f6f7f8;
+        background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+        background-size: 800px 104px;
+        height: 10px;
+        position: relative;
+    }
+    .slds-spinner:after{
+        display:none;
+    }
+    .slds-spinner:before{
+        display:none; 
+    }
+    
+    .timeline-item {
+        background: #fff; 
+        border-radius: 3px;
+        
+    }
+    @keyframes placeHolderShimmer{
+        0%{
+            background-position: -468px 0
+        }
+        100%{
+            background-position: 468px 0
+        }
+    }
+    
+      canvas {
+        padding-left: 15px;
+    }
+    .textLayer{
+        left : 15px !important;
+        display:none !important;
+    }
+    .pdf-content {
+    border: 1px solid #000000;
+    }
+    
+    /* CSS classes used by TextLayerBuilder to style the text layer divs */
+    
+    /* This stuff is important! Otherwise when you select the text, the text in the divs will show up! */
+    ::selection { background:rgba(0,0,255,0.3); }
+    ::-moz-selection { background:rgba(0,0,255,0.3); }
+    
+    .textLayer {
+        position: relative;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        color: #000;
+        font-family: sans-serif;
+        overflow: hidden;
+    }
+    
+    .textLayer > div {
+        color: black;
+        position: absolute;
+        line-height: 1;
+        white-space: pre;
+        cursor: text;
+    }
+    
+    .textLayer .highlight {
+        margin: -1px;
+        padding: 1px;
+        
+        background-color: rgba(180, 0, 170, 0.2);
+        border-radius: 4px;
+    }
+    
+    .textLayer .highlight.begin {
+        border-radius: 4px 0px 0px 4px;
+    }
+    
+    .textLayer .highlight.end {
+        border-radius: 0px 4px 4px 0px;
+    }
+    
+    .textLayer .highlight.middle {
+        border-radius: 0px;
+    }
+    
+    .textLayer .highlight.selected {
+        background-color: rgba(0, 100, 0, 0.2);
+    }
+    
+    td{
+        padding: 10px;
+    }
+
+    </style>
+    
+    <!--Added By Sharanya end-->    
+        
+    <script>
+           
+            function convertUndefinedToEmpty (value){
+                  if(value == undefined){
+                      value = '';
+                  }
+                  return value;
+              }
+            var winHeight = 200;
+            function func1() {
+              winHeight = $(window).height();
+              $("#contentDiv").css("max-height",winHeight-110);
+            }
+            window.onload=func1;
+            
+            var searchContracts= angular.module('searchContracts', ['ngMaterial', 'novaTheme', 'ngMessages', 'ngAnimate', 'ngRoute', 'material.svgAssetsCache']);
+            searchContracts.config(function (novaThemeProvider) {
+                    novaThemeProvider.setTheme('default');
+            });
+            
+            searchContracts.controller('searchContracts' ,['$scope','$sce',function($scope,$sce,$filter){
+                $scope.searchingContracts = false;     
+                $scope.searchText = '{!searchText}';
+                $scope.agreementListJSONBase = {!agreementListJSON};
+                $scope.agreementListJSON = [];
+                $scope.downArrow = true;
+                $scope.userListJSON = {!userListJSON};
+                $scope.userListJSON.unshift({FirstName:'',Id:'',LastName:'',attributes:{}});
+                $scope.activationDateJSON = [];
+                $scope.activationDateJSON.push('--None--');
+                $scope.activationDateJSON.push('Last 1 Month');
+                $scope.activationDateJSON.push('Last 6 Months');
+                $scope.activationDateJSON.push('Last 1 Year'); 
+                $scope.activationDateJSON.push('Last 3 Years');
+                $scope.agreementType = {Name: '--None--'};
+                $scope.activationDate = '';
+                $scope.ownerName = '--None--';
+                $scope.recordTypeListJSON = {!recordTypeListJSON};
+                $scope.recordTypeListJSON.unshift({Name:'',Id:'',SobjectType:''});
+                $scope.accountName= ('{!$CurrentPage.parameters.accountName}' || null);
+                $scope.agreementType.Name = ('{!$CurrentPage.parameters.recordtypeName}' || null);
+                $scope.item = {
+                    value: ''
+                }
+                
+                // Added By Japan Bhavsar
+                $scope.selectedTab = {
+                    value: 0
+                };
+                
+                
+                $scope.currentContentID ='';
+                var pdfBase64 = '';
+                var scale = 1;
+                $scope.startIndex = 1;
+                $scope.endIndex = 10;
+                $scope.numOfPages = 10;
+                $scope.model ={};
+                $scope.model.selectedPage = 1;
+                $scope.pageNumbers = [];
+                $scope.getCurrentPage = function(mode){
+                    if(mode=='p'){
+                        $scope.model.selectedPage--; 
+                    }
+                    else if(mode=='n'){
+                        $scope.model.selectedPage++;
+                    }
+                    $scope.startIndex= (($scope.model.selectedPage-1) * $scope.numOfPages)+1;
+                    $scope.endIndex = ($scope.model.selectedPage * $scope.numOfPages);
+                    if($scope.endIndex > $scope.agreementListJSONBase.length){
+                        $scope.endIndex =$scope.agreementListJSONBase.length;
+                    }
+                    $scope.agreementListJSON = $scope.agreementListJSONBase.slice($scope.startIndex-1, $scope.endIndex);
+                    $scope.startSearching();
+                }
+                
+                $scope.getORSearchAgmt = function (fromFirst){
+                    
+                    if($scope.searchText==null || $scope.searchText=='' || $scope.searchText==undefined){
+                        window.alert('Please search with any keyword in Content Search first!');
+                        $scope.selectedTab.value= 0;
+                        setTimeout(function(){
+                            document.getElementById("focusThisIP").focus();
+                        },1000);
+                        return;
+                            
+                    }
+                    
+                    
+                    $scope.searchingContracts = true;
+                    $scope.model.selectedPage = 1;
+                    if($('#advancedSearchModel').hasClass('slds-is-open')){
+                        $('#advancedSearchModel').removeClass('slds-is-open');
+                        $scope.downArrow = true;
+                    }
+                    
+                    Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.APTSMD_ContractSearchController.getORSearchAgmt}',$scope.searchText,
+                    convertUndefinedToEmpty($scope.accountName),convertUndefinedToEmpty($scope.agreementType.Name),convertUndefinedToEmpty($scope.ownerName),convertUndefinedToEmpty($scope.activationDate),convertUndefinedToEmpty($scope.endDateFrom),convertUndefinedToEmpty($scope.endDateTo),
+                    function(result,event){
+                        $scope.agreementListJSONBase = result;
+                        $scope.pageNumbers = [];
+                        if($scope.searchText == '*000*'){ $scope.searchText = ''; }
+                        for(var pg=1;pg<=(Math.ceil($scope.agreementListJSONBase.length / $scope.numOfPages) );pg++ ){
+                            $scope.pageNumbers.push(pg);
+                        }
+                        $scope.getCurrentPage('s');
+                        $scope.searchingContracts = false;
+                        $scope.$apply();
+                    });
+                }
+                $scope.startSearching = function(){
+                    for(var i = 0 ; i<$scope.agreementListJSON.length ; i++){
+                            (function(i){
+                                setTimeout(function() {
+                                    $scope.getContentVersionBlob($scope.agreementListJSON[i].contentVersionId,$scope.agreementListJSON[i].agreementId);
+                                },i * 2000);
+                            })(i);
+                        }
+                }
+                $scope.emailSent = false;
+                $scope.emailAddress = '';
+                $scope.contentId = '';
+                $scope.agreementNumber = '';
+                $scope.emailModel = '';
+                
+                $scope.sendEmailPopUp = function (contentId,agreementNumber){
+                    $scope.contentId = contentId;
+                    $scope.agreementNumber = agreementNumber;
+                    $('#backdrop').addClass('slds-backdrop--open');
+                    $('#modal2').addClass('slds-fade-in-open');
+                }
+                $scope.sendEmail = function (emailAddress, contentId,agreementNumber){
+                    
+                    if(!$scope.emailModel){
+                        window.alert('Please enter valid email address');
+                        return;
+                    }
+                    
+                    var emailBody = $('#'+contentId).html();
+                    
+                    Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.APTSMD_ContractSearchController.sendEmail}',$scope.emailModel,contentId,emailBody,agreementNumber,$scope.searchText,
+                        function(result,event){
+                            $('#modal').removeClass('slds-fade-in-open');
+                            $('#modal1').removeClass('slds-fade-in-open');
+                            $('#modal2').removeClass('slds-fade-in-open');
+                            $scope.emailSent = false;
+                            $('#backdrop').removeClass('slds-backdrop--open');
+                    });
+                }
+                $scope.emailSentFunc = function (){
+                    $scope.emailSent = false;
+                }
+                if($scope.searchText != ''){
+                    $scope.getORSearchAgmt(true);
+                }
+    
+                $scope.htmlDecode = function(input){
+                    var e = document.createElement('div');
+                    e.innerHTML = input;
+                    return e.childNodes[0].nodeValue;
+                }
+                $scope.renderHtml = function(html_code){
+                    var htmlCode =$scope.htmlDecode(html_code);
+                    htmlCode.replace(/&amp;/g, "&").replace(/&gt;/g, ">").replace(/&lt;/g, "<").replace(/&quot;/g, '"');
+                    return $sce.trustAsHtml(htmlCode);
+                };
+                $scope.getContentVersionBlob = function (contentId,parentId){
+                    
+                    var loadHtml = '<div class="timeline-wrapper" style="margin-top:10px !important;"><div class="timeline-item"><div class="animated-background" style="width:50%"></div>';
+                    loadHtml+= '<div class="animated-background" style="width:70%"></div><div class="animated-background" style="width:90%"></div><div class="animated-background" style="width:60%"></div></div></div>';
+                                
+                    $("#"+contentId).html(loadHtml);                        
+                    $scope.matchOccuranceArray= [];
+                    $scope.matchedTrackVersion = [];
+                    $('#pdfContainer'+contentId).html('');
+                    
+                    $scope.currentContentID = contentId;
+                    Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.APTSMD_ContractSearchController.getContentVersionBlob}',contentId,
+                          function(result,event){ 
+                              pdfBase64 = '';
+                              pdfBase64 = result;
+                              var dlnk = document.getElementById('downLink'+contentId);
+                              dlnk.href = 'data:application/octet-stream;base64,'+pdfBase64;
+                              var pdfData = $scope.base64ToUint8Array(pdfBase64);
+                              $scope.loadPdf(contentId,pdfData);
+                          },{escape:true});
+                }
+                $scope.readPDFData = function (contentId){
+                    var changesTable ='<div>';
+                    changesTable+='<table class="table pricingTable templateTable width100P">'
+                    
+                    $('.textLayer'+contentId).each(function(i, obj) {
+                        $(this).html($(this).html().replace(/\.[\s]*<(\/)div[^>]*>/g, '.</div>####'));  
+                        var arr=($(this).text().split('####'));
+                        for(var j = 0 ; j<arr.length ; j++){
+                            arr[j]=arr[j].replace(/  +/g, ' ');
+                            if(arr[j].toUpperCase().includes($scope.searchText.toUpperCase())){
+                                changesTable+='<tr>';
+                                changesTable+='<td style="width: 92%;" class="normalTextFont borderNone smallMsgText paddingLeft20">'+arr[j]+'</td>';
+                                changesTable+='<td style="font-weight: bolder;font-size: 14px;vertical-align:top;text-align: right;" class="borderNone blackBold">Page-'+(i+1)+'</td>';
+                                changesTable+='</tr>';
+                            }
+                        }
+                    });
+                    changesTable+='</table><br/></div>';
+                    
+                    $(".textLayer"+contentId).html($(".textLayer"+contentId).html().replace(/#/g, ''));
+                    var src_str = changesTable;
+                    var term = $scope.searchText;
+                    term = term.replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*");
+                    var pattern = new RegExp("("+term+")", "gi");
+                    
+                    src_str = src_str.replace(pattern, "<mark>$1</mark>");
+                    src_str = src_str.replace(/(<mark>[^<>]*)((<[^>]+>)+)([^<>]*<\/mark>)/,"$1</mark>$2<mark>$4");
+                    
+                    $("#"+contentId).html(src_str);
+                }
+                $scope.closeModel = function(contentId){
+                    $('#'+contentId).removeClass('slds-fade-in-open');
+                    $('#backdrop').removeClass('slds-backdrop--open');
+                }
+                $scope.expandCollpase = function(item) {
+                    item.isExpand = !item.isExpand;
+                }
+                $scope.showIcons = function(item) {
+                return item ? 'fa fa-plus-circle fa-lg' :
+                        'fa fa-minus-circle fa-lg';
+                }
+                $scope.openModel = function(contentId){
+                    $('#backdrop').addClass('slds-backdrop--open');
+                    $('#'+contentId).addClass('slds-fade-in-open');
+                }
+                $scope.ShowHideAdvancedSearchModel = function(){
+                    if($('#advancedSearchModel').hasClass('slds-is-open')){
+                        $('#advancedSearchModel').removeClass('slds-is-open');
+                        $scope.downArrow = true;
+                    }else{
+                        $('#advancedSearchModel').addClass('slds-is-open'); 
+                        $scope.downArrow = false;
+                    }
+                    
+                }
+                $scope.base64ToUint8Array = function(base64){
+                    var raw = atob(base64); //This is a native function that decodes a base64-encoded string.
+                    var uint8Array = new Uint8Array(new ArrayBuffer(raw.length));
+                    for(var i = 0; i < raw.length; i++) {
+                        uint8Array[i] = raw.charCodeAt(i);
+                    }
+                    
+                    return uint8Array;
+                }
+    
+                $scope.loadPdf = function(contentId, pdfData){
+                    PDFJS.disableWorker = true;
+                    var pdfSuccessPromise = PDFJS.getDocument(pdfData);
+                    pdfSuccessPromise.then(function(pdfSuccessPromise){
+                        
+                            $scope.renderPdf1(contentId ,pdfSuccessPromise);    
+                        
+                        
+                    });
+                }
+                
+                $scope.renderPdf1 = function(contentId, pdf){
+                    var promisePDFPages = [];
+                    for(var i = 1 ; i <=pdf.pdfInfo.numPages;i++ ){
+                        var pdfGetPage = pdf.getPage(i);
+                       
+                        pdfGetPage.then(
+                            function(page)
+                            {
+                                 var viewport = page.getViewport(scale);
+                                    var $canvas = jQuery("<canvas></canvas>");
+                                    
+                                    //Set the canvas height and width to the height and width of the viewport
+                                    var canvas = $canvas.get(0);
+                                    var context = canvas.getContext("2d");
+                                    canvas.height = viewport.height;
+                                    canvas.width = viewport.width;
+                                    
+                                    //Append the canvas to the pdf container div
+                                    
+                                    jQuery("#pdfContainer"+contentId).append($canvas);
+                                    
+                                    //The following few lines of code set up scaling on the context if we are on a HiDPI display
+                                    var outputScale = getOutputScale();
+                                    if (outputScale.scaled) {
+                                        var cssScale = 'scale(' + (1 / outputScale.sx) + ', ' +
+                                            (1 / outputScale.sy) + ')';
+                                        CustomStyle.setProp('transform', canvas, cssScale);
+                                        CustomStyle.setProp('transformOrigin', canvas, '0% 0%');
+                                    }
+                                    
+                                    context._scaleX = outputScale.sx;
+                                    context._scaleY = outputScale.sy;
+                                    if (outputScale.scaled) {
+                                        context.scale(outputScale.sx, outputScale.sy);
+                                    }     
+                                    
+                                    var canvasOffset = $canvas.offset();
+                                    var $textLayerDiv = jQuery("<div />")
+                                    .addClass("textLayer textLayer"+contentId)
+                                    .css("height", viewport.height + "px")
+                                    .css("width", viewport.width + "px")
+                                    .offset({
+                                        top: canvasOffset.top,
+                                        left: canvasOffset.left
+                                    });
+                                    
+                                    jQuery("#pdfContainer"+contentId).append($textLayerDiv);
+                                    
+                                    page.getTextContent().then(function(textContent) {
+                                        var textLayer = new TextLayerBuilder($textLayerDiv.get(0), 0); //The second zero is an index identifying
+                                        textLayer.setTextContent(textContent);
+                                        
+                                        var renderContext = {
+                                            canvasContext: context,
+                                            viewport: viewport,
+                                            textLayer: textLayer
+                                        };
+                                          var xxxx = page.render(renderContext);
+                                          promisePDFPages.push(xxxx);
+                                    });
+                    
+                            }
+                            );
+                    
+                        
+                    }
+                    
+                   Promise.all(promisePDFPages).then(function(){
+                        $scope.readPDFData(contentId);
+                    });
+                    
+                }
+                
+                $scope.clearAllAdvancedFilter = function(){
+                    $scope.searchText = '';
+                    $scope.accountName= '';//'{!$CurrentPage.parameters.relatedId}'
+                    $scope.agreementType.Name = '--None--';
+                    $scope.ownerName = '--None--';
+                    $scope.activationDate = '';
+                    $scope.endDateFrom = '';
+                    $scope.endDateTo = '';
+                }
+                
+                
+                // ownerChangeTrack - track change of owner
+                $scope.ownerChangeTrack = function(modelvalue){
+                    if(modelvalue.replace(' ','') == ''){
+                        $scope.ownerName = '--None--';
+                    }
+                    
+                }
+                
+                // typeChangeTrack - track change of agreement type
+                $scope.typeChangeTrack = function(modelvalue){
+                    if(modelvalue == ''){
+                         $scope.agreementType.Name = '--None--';
+                    }
+                    
+                }
+                
+                // backToHome() - Back to home
+                $scope.backToHome = function(){
+                    window.top.location = '/home/home.jsp';
+                    return;
+                }
+                
+                
+        }]); 
+</script>
+
+</head>
+<body ng-app="searchContracts" onresize="func1()" ng-controller="searchContracts" ng-cloak="true">
+<!-- <c:APTSMD_CommonHeader pageName1="Contract Search" objectName="" /> -->
+<div class="apttusContainer ">
+<div class="slds">
+    <div class="slds-spinner_container" ng-if="searchingContracts" style="width: 100%;height: 100%;position: fixed;z-index: 999;background-color: rgba(204, 204, 204, 0.26);">
+        <center>
+            <div class="slds-spinner slds-spinner--large" style="top: 40%;position: absolute;left: 45%;" role="alert">
+                <div class="slds-spinner--large">
+                    <img style="height:100px;width:100px;max-width: 100px;" src="{!$Resource.APTSMD_Loading}" alt="Loading..." />
+                </div>
+            </div>
+        </center>
+    </div>
+    
+    <!-- Apttus Back button -->
+    <!-- <div class="textAlignRight marginBottom15">
+        <button type="button" class="apttusBtn" ng-click="backToHome();">
+            Home
+        </button>
+    </div> -->
+    
+    <!-- New Panel Design by Japan Bhavsar on 18-July-2024 -->
+    <div class="apttusPanel">
+        <!-- Search Filter Label -->
+        <p class="blackBold" ng-click="showFilter = !showFilter" ><i ng-init="showFilter = true;"
+				class="material-icons verticalMiddle">{{showFilter ? 'expand_more' : 'chevron_right'}}</i>&nbsp;Seach Filters</p>
+        <br/>
+        <div ng-show="showFilter">
+            <!-- Content Search Bar and Search Button Container -->
+            <!--<div class="row margin0 padding0">
+                <div class="col-md-4 col-sm-12 padding0">
+                    <md-input-container class="md-block ands-input-container verticalMiddle" md-no-float="true">
+                        <input class="ands-input marginTop7" type="text" name="searchText" required="true"
+                               placeholder="Please enter any keyword for searching agreements..." id="focusThisIP" ng-model="searchText" value="searchText" />
+                    </md-input-container> 
+                </div>
+                <div class="col-md-4 col-sm-12 padding0 textAlignLeft">
+                    <button ng-click="getORSearchAgmt(true);" class="slds-button slds-button--brand apttusBtn">Search</button>
+                </div>
+            </div>-->
+            <!-- Advanced Filters -->
+            <div>
+                <div class="row margin0 padding0">
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10">
+                        <md-input-container class="md-block ands-input-container verticalMiddle" md-no-float="true">
+                            <label class="ands-label fontWeight400">Search Content</label>
+                            <input class="ands-input marginTop7" type="text" name="searchText" required="true"
+                                   id="focusThisIP" ng-model="searchText" value="searchText" />
+                        </md-input-container> 
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10">
+                        <md-input-container class="md-block ands-input-container">
+                            <label class="ands-label fontWeight400">Account Name</label>
+                            <input class="ands-input" type="text" name="fieldValue" ng-model="accountName"/>
+                        </md-input-container>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10 marginBottom10">
+                        <md-input-container class="md-block ands-input-container">
+                            <label class="ands-label">Agreement Type</label>
+                            <md-select ng-model="agreementType.Name" id="{{obj.Id}}" ng-change="typeChangeTrack(agreementType.Name);">
+                                <md-option ng-repeat='obj in recordTypeListJSON' ng-value="obj.Name" class="optionmd">
+                                     {{obj.Name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10 marginBottom10">
+                         <md-input-container class="md-block ands-input-container">
+                            <label class="ands-label">Owner Name</label>
+                            <md-select ng-model="ownerName" id="{{expression.expressionId}}" ng-change="ownerChangeTrack(ownerName)">
+                                <md-option ng-repeat="obj in userListJSON" value="{{obj.FirstName + ' ' + obj.LastName }}" class="optionmd">
+                                     {{obj.FirstName + ' ' + obj.LastName }}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                </div>
+                <div class="row margin0 padding0 marginTop5">
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10 marginBottom10">
+                         <md-input-container class="md-block ands-input-container">
+                            <label class="ands-label">Activation Date</label>
+                            <md-select ng-model="activationDate" id="{{expression.expressionId}}">
+                                <md-option ng-repeat="obj in activationDateJSON" value="{{obj}}" class="optionmd">
+                                     {{obj}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10 marginBottom10">
+                         <md-input-container class="md-block ands-input-container">
+                            <label class="ands-label fontWeight400">End Date From</label>
+                            <input ng-model="endDateFrom" class="apttusInput padding0" type="date"></input>
+                        </md-input-container>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10 marginBottom10">
+                         <md-input-container class="md-block ands-input-container">
+                            <label class="ands-label fontWeight400">End Date To</label>
+                             <input ng-model="endDateTo" class="apttusInput padding0" type="date" />
+                        </md-input-container>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10 marginBottom10">
+                        <button ng-click="getORSearchAgmt(false);" class="slds-button slds-button--brand apttusBtn">Search</button>
+                        <button ng-click="clearAllAdvancedFilter();" class="slds-button slds-button--brand apttusBtnWhite">Clear</button>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+    
+    
+    <!-- New Filter Design By Japan Bhavsar -->
+     <div class="apttusPanel" style="display:none;">
+        <div> 
+        <p class="blackBold" ng-click="showFilter = !showFilter" ><i ng-init="showFilter = true;"
+        class="material-icons verticalMiddle">{{showFilter ? 'expand_more' : 'chevron_right'}}</i>&nbsp;Search Filters</p>
+        </div>
+        <md-tabs  md-selected="selectedTab.value"  md-dynamic-height="true" md-border-bottom="true" ng-show="showFilter">
+          <md-tab label="Content Search" class="capitalize"> 
+            <md-content class="md-padding"> 
+               <div class="row margin0 padding0">
+                    <div class="col-md-4 col-sm-12 padding0">
+                        <md-input-container class="md-block ands-input-container verticalMiddle" md-no-float="true">
+                            <input class="ands-input marginTop7" type="text" name="searchText" 
+                                placeholder="Please enter any keyword for searching agreements..." id="focusThisIP" ng-model="searchText" value="searchText" />
+                        </md-input-container> 
+                    </div>
+                    <div class="col-md-4 col-sm-12 padding0 textAlignLeft">
+                        <button ng-click="getORSearchAgmt(true);" class="slds-button slds-button--brand apttusBtn">Search</button>
+                    </div>
+                </div>
+            </md-content> 
+          </md-tab>
+          <md-tab label="Advance Search" class="capitalize">
+            <md-content class="md-padding">
+                <div class="row margin0 padding0">
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10">
+                        <md-input-container class="md-block ands-input-container">
+                            <label class="ands-label fontWeight400">Account Name</label>
+                            <input class="ands-input" type="text" name="fieldValue" ng-model="accountName"/>
+                        </md-input-container>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10 marginBottom10">
+                        <md-input-container class="md-block ands-input-container">
+                            <label class="ands-label">Agreement Type</label>
+                            <md-select ng-model="agreementType.Name" ng-change="typeChangeTrack(agreementType.Name);">
+                                <md-option ng-repeat='obj in recordTypeListJSON' ng-value="obj.Name" class="optionmd">
+                                     {{obj.Name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10 marginBottom10">
+                         <md-input-container class="md-block ands-input-container">
+                            <label class="ands-label">Owner Name</label>
+                            <md-select ng-model="ownerName" id="{{expression.expressionId}}" ng-change="ownerChangeTrack(ownerName)">
+                                <md-option ng-repeat="obj in userListJSON" value="{{obj.FirstName + ' ' + obj.LastName }}" class="optionmd">
+                                     {{obj.FirstName + ' ' + obj.LastName }}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                </div>
+                <div class="row margin0 padding0 marginTop5">
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10 marginBottom10">
+                         <md-input-container class="md-block ands-input-container">
+                            <label class="ands-label">Activation Date</label>
+                            <md-select ng-model="activationDate" id="{{expression.expressionId}}">
+                                <md-option ng-repeat="obj in activationDateJSON" value="{{obj}}" class="optionmd">
+                                     {{obj}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10 marginBottom10">
+                         <md-input-container class="md-block ands-input-container">
+                            <label class="ands-label fontWeight400">End Date From</label>
+                            <input ng-model="endDateFrom" class="apttusInput padding0" type="date"></input>
+                        </md-input-container>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10 marginBottom10">
+                         <md-input-container class="md-block ands-input-container">
+                            <label class="ands-label fontWeight400">End Date To</label>
+                             <input ng-model="endDateTo" class="apttusInput padding0" type="date" />
+                        </md-input-container>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12 marginTop10 marginBottom10">
+                        <button ng-click="getORSearchAgmt(false);" class="slds-button slds-button--brand apttusBtn">Search</button>
+                        <button ng-click="clearAllAdvancedFilter();" class="slds-button slds-button--brand apttusBtnWhite">Clear</button>
+                    </div>
+              </div>
+            </md-content>
+          </md-tab>
+        </md-tabs>
+    </div>
+</div>
+<!-- Main Panel -->
+<div id="contentDiv" class="prettyScroll apttusPanel" style="overflow-y: auto;max-height: 580px;">
+    
+<div class="marginBottom10 marginTop10" role="banner" ng-repeat="item in agreementListJSON | filter:search">
+    <div class="slds-grid">
+        <div class="slds-col">
+            <div class="slds-media slds-no-space slds-grow">
+                <div class="slds-media__figure">
+
+                    <i ng-if="agreementListJSON.length" class="material-icons" ng-click="expandCollpase(item);">
+                        {{item.isExpand ?  'expand_more' : 'chevron_right' }}
+                    </i>
+                </div>
+                <div class="slds-media__body">
+                    <div style="width:100% !important;padding:0px !important;">
+                            <div style="width:100% !important;padding:0px !important;">
+                                <ul class="slds-grid slds-page-header__detail-row margin0">
+                                    <li class="slds-page-header__detail-block width250 marginRight30">
+                                        <p class="slds-text-title--caps slds-line-height--reset blackBold margin0">AGREEMENT</p>
+                                        <h2 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate normalTextFont margin0 marginTop5" title="this should match the Record Title"><a href="/{{item.agreementId}}" style="text-decoration: none;">{{item.agreementName}}</a></h2>
+                                    </li>
+                                    <li class="slds-page-header__detail-block marginRight30">
+                                        <p class="slds-text-title slds-truncate slds-m-bottom--xx-small blackBold" title="Field 1">Agreement Number</p>
+                                        <p class="slds-text-body--regular slds-truncate normalTextFont" title="Description that demonstrates truncation with a long text field">{{item.agreementNumber}}</p>
+                                    </li>
+                                    <li class="slds-page-header__detail-block marginRight30 width150">
+                                        <p class="slds-text-title slds-truncate slds-m-bottom--xx-small blackBold">Account
+                                            <button class="slds-button slds-button--icon" aria-haspopup="true" title="More Actions">
+                                                <svg aria-hidden="true" class="slds-button__icon slds-button__icon--small">
+                                                    
+                                                </svg>
+                                                <span class="slds-assistive-text">More Actions</span>
+                                            </button>
+                                        </p>
+                                        <p class="slds-text-body--regular normalTextFont">{{item.accountName}}</p>
+                                    </li>
+                                    <li class="slds-page-header__detail-block marginRight30 width100">
+                                        <p class="slds-text-title slds-truncate slds-m-bottom--xx-small blackBold">Status</p>
+                                        <p class="normalTextFont">{{item.status}}</p></li>
+                                    <li class="slds-page-header__detail-block marginRight30">
+                                        <p class="slds-text-title slds-truncate slds-m-bottom--xx-small blackBold">Start Date</p>
+                                        <p class="normalTextFont">
+                                            <span title="Description (2-line truncation—must use JS to truncate).">{{item.startDate | date: '{!dateFormat}' }}</span>
+                                        </p>
+                                    </li>
+                                    <li class="slds-page-header__detail-block marginRight30">
+                                        <p class="slds-text-title slds-truncate slds-m-bottom--xx-small blackBold">End Date</p>
+                                        <p class="normalTextFont">
+                                            <span title="Description (2-line truncation—must use JS to truncate).">{{item.endDate | date: '{!dateFormat}' }}</span>
+                                        </p>
+                                    </li>
+                                </ul>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+            
+        </div>
+        <div class="slds-col textAlignRight paddingTop10">
+             <i class="material-icons verticalMiddle lightBigIcon" title="View File"
+                ng-click="openModel('modal'+item.contentVersionId);">remove_red_eye</i>&nbsp;&nbsp;&nbsp;&nbsp;
+             <i class="material-icons verticalMiddle lightBigIcon" title="Send File"
+                ng-click="sendEmailPopUp(item.contentVersionId,item.agreementNumber);">email</i>&nbsp;&nbsp;
+        </div>
+    </div>
+    
+    <div style="width:100% !important; margin-top: 19px;" id="{{item.id}}" ng-show="item.isExpand">
+        <div class="slds-modal__content slds-p-around--medium prettyScroll" id="{{item.contentVersionId}}" style="padding-bottom: 0px;overflow-x: hidden;overflow-y: auto;height: 125px;padding-top:0px;">
+            <div class="timeline-wrapper" style="margin-top:10px !important;">
+                <div class="timeline-item">
+                    <div class="animated-background" style="width:50%"></div>
+                    <div class="animated-background" style="width:70%"></div>
+                    <div class="animated-background" style="width:90%"></div>
+                    <div class="animated-background" style="width:60%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="smallMsgText textAlignCenter" ng-if="agreementListJSON.length == 0">
+    Search your agreement using search button.
+</div>
+</div>
+
+<div>
+    <div class="marginTop5 marginBottom5" ng-if="agreementListJSONBase.length > 0">
+    <div class="slds-button-group" ng-if="agreementListJSONBase.length > 0" role="group">
+        <button ng-disabled="startIndex == 1" ng-click="getCurrentPage('p');"  class="slds-button slds-button--neutral slds-not-selected borderRadius0 apttusBtnWhite">&lt;&lt;</button>
+        <p class="slds-text-title--caps slds-line-height--reset marginTop10 paddingLeft5 paddingRight5">
+            Showing {{startIndex}} - {{endIndex}} of {{agreementListJSONBase.length}} 
+        </p>
+        <button ng-disabled="endIndex == agreementListJSONBase.length" ng-click="getCurrentPage('n');"  class="slds-button slds-button--neutral slds-not-selected borderRadius0 borderLeftGrey apttusBtnWhite">&gt;&gt;</button>
+        <p class="slds-text-title--caps slds-line-height--reset marginTop10 paddingLeft5 paddingRight5">
+            Jump to
+        </p>
+        <select ng-change="getCurrentPage('j');" ng-model="model.selectedPage" class="prettyScroll borderRadius0 apttusInput" ng-options="item for item in pageNumbers">
+        </select>
+    </div>
+    </div>
+</div>
+
+
+<!-- Modals -->
+
+<div class="slds-modal" ng-repeat="item in agreementListJSON" aria-hidden="false" role="dialog" id="modal{{item.contentVersionId}}" >
+    <div class="slds-modal__container" style="max-width:700px !important;width:90% !important;">
+    <div class="slds-modal__header textAlignLeft blackBold">
+        <button class="slds-button slds-button--icon-inverse slds-modal__close" ng-click="closeModel('modal'+item.contentVersionId)">
+            <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large"></svg>
+            <span class="slds-assistive-text">Close</span>
+        </button>
+        <h2 class="slds-text-heading--medium margin0">Document Viewer</h2>
+    </div>
+    <div class="slds-modal__content slds-p-around--medium prettyScroll" >
+        <div>
+            <div id="pdfContainer{{item.contentVersionId}}" class = "pdf-content"></div>
+        </div>
+    </div>
+    <div class="slds-modal__footer textAlignCenter">
+        <button class="slds-button slds-button--neutral apttusBtnWhite" ng-click="closeModel('modal'+item.contentVersionId)">Cancel</button>
+        <button class="slds-button slds-button--brand apttusBtn" ><a id="downLink{{item.contentVersionId}}" download='{{item.agreementName}}.pdf' target="_blank" style="text-decoration: none !important;color: #fff !important;">Download</a></button>
+    </div>
+    </div>
+</div>
+
+<div class="slds-backdrop" id="backdrop"></div>
+
+<!--send email-->
+
+<div class="slds-modal" aria-hidden="false" role="dialog" id="modal2">
+    <div class="slds-modal__container" style="max-width:700px !important;">
+    <div class="slds-modal__header textAlignLeft blackBold">
+        <button class="slds-button slds-button--icon-inverse slds-modal__close" ng-click="closeModel('modal2')">
+            <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large"></svg>
+            <span class="slds-assistive-text">Close</span>
+        </button>
+        <h2 class="slds-text-heading--medium margin0">Send Document</h2>
+    </div>
+    <div class="slds-modal__content slds-p-around--medium prettyScroll">
+        <div class="slds-notify_container" ng-show="emailSent">
+          <div class="slds-notify slds-notify--alert slds-theme--alert-texture" role="alert">
+            <button class="slds-button slds-notify__close slds-button--icon-inverse" title="Close">
+              <svg aria-hidden="true" class="slds-button__icon">
+              </svg>
+              <span class="slds-assistive-text">Close</span>
+            </button>
+            <span class="slds-assistive-text">Info</span>
+            <h2>Email has been sent.</h2>
+          </div>
+        </div>
+        <div>
+            <div class="slds-form-element__control">
+                Enter Email Address
+                <input ng-model="emailModel" class="slds-input apttusInput" type="text" />
+            </div>
+        </div>
+    </div>
+    <div class="slds-modal__footer textAlignCenter">
+        <button class="slds-button slds-button--neutral apttusBtnWhite" ng-click="closeModel('modal2')">Cancel</button>
+        <button class="slds-button slds-button--brand apttusBtn" ng-click="sendEmail(emailAddress,contentId,agreementNumber)">Send</button>
+    </div>
+    </div>
+</div>
+</div>
+</body>
+
+</apex:page>
