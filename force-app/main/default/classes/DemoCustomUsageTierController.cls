@@ -74,7 +74,7 @@ public with sharing class DemoCustomUsageTierController {
                 }
             }
         } catch(Exception ex){
-           System.debug('@@@ exception: ' + ex);
+           System.debug('@@@ exception ' + ex);
         }
     }
 
