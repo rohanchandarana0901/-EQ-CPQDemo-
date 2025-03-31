@@ -1,13 +1,7 @@
 global with sharing class CustomPricingCallbackNE implements Apttus_Config2.CustomClass.IPricingCallback3 {
  
-<<<<<<< HEAD
    private Apttus_Config2.ProductConfiguration contextCart; //branch 1 direct commit 5
-   private Apttus_Config2.CustomClass.PricingMode currentMode; //test
-=======
-   private Apttus_Config2.ProductConfiguration contextCart; //branch 1 commit 5
-   private Apttus_Config2.CustomClass.PricingMode currentMode; 
->>>>>>> a309a8f (commit 5)
- 
+   private Apttus_Config2.CustomClass.PricingMode currentMode; //test 
  /**
  * Callback at the beginning of the pricing call.
  * Use the start method to initialize state
