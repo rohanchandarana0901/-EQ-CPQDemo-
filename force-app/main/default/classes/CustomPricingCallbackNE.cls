@@ -1,6 +1,6 @@
 global with sharing class CustomPricingCallbackNE implements Apttus_Config2.CustomClass.IPricingCallback3 {
  
-   private Apttus_Config2.ProductConfiguration contextCart; //branch 1 direct commit 4
+   private Apttus_Config2.ProductConfiguration contextCart; //branch 1 commit 4
    private Apttus_Config2.CustomClass.PricingMode currentMode; 
  
  /**
