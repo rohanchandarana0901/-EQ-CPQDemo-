@@ -83,7 +83,7 @@ public with sharing class DemoCustomUsageTierController {
         includedQuantity = includedQuantity ?? 0;
         perUnitCharge = perUnitCharge ?? 0;
         
-        if(inclusionType == 'Inclusive Upto'){ //test
+        if(inclusionType == 'Inclusive Upto'){ //test test2
 
             List<String> fields = new List<String>(Apttus_Config2__UsagePriceTier__c.SObjectType.getDescribe().fields.getMap().keySet());
             String SOQL = 'SELECT ' + String.join(fields, ',') + ', Apttus_Config2__LineItemId__r.Apttus_Config2__OptionId__c from Apttus_Config2__UsagePriceTier__c  where Apttus_Config2__LineItemId__c = :lineItemId';
